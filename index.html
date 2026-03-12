@@ -2,629 +2,1342 @@
 
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="SocialVault">
-<meta name="theme-color" content="#000000">
-<title>SocialVault</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediaVault — Personal Archive</title>
+  <meta name="description" content="Save and archive media from Reddit, Twitter/X, Pinterest, and more." />
+  <meta name="theme-color" content="#c4440a" />
+  <meta property="og:title" content="MediaVault" />
+  <meta property="og:description" content="Personal social media archive" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23c4440a' rx='6' width='32' height='32'/><text y='22' font-size='20' x='6'>🗃</text></svg>" />
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--safe-top:env(safe-area-inset-top,44px);--safe-bot:env(safe-area-inset-bottom,20px);--g:#34c759;--g2:#30d158;--card:#1c1c1e;--card2:#2c2c2e;--muted:#636366}
-html,body{height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
-.app{width:100%;height:100%;display:flex;flex-direction:column;background:#000;position:relative;overflow:hidden}
-.sv{display:none;flex-direction:column;flex:1;overflow:hidden;padding-top:var(--safe-top)}
-.sv.active{display:flex}
-.hd{padding:10px 20px 14px;flex-shrink:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
-.hd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.hd h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
-.hd-sub{font-size:13px;color:var(--muted);margin-top:1px}
-.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;flex-shrink:0}
-.spill{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:10px 14px}
-.spill input{background:none;border:none;outline:none;color:#fff;font-size:15px;flex:1;font-family:inherit}
-.spill input::placeholder{color:var(--muted)}
-.ab{margin:0 16px 10px;background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.25);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
-.ab-icon{font-size:18px}
-.ab h4{font-size:13px;font-weight:600;color:var(--g);margin-bottom:1px}
-.ab p{font-size:11px;color:var(--muted)}
-.ab-st{margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap}
-.ab-st.ok{color:var(--g)}.ab-st.no{color:#ff9500}
-.chips{display:flex;gap:8px;padding:8px 16px 10px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
-.chips::-webkit-scrollbar{display:none}
-.chip{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;border:1.5px solid transparent;flex-shrink:0;transition:all .15s}
-.chip.on{background:#fff;color:#000;border-color:#fff}
-.chip.off{background:var(--card);color:var(--muted);border-color:var(--card2)}
-.feed{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:16px}
-.feed::-webkit-scrollbar{display:none}
-.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 12px 0}
-.pin{background:var(--card);border-radius:16px;overflow:hidden;cursor:pointer;position:relative;transition:transform .15s,opacity .15s;animation:fu .3s ease both}
-.pin:active{transform:scale(.95);opacity:.8}
-@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.pin-img{width:100%;display:block;object-fit:cover;background:var(--card2)}
-.pin:nth-child(5n+1) .pin-img{height:170px}
-.pin:nth-child(5n+2) .pin-img{height:125px}
-.pin:nth-child(5n+3) .pin-img{height:155px}
-.pin:nth-child(5n+4) .pin-img{height:190px}
-.pin:nth-child(5n)   .pin-img{height:135px}
-.pin-noimg{height:95px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:var(--card2)}
-.pin-body{padding:9px 10px 11px}
-.pin-title{font-size:12px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}
-.pin-foot{display:flex;align-items:center;justify-content:space-between}
-.sb{display:flex;align-items:center;gap:3px;padding:3px 7px;border-radius:7px;font-size:10px;font-weight:700}
-.sb-p{background:rgba(230,0,35,.15);color:#e60023}
-.sb-x{background:rgba(255,255,255,.08);color:#ccc}
-.sb-r{background:rgba(255,69,0,.15);color:#ff4500}
-.sb-m{background:rgba(52,199,89,.12);color:var(--g)}
-.pin-fav{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:none;transition:transform .15s}
-.pin-fav:active{transform:scale(.8)}
-.pin-cloud{position:absolute;top:8px;left:8px;background:rgba(52,199,89,.88);border-radius:6px;font-size:9px;font-weight:700;color:#000;padding:2px 6px}
-.uscroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 18px 30px}
-.uscroll::-webkit-scrollbar{display:none}
-.dz{border:2px dashed var(--card2);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:14px;position:relative;background:#0a0a0c;transition:all .2s}
-.dz.over{border-color:var(--g);background:rgba(52,199,89,.04)}
-.dz input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.dz-icon{font-size:38px;margin-bottom:8px}
-.dz-title{font-size:16px;font-weight:600;margin-bottom:3px}
-.dz-sub{font-size:12px;color:var(--muted)}
-.uprev{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:12px;display:none}
-.ustatus{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px;display:none}
-.ustatus.ok{color:var(--g)}.ustatus.err{color:#ff3b30}
-.slbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;padding-left:2px}
-.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.pbtn{background:var(--card);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;border:2px solid transparent;transition:all .15s}
-.pbtn:active{transform:scale(.92)}
-.pbtn.pp.sel{background:rgba(230,0,35,.1);border-color:#e60023}
-.pbtn.px.sel{background:rgba(255,255,255,.05);border-color:#ddd}
-.pbtn.pr.sel{background:rgba(255,69,0,.1);border-color:#ff4500}
-.pbtn.pm.sel{background:rgba(52,199,89,.1);border-color:var(--g)}
-.picon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
-.pip{background:rgba(230,0,35,.15)}.pix{background:rgba(255,255,255,.08)}.pir{background:rgba(255,69,0,.15)}.pim{background:rgba(52,199,89,.12)}
-.plbl{font-size:10px;font-weight:600;color:var(--muted);text-align:center}
-.isec{background:var(--card);border-radius:14px;overflow:hidden;margin-bottom:14px}
-.irow{display:flex;align-items:center;padding:13px 14px;border-bottom:1px solid var(--card2);gap:10px}
-.irow:last-child{border-bottom:none}
-.irow label{font-size:15px;color:#fff;width:64px;flex-shrink:0}
-.irow input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit}
-.irow input::placeholder{color:#3a3a3c}
-.irow textarea{flex:1;background:none;border:none;outline:none;color:var(--muted);font-size:14px;font-family:inherit;resize:none}
-.savebtn{width:100%;background:linear-gradient(135deg,var(--g),var(--g2));border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:700;color:#000;font-family:inherit;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:4px}
-.savebtn:active{opacity:.85;transform:scale(.98)}
-.rhbtn{width:100%;background:linear-gradient(135deg,#1d9bf0,#0e76d0);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:600;color:#fff;font-family:inherit;cursor:pointer;margin-bottom:14px}
-.rhbtn:active{opacity:.8}
-.sres{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 14px}
-.sres::-webkit-scrollbar{display:none}
-.ri{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:14px;margin-bottom:8px;cursor:pointer;animation:fu .25s ease both}
-.ri:active{opacity:.7}
-.rth{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0}
-.rph{width:52px;height:52px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.ptop{padding:14px 20px 16px;text-align:center;flex-shrink:0}
-.pav{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px}
-.ptop h2{font-size:20px;font-weight:700;margin-bottom:3px}
-.ptop p{font-size:13px;color:var(--muted)}
-.strow{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--card2);border-radius:14px;overflow:hidden;margin:0 18px 16px;flex-shrink:0}
-.stcell{background:var(--card);padding:14px 8px;text-align:center}
-.stnum{font-size:22px;font-weight:700}
-.stlbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
-.pscroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 18px}
-.pscroll::-webkit-scrollbar{display:none}
-.sg{margin-bottom:16px}
-.sglbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;padding-left:2px}
-.sr{display:flex;align-items:center;padding:14px;background:var(--card);border-bottom:1px solid var(--card2);gap:12px;cursor:pointer;transition:opacity .15s}
-.sr:last-child{border-bottom:none;border-radius:0 0 14px 14px}
-.sr:first-child{border-radius:14px 14px 0 0}
-.sr:only-child{border-radius:14px}
-.sr:active{opacity:.7}
-.sri{font-size:16px;width:22px;text-align:center}
-.srt{font-size:15px;flex:1}
-.sra{font-size:12px;color:#3a3a3c}
-.akbox{background:var(--card);border-radius:14px;padding:16px;margin-bottom:16px}
-.akbox h4{font-size:14px;font-weight:600;margin-bottom:4px}
-.akbox p{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.akrow{display:flex;gap:8px}
-.akrow input{flex:1;background:var(--card2);border:none;border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none}
-.akrow input::placeholder{color:var(--muted)}
-.aksave{background:var(--g);border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;color:#000;font-family:inherit;cursor:pointer}
-.akst{margin-top:8px;font-size:11px;color:var(--muted)}
-.ds{position:absolute;inset:0;background:#000;z-index:300;transform:translateY(100%);transition:transform .4s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;overflow:hidden;padding-bottom:var(--safe-bot);pointer-events:none}
-.ds.open{transform:translateY(0);pointer-events:all}
-.ds-handle{width:36px;height:5px;background:#3a3a3c;border-radius:3px;margin:12px auto 0;flex-shrink:0}
-.ds-img{width:100%;max-height:250px;object-fit:cover;flex-shrink:0}
-.ds-body{flex:1;overflow-y:auto;padding:18px 20px 24px;scrollbar-width:none}
-.ds-body::-webkit-scrollbar{display:none}
-.ds-cloud{display:inline-flex;align-items:center;gap:5px;background:rgba(52,199,89,.15);color:var(--g);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;margin-bottom:10px}
-.ds-src{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:10px}
-.ds-title{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:8px}
-.ds-desc{font-size:14px;color:#8e8e93;line-height:1.6;margin-bottom:12px}
-.ds-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
-.ds-tag{font-size:12px;padding:4px 10px;border-radius:20px;background:var(--card);color:var(--muted)}
-.ds-date{font-size:12px;color:#3a3a3c;margin-bottom:18px}
-.ds-btns{display:flex;gap:8px}
-.dsbtn{flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
-.dsbtn:active{opacity:.8}
-.db-o{background:var(--card);color:#fff}
-.db-i{background:rgba(52,199,89,.18);color:var(--g)}
-.db-d{background:rgba(255,59,48,.15);color:#ff3b30}
-.ds-x{position:absolute;top:56px;right:18px;width:30px;height:30px;background:rgba(28,28,30,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;backdrop-filter:blur(8px);border:none;color:#fff}
-.fab{position:absolute;right:20px;bottom:calc(60px + var(--safe-bot) + 14px);width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;cursor:pointer;border:none;color:#000;box-shadow:0 4px 20px rgba(52,199,89,.4);z-index:90;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.fab:active{transform:scale(.88)}
-.tbar{height:calc(60px + var(--safe-bot));padding-bottom:var(--safe-bot);background:rgba(18,18,20,.96);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding-top:10px;flex-shrink:0;z-index:100}
-.ti{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:0 4px}
-.ti:active{opacity:.7}
-.ti-icon{font-size:22px;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
-.ti.active .ti-icon{transform:scale(1.1)}
-.ti-lbl{font-size:10px;font-weight:500;color:var(--muted);transition:color .15s}
-.ti.active .ti-lbl{color:var(--g)}
-.ti-dot{width:4px;height:4px;border-radius:50%;background:var(--g);opacity:0;margin-top:-1px;transition:opacity .15s}
-.ti.active .ti-dot{opacity:1}
-.uov{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:none}
-.uov.show{display:flex;pointer-events:all}
-.spin{width:48px;height:48px;border:3px solid var(--card2);border-top-color:var(--g);border-radius:50%;animation:sp .8s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-.uov-t{font-size:15px;font-weight:600}
-.uov-s{font-size:12px;color:var(--muted)}
-.toast{position:absolute;top:calc(var(--safe-top) + 10px);left:50%;transform:translateX(-50%) translateY(-16px);background:rgba(44,44,46,.96);color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;font-weight:500;backdrop-filter:blur(20px);z-index:600;white-space:nowrap;opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.34,1.56,.64,1)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.green{background:rgba(52,199,89,.92);color:#000}
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center}
-.empty .ei{font-size:50px;margin-bottom:14px}
-.empty h3{font-size:20px;font-weight:700;margin-bottom:7px}
-.empty p{font-size:14px;color:var(--muted);max-width:240px;line-height:1.5}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap');
+
+:root {
+–bg: #f4f1eb; –bg2: #ede9e0; –surface: #ffffff; –surface2: #f8f5ef;
+–border: #ddd8cc; –border2: #c8c0b0;
+–text: #1a1612; –text2: #5a5248; –text3: #9a9088;
+–accent: #c4440a; –accent2: #e8550d;
+–success: #1d7a4d; –warning: #c47a00; –error: #c41a1a; –info: #1a4ac4;
+–shadow: 0 2px 12px rgba(0,0,0,.08); –shadow-lg: 0 8px 40px rgba(0,0,0,.14);
+–radius: 4px; –radius-lg: 8px;
+–font-display: ‘Fraunces’, Georgia, serif;
+–font-mono: ‘DM Mono’, ‘Courier New’, monospace;
+–transition: 0.2s ease;
+}
+:root.dark {
+–bg: #0f0d0b; –bg2: #181410; –surface: #1e1a16; –surface2: #242018;
+–border: #2e2820; –border2: #3e3628;
+–text: #f0ece4; –text2: #a09880; –text3: #5a5248;
+–accent: #e8660e; –accent2: #ff7a20;
+–shadow: 0 2px 12px rgba(0,0,0,.4); –shadow-lg: 0 8px 40px rgba(0,0,0,.6);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(–font-mono);background:var(–bg);color:var(–text);min-height:100vh;font-size:14px;line-height:1.6;transition:background var(–transition),color var(–transition);overflow-x:hidden}
+img,video{max-width:100%;display:block}
+a{color:var(–accent);text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;font-family:var(–font-mono)}
+.app-wrap{max-width:1400px;margin:0 auto;padding:0 20px}
+
+/* HEADER */
+header{background:var(–surface);border-bottom:1px solid var(–border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);background:color-mix(in srgb,var(–surface) 92%,transparent)}
+.header-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.logo{display:flex;align-items:baseline;gap:8px;flex-shrink:0}
+.logo-name{font-family:var(–font-display);font-size:22px;font-weight:800;color:var(–text);letter-spacing:-.03em}
+.logo-name span{color:var(–accent)}
+.logo-sub{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(–text3)}
+.header-actions{display:flex;align-items:center;gap:10px}
+
+/* HERO */
+.hero{padding:40px 20px 24px;max-width:1400px;margin:0 auto}
+.hero-heading{font-family:var(–font-display);font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.04em;color:var(–text);margin-bottom:4px}
+.hero-sub{color:var(–text2);font-size:13px;margin-bottom:24px;letter-spacing:.02em}
+.input-row{display:flex;gap:10px;align-items:stretch;max-width:680px}
+.url-input{flex:1;padding:14px 18px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–surface);color:var(–text);font-family:var(–font-mono);font-size:13px;outline:none;transition:border-color var(–transition),box-shadow var(–transition);min-width:0}
+.url-input::placeholder{color:var(–text3)}
+.url-input:focus{border-color:var(–accent);box-shadow:0 0 0 3px color-mix(in srgb,var(–accent) 15%,transparent)}
+.save-btn{padding:14px 24px;background:var(–accent);color:white;border:none;border-radius:var(–radius);font-size:13px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;transition:background var(–transition),transform var(–transition);white-space:nowrap;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.save-btn:hover{background:var(–accent2)}
+.save-btn:active{transform:scale(.97)}
+.save-btn:disabled{opacity:.6;cursor:not-allowed}
+.save-btn.loading::after{content:’’;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+#progressBar{height:3px;background:var(–border);margin-top:10px;max-width:680px;border-radius:2px;overflow:hidden;display:none}
+#progressFill{height:100%;background:linear-gradient(90deg,var(–accent),var(–accent2));width:0%;transition:width .4s ease;border-radius:2px}
+
+/* TOOLBAR */
+.toolbar{max-width:1400px;margin:0 auto;padding:0 20px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.filter-group{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.filter-btn{padding:6px 14px;border:1.5px solid var(–border2);border-radius:20px;background:var(–surface);color:var(–text2);font-family:var(–font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:all var(–transition);display:flex;align-items:center;gap:6px}
+.filter-btn:hover{border-color:var(–accent);color:var(–accent)}
+.filter-btn.active{background:var(–accent);border-color:var(–accent);color:white}
+.filter-count{background:rgba(255,255,255,.25);border-radius:10px;padding:0 5px;font-size:10px;min-width:18px;text-align:center}
+.filter-btn:not(.active) .filter-count{background:var(–bg2);color:var(–text3)}
+.search-wrap{position:relative;flex-shrink:0}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(–text3);font-size:13px;pointer-events:none}
+.search-input{padding:8px 14px 8px 34px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–surface);color:var(–text);font-family:var(–font-mono);font-size:12px;width:200px;outline:none;transition:border-color var(–transition)}
+.search-input:focus{border-color:var(–accent)}
+.search-input::placeholder{color:var(–text3)}
+
+/* MASONRY GRID — Pinterest style */
+.grid-section{max-width:1400px;margin:0 auto;padding:0 20px 60px}
+#mediaGrid{columns:5;column-gap:14px}
+@media(max-width:1200px){#mediaGrid{columns:4}}
+@media(max-width:900px){#mediaGrid{columns:3}}
+@media(max-width:600px){#mediaGrid{columns:2}}
+@media(max-width:380px){#mediaGrid{columns:1}}
+
+/* CARD */
+.media-card{break-inside:avoid;margin-bottom:14px;background:var(–surface);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden;cursor:pointer;transition:transform var(–transition),box-shadow var(–transition),border-color var(–transition);animation:cardIn .35s ease both}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.media-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:var(–shadow-lg);border-color:var(–border2)}
+.card-media{position:relative;background:var(–bg2);overflow:hidden;min-height:100px}
+.card-img{width:100%;height:auto;display:block;transition:transform .4s ease;object-fit:cover}
+.card-img[data-src]{min-height:120px;background:var(–bg2)}
+.media-card:hover .card-img{transform:scale(1.05)}
+.play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none}
+.card-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 10px 10px;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%);display:flex;align-items:flex-end;justify-content:space-between;opacity:0;transition:opacity var(–transition)}
+.media-card:hover .card-overlay{opacity:1}
+.platform-badge{font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:white;backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px}
+.platform-badge.reddit{background:rgba(255,69,0,.6)}
+.platform-badge.twitter{background:rgba(0,0,0,.6)}
+.platform-badge.pinterest{background:rgba(189,8,28,.6)}
+.platform-badge.imgur{background:rgba(31,163,110,.6)}
+.platform-badge.google{background:rgba(26,74,196,.6)}
+.platform-badge.tumblr{background:rgba(53,109,163,.6)}
+.platform-badge.flickr{background:rgba(255,0,132,.6)}
+.platform-badge.deviantart{background:rgba(5,140,80,.6)}
+.platform-badge.direct{background:rgba(100,100,200,.6)}
+.platform-badge.other{background:rgba(80,80,80,.6)}
+.card-date{font-size:10px;color:rgba(255,255,255,.75)}
+.upload-dot{position:absolute;top:9px;right:9px;width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85)}
+.status-done{background:#1d7a4d}
+.status-uploading{background:#c47a00;animation:pulse 1.2s ease infinite}
+.status-pending{background:#9a9088}
+.status-failed{background:#c41a1a}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.card-title{padding:8px 10px;font-size:11px;color:var(–text2);line-height:1.4;letter-spacing:.01em;border-top:1px solid var(–border)}
+
+/* EMPTY STATE */
+#emptyState{display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center;color:var(–text3)}
+.empty-icon{font-size:52px;margin-bottom:16px;opacity:.5}
+.empty-title{font-family:var(–font-display);font-size:22px;font-weight:600;color:var(–text2);margin-bottom:8px}
+.empty-sub{font-size:13px;max-width:340px}
+
+/* MODAL */
+#modalOverlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s ease}
+#modalOverlay.open{opacity:1;pointer-events:all}
+.modal-inner{background:var(–surface);border:1px solid var(–border2);border-radius:var(–radius-lg);width:100%;max-width:900px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;animation:modalIn .25s ease}
+@keyframes modalIn{from{transform:scale(.95) translateY(12px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-media-pane{background:#000;flex-shrink:0;max-height:60vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.modal-media-el{max-width:100%;max-height:60vh;object-fit:contain}
+.modal-info{padding:20px 24px;overflow-y:auto;flex:1;border-top:1px solid var(–border)}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+#modalTitle{font-family:var(–font-display);font-size:18px;font-weight:600;color:var(–text);line-height:1.3}
+.modal-close-btn{background:var(–bg2);border:1px solid var(–border);border-radius:var(–radius);color:var(–text2);width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all var(–transition)}
+.modal-close-btn:hover{background:var(–accent);color:white;border-color:var(–accent)}
+.modal-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.meta-chip{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(–text3);background:var(–bg2);border:1px solid var(–border);border-radius:3px;padding:3px 8px}
+.modal-upload-status{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.modal-upload-status.done{color:var(–success)}
+.modal-upload-status.failed{color:var(–error)}
+.modal-upload-status.uploading{color:var(–warning)}
+.modal-upload-status.pending{color:var(–text3)}
+.modal-links{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.modal-link{font-size:11px;color:var(–accent);border:1px solid var(–accent);border-radius:3px;padding:4px 10px;transition:all var(–transition);letter-spacing:.04em;text-transform:uppercase}
+.modal-link:hover{background:var(–accent);color:white;text-decoration:none}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{padding:10px 18px;border-radius:var(–radius);font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid;transition:all var(–transition)}
+.action-btn.primary{background:var(–accent);border-color:var(–accent);color:white}
+.action-btn.primary:hover{background:var(–accent2);border-color:var(–accent2)}
+.action-btn.danger{background:transparent;border-color:var(–error);color:var(–error)}
+.action-btn.danger:hover{background:var(–error);color:white}
+
+/* SETTINGS */
+#settingsPanel{position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(–surface);border-left:1px solid var(–border2);z-index:500;transition:right .3s ease;overflow-y:auto;box-shadow:var(–shadow-lg)}
+#settingsPanel.open{right:0}
+.settings-header{padding:20px 24px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.settings-title{font-family:var(–font-display);font-size:18px;font-weight:600;color:var(–text)}
+.settings-body{padding:24px}
+.settings-section{margin-bottom:28px}
+.settings-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(–text3);margin-bottom:8px;display:block}
+.settings-input{width:100%;padding:10px 14px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–bg2);color:var(–text);font-family:var(–font-mono);font-size:12px;outline:none;transition:border-color var(–transition)}
+.settings-input:focus{border-color:var(–accent)}
+.settings-hint{font-size:11px;color:var(–text3);margin-top:6px;line-height:1.5}
+.settings-hint a{color:var(–accent)}
+.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:var(–border2);border-radius:12px;cursor:pointer;transition:background var(–transition)}
+.toggle input:checked+.toggle-track{background:var(–accent)}
+.toggle-track::after{content:’’;position:absolute;left:3px;top:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform var(–transition);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-track::after{transform:translateX(20px)}
+.icon-btn{padding:8px 10px;background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);color:var(–text2);font-size:12px;transition:all var(–transition);display:flex;align-items:center;gap:6px;font-family:var(–font-mono)}
+.icon-btn:hover{background:var(–bg2);border-color:var(–border2);color:var(–text)}
+.small-btn{padding:8px 16px;background:var(–accent);color:white;border:none;border-radius:var(–radius);font-family:var(–font-mono);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;transition:background var(–transition);margin-top:10px}
+.small-btn:hover{background:var(–accent2)}
+.danger-btn{padding:8px 16px;background:transparent;color:var(–error);border:1px solid var(–error);border-radius:var(–radius);font-family:var(–font-mono);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;transition:all var(–transition);margin-top:10px}
+.danger-btn:hover{background:var(–error);color:white}
+
+/* TOASTS */
+#toastContainer{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{padding:10px 18px;border-radius:var(–radius);font-size:13px;font-weight:500;color:white;box-shadow:var(–shadow-lg);transform:translateY(20px);opacity:0;transition:all .3s ease;display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:all;letter-spacing:.02em}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-success{background:#1d7a4d}
+.toast-error{background:#c41a1a}
+.toast-warning{background:#c47a00}
+.toast-info{background:#1a4ac4}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(–border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(–text3)}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+.hero{padding:24px 20px 16px}
+.hero-heading{font-size:28px}
+.input-row{flex-direction:column}
+.save-btn{justify-content:center}
+.toolbar{padding:0 20px 16px;gap:8px}
+.search-input{width:100%}
+.logo-sub{display:none}
+#settingsPanel{width:100%;right:-100%}
+.modal-inner{max-height:95vh}
+.modal-media-pane{max-height:45vh}
+}
+:focus-visible{outline:2px solid var(–accent);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
+
 </head>
 <body>
-<div class="app">
 
-  <!-- HOME -->
-
-  <div class="sv active" id="sv-home">
-    <div class="hd">
-      <div class="hd-row">
-        <div><h1>SocialVault</h1><div class="hd-sub">Your permanent media library</div></div>
-        <div class="av" onclick="goTo('profile')">🌿</div>
-      </div>
-      <div class="spill" onclick="goTo('search')">
-        <span style="color:var(--muted);font-size:14px">🔍</span>
-        <input type="text" placeholder="Search saved media..." readonly style="pointer-events:none">
-      </div>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-name">Media<span>Vault</span></span>
+      <span class="logo-sub">Archive</span>
     </div>
-    <div class="ab" id="ab" onclick="goTo('profile')">
-      <div class="ab-icon">🔑</div>
-      <div><h4>ImgBB API Key</h4><p id="ab-p">Tap to add — enables permanent uploads</p></div>
-      <div class="ab-st no" id="ab-st">Setup</div>
-    </div>
-    <div class="chips">
-      <div class="chip on"  onclick="setFilter('all',this)">All</div>
-      <div class="chip off" onclick="setFilter('pinterest',this)">📌 Pinterest</div>
-      <div class="chip off" onclick="setFilter('twitter',this)">✖ X</div>
-      <div class="chip off" onclick="setFilter('reddit',this)">👾 Reddit</div>
-      <div class="chip off" onclick="setFilter('manual',this)">🌿 Other</div>
-    </div>
-    <div class="feed" id="home-feed"></div>
-  </div>
-
-  <!-- SEARCH -->
-
-  <div class="sv" id="sv-search">
-    <div class="hd">
-      <h1>Search</h1>
-      <div style="margin-top:12px" class="spill">
-        <span style="color:var(--muted);font-size:14px">🔍</span>
-        <input type="text" id="srch" placeholder="Titles, tags, platform..." oninput="doSearch()">
-      </div>
-    </div>
-    <div class="sres" id="sres">
-      <div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search by title, tags or platform</p></div>
+    <div class="header-actions">
+      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">⚙ Settings</button>
     </div>
   </div>
+</header>
 
-  <!-- UPLOAD -->
-
-  <div class="sv" id="sv-upload">
-    <div class="hd"><h1>Save Media</h1><div class="hd-sub">Upload or link — stored on ImgBB permanently</div></div>
-    <div class="uscroll">
-      <div class="dz" id="dz">
-        <input type="file" id="file-in" accept="image/*,video/*" onchange="handleFile(this.files[0])">
-        <div class="dz-icon">📸</div>
-        <div class="dz-title">Tap to pick a photo or video</div>
-        <div class="dz-sub">Uploads permanently to ImgBB free cloud</div>
-      </div>
-      <img id="uprev" class="uprev" alt="">
-      <div class="ustatus" id="ustatus"></div>
-      <div class="slbl">— OR paste image URL to re-host —</div>
-      <div class="isec" style="margin-bottom:10px">
-        <div class="irow"><label>URL</label><input type="url" id="f-imgurl" placeholder="https://..."></div>
-      </div>
-      <button class="rhbtn" onclick="reHostUrl()">⬆ Re-host this URL to ImgBB permanently</button>
-      <div class="slbl">Platform Source</div>
-      <div class="pgrid">
-        <div class="pbtn pp" id="pb-pinterest" onclick="selP('pinterest')"><div class="picon pip">📌</div><div class="plbl">Pinterest</div></div>
-        <div class="pbtn px" id="pb-twitter"   onclick="selP('twitter')">  <div class="picon pix">✖</div><div class="plbl">X / Twitter</div></div>
-        <div class="pbtn pr" id="pb-reddit"    onclick="selP('reddit')">   <div class="picon pir">👾</div><div class="plbl">Reddit</div></div>
-        <div class="pbtn pm" id="pb-manual"    onclick="selP('manual')">   <div class="picon pim">🌿</div><div class="plbl">Other</div></div>
-      </div>
-      <div class="slbl">Details</div>
-      <div class="isec">
-        <div class="irow"><label>Title</label><input type="text" id="f-title" placeholder="Add a title"></div>
-        <div class="irow"><label>Link</label> <input type="url"  id="f-url"   placeholder="Original post URL"></div>
-      </div>
-      <div class="slbl">Notes &amp; Tags</div>
-      <div class="isec">
-        <div class="irow"><textarea id="f-desc" rows="2" placeholder="Notes..."></textarea></div>
-        <div class="irow"><label>Tags</label><input type="text" id="f-tags" placeholder="ui, dark, design..."></div>
-      </div>
-      <button class="savebtn" onclick="finalSave()">Save to Vault</button>
-      <div style="height:24px"></div>
+<section class="hero" aria-label="Save media">
+  <div class="app-wrap">
+    <h1 class="hero-heading">Your Personal<br>Media Archive.</h1>
+    <p class="hero-sub">Paste a link from Reddit, X, Pinterest, Imgur, Tumblr, Flickr, DeviantArt, or any image URL.</p>
+    <div class="input-row" role="search">
+      <input type="url" id="urlInput" class="url-input"
+        placeholder="https://reddit.com/r/…  or any image URL"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        aria-label="Media URL" />
+      <button id="saveBtn" class="save-btn" aria-label="Save media from URL">
+        <span>↓</span> Save Media
+      </button>
+    </div>
+    <div id="progressBar" role="progressbar" aria-label="Upload progress">
+      <div id="progressFill"></div>
     </div>
   </div>
+</section>
 
-  <!-- PROFILE -->
-
-  <div class="sv" id="sv-profile">
-    <div class="ptop">
-      <div class="pav">🌿</div>
-      <h2>My Vault</h2><p>Permanent media collection</p>
-    </div>
-    <div class="strow">
-      <div class="stcell"><div class="stnum" id="st-total">0</div><div class="stlbl">Saved</div></div>
-      <div class="stcell"><div class="stnum" id="st-cloud">0</div><div class="stlbl">On ImgBB</div></div>
-      <div class="stcell"><div class="stnum" id="st-fav">0</div><div class="stlbl">Favorites</div></div>
-    </div>
-    <div class="pscroll">
-      <div class="akbox">
-        <h4>🔑 ImgBB API Key</h4>
-        <p>Get a free key at <strong style="color:var(--g)">imgbb.com/api</strong> — images stored permanently, never expire.</p>
-        <div class="akrow">
-          <input type="password" id="ak-in" placeholder="Paste your key..." autocomplete="off">
-          <button class="aksave" onclick="saveKey()">Save</button>
-        </div>
-        <div class="akst" id="ak-st">No key saved yet</div>
-      </div>
-      <div class="sg">
-        <div class="sglbl">Cloud &amp; Backup</div>
-        <div class="isec">
-          <div class="sr" onclick="cloudSync()"> <span class="sri">☁️</span><span class="srt">Sync to JSONBin</span>      <span class="sra">›</span></div>
-          <div class="sr" onclick="showRestore()"><span class="sri">⬇️</span><span class="srt">Restore from cloud</span>   <span class="sra">›</span></div>
-          <div class="sr" onclick="exportJSON()"> <span class="sri">📤</span><span class="srt">Export JSON</span>           <span class="sra">›</span></div>
-          <div class="sr" onclick="showImport()"> <span class="sri">📥</span><span class="srt">Import JSON</span>           <span class="sra">›</span></div>
-        </div>
-      </div>
-      <div class="sg">
-        <div class="sglbl">Data</div>
-        <div class="isec">
-          <div class="sr" onclick="clearAll()"><span class="sri">🗑️</span><span class="srt" style="color:#ff3b30">Clear All Posts</span><span class="sra">›</span></div>
-        </div>
-      </div>
-      <div style="height:20px"></div>
-    </div>
+<nav class="toolbar" aria-label="Filter and search">
+  <div class="filter-group" role="group" aria-label="Filter by platform">
+    <button class="filter-btn active" data-filter="all">All <span class="filter-count" id="totalCount">0</span></button>
+    <button class="filter-btn" data-filter="reddit">🤖 Reddit <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="twitter">𝕏 Twitter <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="pinterest">📌 Pinterest <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="imgur">🖼 Imgur <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="google">🔍 Google <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="tumblr">💙 Tumblr <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="flickr">📷 Flickr <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="deviantart">🎨 DeviantArt <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="direct">🔗 Direct <span class="filter-count">0</span></button>
+    <button class="filter-btn" data-filter="other">🌐 Other <span class="filter-count">0</span></button>
   </div>
-
-  <!-- FAB -->
-
-<button class="fab" id="fab" onclick="goTo('upload')">＋</button>
-
-  <!-- TAB BAR -->
-
-  <div class="tbar">
-    <div class="ti active" id="ti-home"    onclick="goTo('home')"   ><div class="ti-icon">🏠</div><div class="ti-lbl">Home</div>  <div class="ti-dot"></div></div>
-    <div class="ti"        id="ti-search"  onclick="goTo('search')" ><div class="ti-icon">🔍</div><div class="ti-lbl">Search</div><div class="ti-dot"></div></div>
-    <div class="ti"        id="ti-upload"  onclick="goTo('upload')" ><div class="ti-icon">📸</div><div class="ti-lbl">Upload</div><div class="ti-dot"></div></div>
-    <div class="ti"        id="ti-profile" onclick="goTo('profile')"><div class="ti-icon">👤</div><div class="ti-lbl">Profile</div><div class="ti-dot"></div></div>
+  <div class="search-wrap">
+    <span class="search-icon" aria-hidden="true">🔍</span>
+    <input type="search" id="searchInput" class="search-input" placeholder="Search archive…" aria-label="Search saved media" />
   </div>
+</nav>
 
-  <!-- DETAIL SHEET -->
+<main class="grid-section">
+  <div id="mediaGrid" role="list" aria-label="Saved media"></div>
+  <div id="emptyState" aria-live="polite">
+    <div class="empty-icon">🗃️</div>
+    <h2 class="empty-title">Your archive is empty</h2>
+    <p class="empty-sub">Paste any media URL above to get started. Supports Reddit, X, Imgur, Pinterest, Tumblr, Flickr, DeviantArt, and direct image links.</p>
+  </div>
+</main>
 
-  <div class="ds" id="ds">
-    <div class="ds-handle"></div>
-    <button class="ds-x" onclick="closeSheet()">✕</button>
-    <img id="ds-img" class="ds-img" src="" alt="" style="display:none">
-    <div class="ds-body">
-      <div id="ds-cloud" class="ds-cloud" style="display:none">☁️ Stored on ImgBB</div>
-      <div id="ds-src"   class="ds-src"></div>
-      <div id="ds-title" class="ds-title"></div>
-      <div id="ds-desc"  class="ds-desc"></div>
-      <div id="ds-tags"  class="ds-tags"></div>
-      <div id="ds-date"  class="ds-date"></div>
-      <div class="ds-btns">
-        <button class="dsbtn db-o" onclick="openPost()">Open Link 🔗</button>
-        <button class="dsbtn db-i" id="ds-ibb" onclick="openImgBB()" style="display:none">ImgBB ☁️</button>
-        <button class="dsbtn db-d" onclick="deletePost()">Delete</button>
+<div id="modalOverlay" role="dialog" aria-modal="true" aria-label="Media preview">
+  <div class="modal-inner">
+    <div class="modal-media-pane" id="modalMedia" aria-label="Media content"></div>
+    <div class="modal-info">
+      <div class="modal-header">
+        <h2 id="modalTitle">Untitled</h2>
+        <button class="modal-close-btn" id="modalClose" aria-label="Close preview">✕</button>
+      </div>
+      <div class="modal-meta">
+        <span class="meta-chip" id="modalPlatform">—</span>
+        <span class="meta-chip" id="modalDate">—</span>
+        <span class="modal-upload-status" id="modalUploadStatus"></span>
+      </div>
+      <div class="modal-links">
+        <a href="#" id="modalSource" class="modal-link" target="_blank" rel="noopener noreferrer">↗ Source</a>
+        <a href="#" id="modalImgbb" class="modal-link" target="_blank" rel="noopener noreferrer">☁ ImgBB</a>
+      </div>
+      <div class="modal-actions">
+        <button class="action-btn primary" id="modalDownload" aria-label="Download media">↓ Download</button>
+        <button class="action-btn danger" id="modalDelete" aria-label="Delete media">🗑 Delete</button>
       </div>
     </div>
   </div>
-
-  <!-- OVERLAY -->
-
-  <div class="uov" id="uov">
-    <div class="spin"></div>
-    <div class="uov-t" id="uov-t">Uploading...</div>
-    <div class="uov-s">Stored permanently on free cloud</div>
-  </div>
-
-  <!-- TOAST -->
-
-  <div class="toast" id="toast"></div>
-
 </div>
+
+<aside id="settingsPanel" aria-label="Settings">
+  <div class="settings-header">
+    <h2 class="settings-title">Settings</h2>
+    <button class="icon-btn" id="settingsClose" aria-label="Close settings">✕</button>
+  </div>
+  <div class="settings-body">
+    <div class="settings-section">
+      <label class="settings-label" for="apiKeyInput">ImgBB API Key</label>
+      <input type="password" id="apiKeyInput" class="settings-input" placeholder="Paste your ImgBB API key…" autocomplete="off" />
+      <p class="settings-hint">Get a free key at <a href="https://api.imgbb.com" target="_blank" rel="noopener">api.imgbb.com</a>. Without a key media is cached locally only.</p>
+      <button class="small-btn" id="saveApiKey">Save Key</button>
+    </div>
+    <div class="settings-section">
+      <label class="settings-label">Appearance</label>
+      <div class="settings-row">
+        <span style="font-size:13px;color:var(--text2)">Dark mode</span>
+        <label class="toggle" aria-label="Toggle dark mode">
+          <input type="checkbox" id="darkModeToggle" />
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+    </div>
+    <div class="settings-section">
+      <label class="settings-label">Upload Status</label>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2)">
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#1d7a4d;display:inline-block"></span>Uploaded to ImgBB</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#c47a00;display:inline-block"></span>Uploading…</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#9a9088;display:inline-block"></span>Pending (add API key)</div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#c41a1a;display:inline-block"></span>Upload failed</div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <label class="settings-label">Supported Platforms</label>
+      <div style="font-size:12px;color:var(--text2);line-height:2">
+        🤖 <strong>Reddit</strong> — posts, galleries, videos<br>
+        𝕏 <strong>Twitter/X</strong> — via fxtwitter proxy<br>
+        📌 <strong>Pinterest</strong> — via picn.me proxy<br>
+        🖼 <strong>Imgur</strong> — direct &amp; album links<br>
+        🔍 <strong>Google</strong> — image result links<br>
+        💙 <strong>Tumblr</strong> — posts, high-res<br>
+        📷 <strong>Flickr</strong> — via oEmbed<br>
+        🎨 <strong>DeviantArt</strong> — via oEmbed<br>
+        🔗 <strong>Direct URLs</strong> — .jpg, .png, .gif, .mp4…<br>
+        🌐 <strong>Any site</strong> — og:image / JSON-LD
+      </div>
+    </div>
+    <div class="settings-section">
+      <label class="settings-label" style="color:var(--error)">Danger Zone</label>
+      <button class="danger-btn" id="clearAllBtn">🗑 Clear All Media</button>
+    </div>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:20px;letter-spacing:.06em">MediaVault v2.0 · GitHub Pages Ready</div>
+  </div>
+</aside>
+
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
 <script>
-var posts   = JSON.parse(localStorage.getItem('sv_posts') || '[]');
-var apiKey  = localStorage.getItem('sv_key') || '';
-var curF    = 'all';
-var curP    = '';
-var curId   = null;
-var imgUrl  = '';
-var imgDel  = '';
+// ============================================================
+// CONSTANTS
+// ============================================================
+const DB_NAME = 'mediavault_db';
+const DB_VERSION = 2;
+const STORE_NAME = 'media_items';
+const SETTINGS_STORE = 'settings';
 
-if (!posts.length) loadDemo();
-renderFeed();
-updateStats();
-updateBanner();
-if (apiKey) {
-document.getElementById(‘ak-in’).value = apiKey;
-document.getElementById(‘ak-st’).textContent = ‘✅ Key saved — ImgBB active’;
-document.getElementById(‘ak-st’).style.color = ‘#34c759’;
-}
-
-function savePosts() { localStorage.setItem(‘sv_posts’, JSON.stringify(posts)); updateStats(); }
-
-function goTo(s) {
-document.querySelectorAll(’.sv’).forEach(function(v){ v.classList.remove(‘active’); });
-document.querySelectorAll(’.ti’).forEach(function(t){ t.classList.remove(‘active’); });
-document.getElementById(‘sv-’+s).classList.add(‘active’);
-var ti = document.getElementById(‘ti-’+s); if (ti) ti.classList.add(‘active’);
-document.getElementById(‘fab’).style.display = s===‘home’ ? ‘flex’ : ‘none’;
-if (s===‘home’)    renderFeed();
-if (s===‘upload’)  resetUp();
-if (s===‘profile’) updateStats();
-}
-
-function saveKey() {
-var k = document.getElementById(‘ak-in’).value.trim();
-if (!k) { toast(‘Paste your ImgBB key first’); return; }
-apiKey = k; localStorage.setItem(‘sv_key’, k);
-document.getElementById(‘ak-st’).textContent = ‘✅ Key saved — ImgBB active’;
-document.getElementById(‘ak-st’).style.color = ‘#34c759’;
-updateBanner(); toast(‘API key saved!’, true);
-}
-
-function updateBanner() {
-var s = document.getElementById(‘ab-st’), p = document.getElementById(‘ab-p’);
-if (apiKey) { s.textContent=‘✅ Active’; s.className=‘ab-st ok’; p.textContent=‘ImgBB enabled — media stored permanently’; }
-else        { s.textContent=‘Setup’;    s.className=‘ab-st no’; p.textContent=‘Tap to add — enables permanent uploads’; }
-}
-
-function selP(p) {
-curP = p;
-document.querySelectorAll(’.pbtn’).forEach(function(b){ b.classList.remove(‘sel’); });
-document.getElementById(‘pb-’+p).classList.add(‘sel’);
-}
-
-function handleFile(file) {
-if (!file) return;
-if (!apiKey) { toast(‘Add ImgBB API key in Profile first’); goTo(‘profile’); return; }
-var reader = new FileReader();
-reader.onload = function(e) {
-var pr = document.getElementById(‘uprev’); pr.src = e.target.result; pr.style.display = ‘block’;
-uploadIBB(file);
+const PLATFORMS = {
+  REDDIT:'reddit', TWITTER:'twitter', PINTEREST:'pinterest', IMGUR:'imgur',
+  GOOGLE:'google', TUMBLR:'tumblr', FLICKR:'flickr', DEVIANTART:'deviantart',
+  DIRECT:'direct', OTHER:'other'
 };
-reader.readAsDataURL(file);
-}
 
-var dz = document.getElementById(‘dz’);
-dz.addEventListener(‘dragover’,  function(e){ e.preventDefault(); dz.classList.add(‘over’); });
-dz.addEventListener(‘dragleave’, function(){  dz.classList.remove(‘over’); });
-dz.addEventListener(‘drop’, function(e){
-e.preventDefault(); dz.classList.remove(‘over’);
-var f = e.dataTransfer.files[0]; if (f) handleFile(f);
-});
+const PLATFORM_LABELS = {
+  reddit:'Reddit', twitter:'X / Twitter', pinterest:'Pinterest', imgur:'Imgur',
+  google:'Google', tumblr:'Tumblr', flickr:'Flickr', deviantart:'DeviantArt',
+  direct:'Direct', other:'Other'
+};
 
-async function uploadIBB(file) {
-showOv(‘Uploading to ImgBB…’);
-var fd = new FormData(); fd.append(‘image’, file);
-try {
-var r = await fetch(‘https://api.imgbb.com/1/upload?key=’+apiKey, {method:‘POST’,body:fd});
-var d = await r.json(); hideOv();
-if (d.success) {
-imgUrl = d.data.url; imgDel = d.data.delete_url||’’;
-setUSt(‘✅ Uploaded permanently to ImgBB!’,‘ok’); toast(‘Uploaded ✅’,true);
-} else { setUSt(’❌ ’+(d.error&&d.error.message||‘Upload failed’),‘err’); toast(‘Upload failed — check API key’); }
-} catch(e) { hideOv(); setUSt(‘❌ Network error’,‘err’); toast(‘Upload failed’); }
-}
+const PLATFORM_ICONS = {
+  reddit:'🤖', twitter:'𝕏', pinterest:'📌', imgur:'🖼',
+  google:'🔍', tumblr:'💙', flickr:'📷', deviantart:'🎨',
+  direct:'🔗', other:'🌐'
+};
 
-async function reHostUrl() {
-var url = document.getElementById(‘f-imgurl’).value.trim();
-if (!url) { toast(‘Paste an image URL first’); return; }
-if (!apiKey) { toast(‘Add ImgBB API key in Profile first’); goTo(‘profile’); return; }
-showOv(‘Re-hosting image…’);
-var fd = new FormData(); fd.append(‘image’, url);
-try {
-var r = await fetch(‘https://api.imgbb.com/1/upload?key=’+apiKey, {method:‘POST’,body:fd});
-var d = await r.json(); hideOv();
-if (d.success) {
-imgUrl = d.data.url; imgDel = d.data.delete_url||’’;
-var pr = document.getElementById(‘uprev’); pr.src = imgUrl; pr.style.display = ‘block’;
-setUSt(‘✅ Re-hosted permanently on ImgBB!’,‘ok’); toast(‘Re-hosted ✅’,true);
-} else { setUSt(’❌ ’+(d.error&&d.error.message||‘Failed’),‘err’); toast(‘Re-host failed’); }
-} catch(e) { hideOv(); toast(‘Network error’); }
-}
-
-function setUSt(m,t){ var e=document.getElementById(‘ustatus’); e.textContent=m; e.className=’ustatus ’+t; e.style.display=‘block’; }
-function showOv(m){ document.getElementById(‘uov-t’).textContent=m; document.getElementById(‘uov’).classList.add(‘show’); }
-function hideOv(){ document.getElementById(‘uov’).classList.remove(‘show’); }
-
-function resetUp() {
-imgUrl=’’; imgDel=’’; curP=’’;
-document.querySelectorAll(’.pbtn’).forEach(function(b){ b.classList.remove(‘sel’); });
-[‘f-title’,‘f-url’,‘f-desc’,‘f-tags’,‘f-imgurl’].forEach(function(id){ document.getElementById(id).value=’’; });
-document.getElementById(‘uprev’).style.display=‘none’;
-document.getElementById(‘ustatus’).style.display=‘none’;
-document.getElementById(‘file-in’).value=’’;
-}
-
-function finalSave() {
-var title = document.getElementById(‘f-title’).value.trim();
-var url   = document.getElementById(‘f-url’).value.trim();
-var desc  = document.getElementById(‘f-desc’).value.trim();
-var tags  = document.getElementById(‘f-tags’).value.split(’,’).map(function(t){return t.trim();}).filter(Boolean);
-if (!title){ toast(‘Please add a title’); return; }
-if (!curP) { toast(‘Select a platform source’); return; }
-var src = imgUrl || document.getElementById(‘f-imgurl’).value.trim();
-posts.unshift({
-id:‘p’+Date.now()+Math.random().toString(36).slice(2,5),
-title:title,url:url,img:src,imgbbDel:imgDel,
-onCloud:!!imgUrl,desc:desc,tags:tags,
-source:curP,fav:false,date:new Date().toISOString()
-});
-savePosts(); toast(‘Saved to vault ✅’,true); goTo(‘home’);
-}
-
-function renderFeed() {
-var feed = document.getElementById(‘home-feed’);
-var list = curF===‘all’ ? posts : posts.filter(function(p){return p.source===curF;});
-if (!list.length) {
-feed.innerHTML=’<div class="empty"><div class="ei">📭</div><h3>Nothing here yet</h3><p>Tap ＋ to upload or save your first media</p></div>’;
-return;
-}
-feed.innerHTML=’<div class="mgrid">’+list.map(function(p,i){return pinCard(p,i);}).join(’’)+’</div>’;
-}
-
-function pinCard(p,i) {
-var si={pinterest:‘📌’,twitter:‘✖’,reddit:‘👾’,manual:‘🌿’};
-var sc={pinterest:‘sb-p’,twitter:‘sb-x’,reddit:‘sb-r’,manual:‘sb-m’};
-var ie = p.img
-? ‘<img class="pin-img" src="'+xe(p.img)+'" loading="lazy" onerror="this.style.display=\'none\'">’
-: ‘<div class="pin-noimg">’+(si[p.source]||‘🌿’)+’</div>’;
-return ‘<div class="pin" onclick="openDetail(\''+p.id+'\')" style="animation-delay:'+(i*0.04)+'s">’
-+ie+(p.onCloud?’<div class="pin-cloud">☁ ImgBB</div>’:’’)
-+’<button class="pin-fav" onclick="event.stopPropagation();toggleFav(\''+p.id+'\',this)">’+(p.fav?‘❤️’:‘🤍’)+’</button>’
-+’<div class="pin-body"><div class="pin-title">’+xe(p.title||‘Untitled’)+’</div>’
-+’<div class="pin-foot"><span class="sb '+(sc[p.source]||'sb-m')+'">’+(si[p.source]||‘🌿’)+’ ‘+(p.source||‘other’)+’</span></div>’
-+’</div></div>’;
-}
-
-function setFilter(f,el) {
-curF=f;
-document.querySelectorAll(’.chip’).forEach(function(c){c.classList.remove(‘on’);c.classList.add(‘off’);});
-el.classList.add(‘on’); el.classList.remove(‘off’);
-renderFeed();
-}
-
-function openDetail(id) {
-var p = posts.find(function(x){return x.id===id;}); if(!p) return; curId=id;
-var si={pinterest:{l:‘📌 Pinterest’,c:’#e60023’,bg:‘rgba(230,0,35,0.15)’},twitter:{l:‘✖ X’,c:’#1d9bf0’,bg:‘rgba(29,155,240,0.15)’},reddit:{l:‘👾 Reddit’,c:’#ff4500’,bg:‘rgba(255,69,0,0.15)’},manual:{l:‘🌿 Other’,c:’#34c759’,bg:‘rgba(52,199,89,0.15)’}};
-var s=si[p.source]||si.manual;
-var img=document.getElementById(‘ds-img’);
-if(p.img){img.src=p.img;img.style.display=‘block’;}else{img.style.display=‘none’;}
-document.getElementById(‘ds-cloud’).style.display=p.onCloud?‘inline-flex’:‘none’;
-var src=document.getElementById(‘ds-src’); src.textContent=s.l; src.style.cssText=‘background:’+s.bg+’;color:’+s.c+’;’;
-document.getElementById(‘ds-title’).textContent=p.title||‘Untitled’;
-document.getElementById(‘ds-desc’).textContent=p.desc||’’;
-document.getElementById(‘ds-tags’).innerHTML=(p.tags||[]).map(function(t){return ‘<span class="ds-tag">#’+xe(t)+’</span>’;}).join(’’);
-document.getElementById(‘ds-date’).textContent=p.date?‘Saved ‘+new Date(p.date).toLocaleDateString(‘en-US’,{month:‘long’,day:‘numeric’,year:‘numeric’}):’’;
-document.getElementById(‘ds-ibb’).style.display=p.onCloud?‘block’:‘none’;
-document.getElementById(‘ds’).classList.add(‘open’);
-}
-
-function closeSheet(){ document.getElementById(‘ds’).classList.remove(‘open’); curId=null; }
-function openPost()  { var p=posts.find(function(x){return x.id===curId;}); if(p&&p.url)window.open(p.url,’_blank’); else toast(‘No URL saved’); }
-function openImgBB() { var p=posts.find(function(x){return x.id===curId;}); if(p&&p.img)window.open(p.img,’_blank’); }
-function deletePost(){ posts=posts.filter(function(p){return p.id!==curId;}); savePosts(); closeSheet(); renderFeed(); toast(‘Deleted’); }
-function toggleFav(id,btn){
-var p=posts.find(function(x){return x.id===id;}); if(!p) return;
-p.fav=!p.fav; savePosts(); btn.textContent=p.fav?‘❤️’:‘🤍’;
-toast(p.fav?‘Added to favorites ❤️’:‘Removed’);
-}
-
-function doSearch() {
-var q=document.getElementById(‘srch’).value.toLowerCase().trim();
-var res=document.getElementById(‘sres’);
-if(!q){res.innerHTML=’<div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search by title, tags or platform</p></div>’;return;}
-var found=posts.filter(function(p){
-return (p.title||’’).toLowerCase().includes(q)||(p.desc||’’).toLowerCase().includes(q)
-||(p.tags||[]).some(function(t){return t.toLowerCase().includes(q);})||(p.source||’’).includes(q);
-});
-if(!found.length){res.innerHTML=’<div class="empty"><div class="ei">😶‍🌫️</div><h3>No results</h3><p>Nothing matches “’+q+’”</p></div>’;return;}
-var si={pinterest:‘📌’,twitter:‘✖’,reddit:‘👾’,manual:‘🌿’};
-res.innerHTML=found.map(function(p,i){
-return ‘<div class="ri" onclick="openDetail(\''+p.id+'\')" style="animation-delay:'+(i*0.04)+'s">’
-+(p.img?’<img class="rth" src="'+xe(p.img)+'" onerror="this.style.display=\'none\'">’:’<div class="rph">’+(si[p.source]||‘🌿’)+’</div>’)
-+’<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">’+xe(p.title||‘Untitled’)+’</div>’
-+’<div style="font-size:12px;color:var(--muted);margin-top:2px">’+(p.source||‘other’)+(p.onCloud?’ · ☁️ ImgBB’:’’)+’</div></div></div>’;
-}).join(’’);
-}
-
-function updateStats(){
-document.getElementById(‘st-total’).textContent=posts.length;
-document.getElementById(‘st-cloud’).textContent=posts.filter(function(p){return p.onCloud;}).length;
-document.getElementById(‘st-fav’).textContent=posts.filter(function(p){return p.fav;}).length;
-}
-
-async function cloudSync(){
-if(!posts.length){toast(‘Nothing to sync’);return;}
-try{
-showOv(‘Syncing to JSONBin…’);
-var r=await fetch(‘https://api.jsonbin.io/v3/b’,{method:‘POST’,headers:{‘Content-Type’:‘application/json’,‘X-Bin-Name’:‘SocialVault’},body:JSON.stringify({posts:posts})});
-var d=await r.json(); hideOv();
-var id=d.metadata&&d.metadata.id; if(!id)throw new Error();
-localStorage.setItem(‘sv_bin’,id);
-setTimeout(function(){prompt(‘Cloud sync done! Save this Bin ID:’,id);},300);
-toast(‘Synced ☁️’,true);
-}catch(e){hideOv();toast(‘Sync failed’);}
-}
-
-function showRestore(){
-var id=localStorage.getItem(‘sv_bin’)||’’;
-var bin=prompt(‘Enter your JSONBin.io Bin ID:’,id); if(bin)doRestore(bin);
-}
-
-async function doRestore(bin){
-try{
-showOv(‘Restoring…’);
-var r=await fetch(‘https://api.jsonbin.io/v3/b/’+bin+’/latest’);
-var d=await r.json(); hideOv();
-if(!Array.isArray(d.record&&d.record.posts))throw new Error();
-posts=d.record.posts; savePosts(); renderFeed(); toast(‘Restored ‘+posts.length+’ posts ✅’,true);
-}catch(e){hideOv();toast(‘Restore failed — check Bin ID’);}
-}
-
-function exportJSON(){
-var b=new Blob([JSON.stringify(posts,null,2)],{type:‘application/json’});
-var a=document.createElement(‘a’); a.href=URL.createObjectURL(b); a.download=‘vault-’+Date.now()+’.json’; a.click(); toast(‘Exported 📤’);
-}
-
-function showImport(){
-var raw=prompt(‘Paste your exported JSON:’); if(!raw)return;
-try{
-var imp=JSON.parse(raw); if(!Array.isArray(imp))throw new Error();
-var ids=new Set(posts.map(function(p){return p.id;}));
-var n=imp.filter(function(p){return!ids.has(p.id);});
-posts=n.concat(posts); savePosts(); renderFeed(); toast(‘Imported ‘+n.length+’ posts’);
-}catch(e){toast(‘Invalid JSON’);}
-}
-
-function clearAll(){
-if(confirm(‘Delete all posts from vault?’)){posts=[];savePosts();renderFeed();toast(‘Vault cleared’);}
-}
-
-var _tt;
-function toast(msg,green){
-var el=document.getElementById(‘toast’);
-el.textContent=msg; el.className=‘toast show’+(green?’ green’:’’);
-clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove(‘show’,‘green’);},2400);
-}
-
-function xe(s){return String(s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);}
-
-function loadDemo(){
-posts=[
-{id:‘d1’,title:‘Minimal Dark Dashboard UI’,url:‘https://dribbble.com’,img:‘https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80’,onCloud:false,desc:‘Beautiful dark concept’,tags:[‘ui’,‘dark’],source:‘pinterest’,fav:true,date:new Date().toISOString()},
-{id:‘d2’,title:‘0 to 10k users — building in public’,url:‘https://x.com’,img:’’,onCloud:false,desc:‘Thread on growth hacking’,tags:[‘startup’],source:‘twitter’,fav:false,date:new Date().toISOString()},
-{id:‘d3’,title:‘Iceland Aurora Borealis’,url:‘https://reddit.com/r/earthporn’,img:‘https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80’,onCloud:false,desc:‘r/EarthPorn community’,tags:[‘photography’,‘travel’],source:‘reddit’,fav:true,date:new Date().toISOString()},
-{id:‘d4’,title:‘Neon color palette — Midnight’,url:’’,img:‘https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=80’,onCloud:false,desc:‘Deep purples and neon accents’,tags:[‘colors’],source:‘pinterest’,fav:false,date:new Date().toISOString()},
-{id:‘d5’,title:‘Brutalist typography 2025’,url:‘https://reddit.com’,img:‘https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80’,onCloud:false,desc:‘Bold type trends’,tags:[‘typography’],source:‘reddit’,fav:false,date:new Date().toISOString()},
+// FIX #9: Removed cors-anywhere (requires manual activation); kept two reliable proxies
+const CORS_PROXIES = [
+  'https://corsproxy.io/?',
+  'https://api.allorigins.win/raw?url='
 ];
-savePosts();
+
+// ============================================================
+// DATABASE (IndexedDB)
+// ============================================================
+class MediaDB {
+  constructor() { this.db = null; }
+
+  async init() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+          store.createIndex('platform', 'platform', { unique: false });
+          store.createIndex('dateSaved', 'dateSaved', { unique: false });
+          // FIX #3: sourceUrl index not unique — we handle dedup in app logic
+          store.createIndex('sourceUrl', 'sourceUrl', { unique: false });
+        }
+        if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
+          db.createObjectStore(SETTINGS_STORE, { keyPath: 'key' });
+        }
+      };
+      req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async save(item) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).put(item);
+      tx.oncomplete = () => resolve(item);
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async getAll() {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(STORE_NAME, 'readonly');
+      const req = tx.objectStore(STORE_NAME).getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async delete(id) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  // FIX #3: Use getAll + JS filter for dedup (no unique constraint issues)
+  async findByUrl(sourceUrl) {
+    const all = await this.getAll();
+    return all.find(i => i.sourceUrl === sourceUrl || i.sourceUrl.startsWith(sourceUrl + '#')) || null;
+  }
+
+  async getSetting(key) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(SETTINGS_STORE, 'readonly');
+      const req = tx.objectStore(SETTINGS_STORE).get(key);
+      req.onsuccess = () => resolve(req.result ? req.result.value : null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async setSetting(key, value) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction(SETTINGS_STORE, 'readwrite');
+      tx.objectStore(SETTINGS_STORE).put({ key, value });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
 }
+
+// ============================================================
+// PLATFORM DETECTOR
+// ============================================================
+class PlatformDetector {
+  static detect(url) {
+    try {
+      const u = new URL(url);
+      const host = u.hostname.toLowerCase().replace('www.', '');
+      if (host.includes('reddit.com') || host.includes('redd.it')) return PLATFORMS.REDDIT;
+      if (host.includes('twitter.com') || host.includes('x.com') || host.includes('t.co')) return PLATFORMS.TWITTER;
+      if (host.includes('pinterest.com') || host.includes('pin.it')) return PLATFORMS.PINTEREST;
+      if (host.includes('imgur.com') || host.includes('i.imgur.com')) return PLATFORMS.IMGUR;
+      if (host.includes('google.com') || host.includes('googleusercontent.com') || host.includes('gstatic.com')) return PLATFORMS.GOOGLE;
+      if (host.includes('tumblr.com')) return PLATFORMS.TUMBLR;
+      if (host.includes('flickr.com') || host.includes('staticflickr.com') || host.includes('flic.kr')) return PLATFORMS.FLICKR;
+      if (host.includes('deviantart.com') || host.includes('deviantart.net')) return PLATFORMS.DEVIANTART;
+      if (/\.(jpg|jpeg|png|gif|webp|svg|mp4|webm|mov)(\?.*)?$/i.test(u.pathname)) return PLATFORMS.DIRECT;
+      return PLATFORMS.OTHER;
+    } catch { return PLATFORMS.OTHER; }
+  }
+}
+
+// ============================================================
+// MEDIA EXTRACTOR
+// ============================================================
+class MediaExtractor {
+  static async extract(url, platform) {
+    switch (platform) {
+      case PLATFORMS.REDDIT:     return this.extractReddit(url);
+      case PLATFORMS.IMGUR:      return this.extractImgur(url);
+      case PLATFORMS.DIRECT:     return this.extractDirect(url);
+      case PLATFORMS.TWITTER:    return this.extractTwitter(url);
+      case PLATFORMS.PINTEREST:  return this.extractPinterest(url);
+      case PLATFORMS.GOOGLE:     return this.extractGoogle(url);
+      case PLATFORMS.TUMBLR:     return this.extractTumblr(url);
+      case PLATFORMS.FLICKR:     return this.extractFlickr(url);
+      case PLATFORMS.DEVIANTART: return this.extractDeviantArt(url);
+      default:                   return this.extractGeneric(url);
+    }
+  }
+
+  static async extractReddit(url) {
+    // FIX #1 & #2: Proper .json URL construction — strip trailing slash, strip existing .json, then append
+    const clean = url.replace(/\/$/, '').replace(/\.json$/, '');
+    const apiUrl = clean + '.json';
+
+    const data = await this.fetchJson(apiUrl);
+    const post = data?.[0]?.data?.children?.[0]?.data;
+    if (!post) throw new Error('Could not fetch Reddit post data');
+
+    const results = [];
+
+    if (post.is_gallery && post.media_metadata) {
+      for (const [key, meta] of Object.entries(post.media_metadata)) {
+        if (meta.status === 'valid') {
+          const src = meta.s;
+          const bestUrl = src?.gif || src?.u || `https://i.redd.it/${key}.jpg`;
+          results.push({ url: bestUrl.replace(/&amp;/g, '&'), type: src?.gif ? 'gif' : 'image', source: 'reddit' });
+        }
+      }
+    }
+
+    if (post.is_video && post.media?.reddit_video) {
+      const videoUrl = post.media.reddit_video.fallback_url?.replace(/&amp;/g, '&');
+      if (videoUrl) results.push({ url: videoUrl, type: 'video', source: 'reddit' });
+    }
+
+    if (post.url && /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i.test(post.url)) {
+      results.push({ url: post.url, type: 'image', source: 'reddit' });
+    }
+
+    if (results.length === 0 && post.preview?.images?.[0]) {
+      const img = post.preview.images[0];
+      const imgUrl = (img.variants?.gif?.source?.url || img.source?.url || '').replace(/&amp;/g, '&');
+      if (imgUrl) results.push({ url: imgUrl, type: 'image', source: 'reddit' });
+    }
+
+    if (results.length === 0) throw new Error('No media found in Reddit post');
+    return { media: results, title: post.title || '' };
+  }
+
+  static async extractImgur(url) {
+    const results = [];
+    if (/i\.imgur\.com/.test(url)) {
+      results.push({ url, type: /\.gif$/.test(url) ? 'gif' : 'image', source: 'imgur' });
+    } else {
+      const match = url.match(/imgur\.com\/(?:a\/|gallery\/)?([A-Za-z0-9]+)/);
+      if (match) results.push({ url: `https://i.imgur.com/${match[1]}.jpg`, type: 'image', source: 'imgur' });
+    }
+    if (results.length === 0) throw new Error('Could not extract Imgur media');
+    return { media: results, title: '' };
+  }
+
+  static async extractDirect(url) {
+    const type = /\.(mp4|webm|mov)(\?.*)?$/i.test(url) ? 'video' : 'image';
+    return { media: [{ url, type, source: 'direct' }], title: '' };
+  }
+
+  static async extractTwitter(url) {
+    // Use fxtwitter.com — serves proper OGP tags for images and videos, no API key needed
+    const fxUrl = url.replace(/https?:\/\/(www\.)?(twitter\.com|x\.com)/, 'https://fxtwitter.com');
+    try {
+      const html = await this.fetchHtmlViaProxy(fxUrl);
+
+      const videoMatch = html.match(/<meta\s+(?:property|name)=["']og:video(?::url)?["']\s+content=["']([^"']+)["']/i)
+                      || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:video(?::url)?["']/i);
+      if (videoMatch) {
+        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+        return { media: [{ url: videoMatch[1], type: 'video', source: 'twitter' }], title: titleMatch?.[1] || '' };
+      }
+
+      const imgMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
+                    || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
+      if (imgMatch) {
+        const imgUrl = imgMatch[1].replace(/&amp;/g, '&');
+        if (!imgUrl.includes('twitter_icon') && !imgUrl.includes('default_profile')) {
+          const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+          return { media: [{ url: imgUrl, type: 'image', source: 'twitter' }], title: titleMatch?.[1] || '' };
+        }
+      }
+      throw new Error('No media found — tweet may be text-only or from a protected account');
+    } catch (e) {
+      throw new Error('Twitter/X: ' + e.message);
+    }
+  }
+  // FIX #14: Removed dangling unreachable oEmbed code that was left after patching
+
+  static async extractPinterest(url) {
+    try {
+      let pinUrl = url;
+      // Resolve pin.it short links
+      if (url.includes('pin.it/')) {
+        const resolved = await this.fetchHtmlViaProxy(url);
+        const canonical = resolved.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1];
+        if (canonical) pinUrl = canonical;
+      }
+
+      const pinIdMatch = pinUrl.match(/\/pin\/(\d+)/i);
+
+      // Strategy 1: picn.me proxy (best quality)
+      if (pinIdMatch) {
+        try {
+          const picnUrl = `https://picn.me/p/${pinIdMatch[1]}`;
+          const html = await this.fetchHtmlViaProxy(picnUrl);
+          const imgMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
+                         || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
+          if (imgMatch && imgMatch[1].includes('pinimg.com')) {
+            const highRes = imgMatch[1].replace(/\/\d+x\//, '/originals/');
+            const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+            return { media: [{ url: highRes, type: 'image', source: 'pinterest' }], title: titleMatch?.[1] || '' };
+          }
+        } catch {}
+      }
+
+      // Strategy 2: scrape Pinterest directly
+      const html = await this.fetchHtmlViaProxy(pinUrl);
+      const jsonMatch = html.match(/"orig":\s*\{"url":"([^"]+)"/);
+      if (jsonMatch) {
+        return { media: [{ url: jsonMatch[1].replace(/\\u002F/g, '/'), type: 'image', source: 'pinterest' }], title: '' };
+      }
+
+      // Strategy 3: og:image fallback
+      const ogMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
+                   || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
+      if (ogMatch) {
+        const highRes = ogMatch[1].replace(/\/\d+x\//, '/originals/').replace(/&amp;/g, '&');
+        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+        return { media: [{ url: highRes, type: 'image', source: 'pinterest' }], title: titleMatch?.[1] || '' };
+      }
+
+      throw new Error('Could not find image in pin');
+    } catch (e) {
+      throw new Error('Pinterest: ' + e.message);
+    }
+  }
+
+  static async extractGoogle(url) {
+    try {
+      const u = new URL(url);
+      // Direct image result link
+      const imgurl = u.searchParams.get('imgurl');
+      if (imgurl) return { media: [{ url: imgurl, type: 'image', source: 'google' }], title: u.searchParams.get('imgrefurl') || '' };
+
+      // Google image proxy (lh3.googleusercontent.com, gstatic)
+      if (url.includes('googleusercontent.com') || url.includes('gstatic.com')) {
+        const highRes = url.replace(/=[swh]\d+(-[swh]\d+)*(-[a-z]+)?$/i, '=s0');
+        return { media: [{ url: highRes, type: 'image', source: 'google' }], title: '' };
+      }
+
+      // Google search link — follow destination
+      const q = u.searchParams.get('q') || u.searchParams.get('url');
+      if (q && q.startsWith('http')) return this.extractGeneric(q, 'google');
+
+      // Scrape page for direct image URLs
+      const html = await this.fetchHtmlViaProxy(url);
+      const directImg = html.match(/"(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp|gif)(?:[^"]{0,60}))"/i)?.[1];
+      if (directImg) return { media: [{ url: directImg, type: 'image', source: 'google' }], title: '' };
+
+      throw new Error('Paste the direct image URL (right-click image → Copy image address)');
+    } catch (e) {
+      throw new Error('Google: ' + e.message);
+    }
+  }
+
+  static async extractTumblr(url) {
+    try {
+      const html = await this.fetchHtmlViaProxy(url);
+
+      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
+                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
+      if (ogImg) {
+        const highRes = ogImg[1].replace(/_(\d+)(\.[a-z]+)$/i, '_raw$2').replace(/&amp;/g, '&');
+        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+        return { media: [{ url: highRes, type: 'image', source: 'tumblr' }], title: titleMatch?.[1] || '' };
+      }
+
+      const ogVid = html.match(/<meta\s+(?:property|name)=["']og:video["']\s+content=["']([^"']+)["']/i);
+      if (ogVid) return { media: [{ url: ogVid[1], type: 'video', source: 'tumblr' }], title: '' };
+
+      const mediaImgs = [...html.matchAll(/https:\/\/([a-z0-9]+\.)?media\.tumblr\.com\/[^"'\s]+\.(?:jpg|jpeg|png|gif|webp)/gi)].map(m => m[0]);
+      if (mediaImgs.length) {
+        return { media: [{ url: mediaImgs[0].replace(/_(\d+)(\.[a-z]+)$/i, '_raw$2'), type: 'image', source: 'tumblr' }], title: '' };
+      }
+
+      throw new Error('No media found in Tumblr post');
+    } catch (e) {
+      throw new Error('Tumblr: ' + e.message);
+    }
+  }
+
+  static async extractFlickr(url) {
+    try {
+      try {
+        const oEmbedUrl = `https://www.flickr.com/services/oembed/?url=${encodeURIComponent(url)}&format=json`;
+        const data = await this.fetchJson(oEmbedUrl);
+        if (data?.url) {
+          return { media: [{ url: data.url.replace(/_b\./, '_o.'), type: 'image', source: 'flickr' }], title: data.title || '' };
+        }
+      } catch {}
+
+      const html = await this.fetchHtmlViaProxy(url);
+      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)?.[1];
+      if (ogImg) {
+        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+        return { media: [{ url: ogImg.replace(/_[a-z]\./, '_b.').replace(/&amp;/g, '&'), type: 'image', source: 'flickr' }], title: titleMatch?.[1] || '' };
+      }
+
+      throw new Error('No image found');
+    } catch (e) {
+      throw new Error('Flickr: ' + e.message);
+    }
+  }
+
+  static async extractDeviantArt(url) {
+    try {
+      try {
+        const oEmbedUrl = `https://backend.deviantart.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+        const data = await this.fetchJson(oEmbedUrl);
+        if (data?.url) return { media: [{ url: data.url, type: 'image', source: 'deviantart' }], title: data.title || '' };
+      } catch {}
+
+      const html = await this.fetchHtmlViaProxy(url);
+      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)?.[1];
+      if (ogImg) {
+        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
+        return { media: [{ url: ogImg.replace(/&amp;/g, '&'), type: 'image', source: 'deviantart' }], title: titleMatch?.[1] || '' };
+      }
+      throw new Error('No image found');
+    } catch (e) {
+      throw new Error('DeviantArt: ' + e.message);
+    }
+  }
+
+  static async extractGeneric(url, forceSource) {
+    const source = forceSource || 'other';
+    try {
+      const html = await this.fetchHtmlViaProxy(url);
+      const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i)
+                       || html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const title = titleMatch?.[1] || '';
+
+      const ogVid = html.match(/<meta\s+(?:property|name)=["']og:video(?::url)?["']\s+content=["']([^"']+)["']/i)
+                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:video(?::url)?["']/i);
+      if (ogVid) return { media: [{ url: ogVid[1].replace(/&amp;/g, '&'), type: 'video', source }], title };
+
+      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
+                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
+      if (ogImg) return { media: [{ url: ogImg[1].replace(/&amp;/g, '&'), type: 'image', source }], title };
+
+      const twImg = html.match(/<meta\s+(?:property|name)=["']twitter:image(?::src)?["']\s+content=["']([^"']+)["']/i)
+                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']twitter:image(?::src)?["']/i);
+      if (twImg) return { media: [{ url: twImg[1].replace(/&amp;/g, '&'), type: 'image', source }], title };
+
+      // JSON-LD structured data
+      const jsonLdBlocks = html.match(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
+      for (const block of jsonLdBlocks) {
+        try {
+          const json = JSON.parse(block.replace(/<script[^>]*>|<\/script>/gi, ''));
+          const imgUrl = json?.image?.url || json?.image || json?.thumbnailUrl;
+          if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
+            return { media: [{ url: imgUrl, type: 'image', source }], title: json?.headline || title };
+          }
+        } catch {}
+      }
+
+      // Score <img> tags by pixel area
+      const imgs = [...html.matchAll(/<img[^>]+src=["'](https?:[^"'\s]+)["'][^>]*(?:width=["'](\d+)["'])?[^>]*(?:height=["'](\d+)["'])?/gi)]
+        .map(m => ({ url: m[1], w: parseInt(m[2]) || 0, h: parseInt(m[3]) || 0 }))
+        .filter(i => /\.(jpg|jpeg|png|webp|gif)/i.test(i.url) && !/(logo|icon|avatar|badge|btn|button|sprite|pixel|tracking|1x1)/i.test(i.url))
+        .sort((a, b) => (b.w * b.h) - (a.w * a.h));
+      if (imgs.length) return { media: [{ url: imgs[0].url, type: 'image', source }], title };
+
+      const vidSrc = html.match(/<(?:video|source)[^>]+src=["'](https?:[^"'\s]+\.(?:mp4|webm|ogg))["']/i)?.[1];
+      if (vidSrc) return { media: [{ url: vidSrc, type: 'video', source }], title };
+
+    } catch (e) {
+      throw new Error('Could not fetch page: ' + e.message);
+    }
+    throw new Error('No media found. Try right-clicking the image and pasting the direct URL.');
+  }
+
+  static async fetchJson(url) {
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  static async fetchHtmlViaProxy(url) {
+    for (const proxy of CORS_PROXIES) {
+      try {
+        const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(9000) });
+        if (res.ok) return res.text();
+      } catch {}
+    }
+    throw new Error('All proxies failed');
+  }
+
+  static async fetchAsBase64(url) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      if (res.ok) return blobToBase64(await res.blob());
+    } catch {}
+    for (const proxy of CORS_PROXIES) {
+      try {
+        const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(15000) });
+        if (res.ok) return blobToBase64(await res.blob());
+      } catch {}
+    }
+    throw new Error('Could not download media');
+  }
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onloadend = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// IMGBB UPLOADER
+// ============================================================
+const ImgBB = {
+  async upload(imageData, apiKey, name = '') {
+    if (!apiKey) throw new Error('ImgBB API key not configured. Add it in Settings.');
+    const fd = new FormData();
+    fd.append('key', apiKey);
+    fd.append('expiration', '0');
+    if (name) fd.append('name', name.substring(0, 100));
+    if (imageData.startsWith('http://') || imageData.startsWith('https://')) {
+      fd.append('image', imageData);
+    } else {
+      fd.append('image', imageData.replace(/^data:image\/[a-z]+;base64,/, ''));
+    }
+    const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd });
+    const result = await res.json();
+    if (!result.success) throw new Error(result.error?.message || 'ImgBB upload failed');
+    return {
+      url: result.data.url,
+      thumbUrl: result.data.thumb?.url || result.data.url,
+      deleteUrl: result.data.delete_url,
+      id: result.data.id
+    };
+  }
+};
+
+// ============================================================
+// UPLOAD QUEUE
+// ============================================================
+class UploadQueue {
+  constructor(db, onProgress, onComplete, onError) {
+    this.db = db; this.onProgress = onProgress;
+    this.onComplete = onComplete; this.onError = onError;
+    this.queue = []; this.running = false;
+  }
+
+  enqueue(item) {
+    this.queue.push(item);
+    if (!this.running) this.process();
+  }
+
+  async process() {
+    this.running = true;
+    while (this.queue.length > 0) {
+      const item = this.queue.shift();
+      try {
+        this.onProgress(item.id, 'uploading');
+        const apiKey = await this.db.getSetting('imgbbApiKey');
+        const imageData = item.localData || item.mediaUrl;
+        const result = await ImgBB.upload(imageData, apiKey, item.id);
+        // FIX #5: Clean update without redundant null/delete
+        const updated = { ...item, imgbbUrl: result.url, imgbbThumb: result.thumbUrl,
+          imgbbDeleteUrl: result.deleteUrl, uploadStatus: 'done', localData: null };
+        await this.db.save(updated);
+        this.onComplete(updated);
+      } catch (err) {
+        const failed = { ...item, uploadStatus: 'failed', uploadError: err.message };
+        await this.db.save(failed);
+        this.onError(item.id, err.message);
+      }
+    }
+    this.running = false;
+  }
+}
+
+// ============================================================
+// LAZY IMAGE LOADER
+// ============================================================
+const lazyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      // FIX #6: Use data-src for true lazy loading
+      if (img.dataset.src) {
+        img.src = img.dataset.src;
+        img.removeAttribute('data-src');
+        lazyObserver.unobserve(img);
+      }
+    }
+  });
+}, { rootMargin: '200px' });
+
+// ============================================================
+// MAIN APP
+// ============================================================
+class App {
+  constructor() {
+    this.db = new MediaDB();
+    this.items = [];
+    this.filteredItems = [];
+    this.currentFilter = 'all';
+    this.searchQuery = '';
+    this.currentPreviewId = null;
+    this.uploadQueue = null;
+    this.darkMode = false;
+  }
+
+  async init() {
+    await this.db.init();
+    this.uploadQueue = new UploadQueue(
+      this.db,
+      (id, status) => this.updateCardStatus(id, status),
+      (item) => this.updateCardAfterUpload(item),
+      (id, msg) => this.updateCardError(id, msg)
+    );
+
+    // FIX #13: Set dark mode BEFORE bindEvents so toggle.checked doesn't fire change event
+    this.darkMode = (await this.db.getSetting('darkMode')) === true ||
+                    window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (this.darkMode) document.documentElement.classList.add('dark');
+    document.getElementById('darkModeToggle').checked = this.darkMode;
+
+    const apiKey = await this.db.getSetting('imgbbApiKey') || '';
+    document.getElementById('apiKeyInput').value = apiKey;
+
+    this.bindEvents();
+    await this.loadItems();
+    this.renderGrid();
+    this.updateStats();
+  }
+
+  bindEvents() {
+    document.getElementById('saveBtn').addEventListener('click', () => this.handleSave());
+    document.getElementById('urlInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') this.handleSave(); });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.currentFilter = btn.dataset.filter;
+        this.applyFilters();
+      });
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      this.searchQuery = e.target.value.toLowerCase();
+      this.applyFilters();
+    });
+
+    document.getElementById('settingsBtn').addEventListener('click', () => this.toggleSettings());
+    document.getElementById('settingsClose').addEventListener('click', () => this.toggleSettings(false));
+    document.getElementById('saveApiKey').addEventListener('click', () => this.saveApiKey());
+
+    // FIX #13: darkModeToggle.checked already set before bindEvents, change listener is safe now
+    document.getElementById('darkModeToggle').addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
+
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modalOverlay')) this.closeModal();
+    });
+    document.getElementById('modalClose').addEventListener('click', () => this.closeModal());
+    document.getElementById('modalDownload').addEventListener('click', () => this.downloadCurrent());
+    document.getElementById('modalDelete').addEventListener('click', () => this.deleteCurrent());
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeModal(); });
+    document.getElementById('clearAllBtn')?.addEventListener('click', () => this.clearAll());
+
+    // Global paste shortcut
+    document.addEventListener('paste', (e) => {
+      const active = document.activeElement;
+      if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') return;
+      const text = e.clipboardData?.getData('text');
+      if (text && text.startsWith('http')) {
+        document.getElementById('urlInput').value = text;
+        document.getElementById('urlInput').focus();
+      }
+    });
+  }
+
+  async handleSave() {
+    const urlInput = document.getElementById('urlInput');
+    const url = urlInput.value.trim();
+    if (!url) return;
+
+    try { new URL(url); } catch { this.showToast('Please enter a valid URL', 'error'); return; }
+
+    // FIX #3: Dedup check using updated findByUrl (no unique constraint issues)
+    const existing = await this.db.findByUrl(url);
+    if (existing) { this.showToast('Already saved!', 'warning'); return; }
+
+    const btn = document.getElementById('saveBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    document.getElementById('progressBar').style.display = 'block';
+
+    try {
+      const platform = PlatformDetector.detect(url);
+      this.updateProgress(20);
+
+      const extracted = await MediaExtractor.extract(url, platform);
+      this.updateProgress(60);
+
+      const mediaList = extracted.media || [];
+      if (!mediaList.length) throw new Error('No media found');
+
+      // FIX #4: Build all items first, then render once
+      const newItems = [];
+      for (let i = 0; i < mediaList.length; i++) {
+        const media = mediaList[i];
+        const id = 'mv_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2, 7);
+
+        let localData = null;
+        if (media.type !== 'video') {
+          try { localData = await MediaExtractor.fetchAsBase64(media.url); } catch {}
+        }
+
+        const item = {
+          id,
+          sourceUrl: i === 0 ? url : url + '#item' + i,
+          mediaUrl: media.url,
+          mediaType: media.type,
+          platform,
+          title: extracted.title || '',
+          dateSaved: new Date().toISOString(),
+          uploadStatus: 'pending',
+          imgbbUrl: null,
+          imgbbThumb: null,
+          localData
+        };
+
+        await this.db.save(item);
+        newItems.push(item);
+      }
+
+      // Add all at once, render once
+      newItems.forEach(item => this.items.unshift(item));
+      this.applyFilters();
+      this.updateStats();
+
+      this.updateProgress(100);
+      urlInput.value = '';
+      this.showToast('Saved ' + mediaList.length + ' item' + (mediaList.length > 1 ? 's' : '') + '!', 'success');
+
+      // Queue uploads
+      newItems.forEach(item => this.uploadQueue.enqueue({ ...item }));
+
+    } catch (err) {
+      this.showToast(err.message || 'Failed to save media', 'error');
+      console.error(err);
+    } finally {
+      setTimeout(() => {
+        document.getElementById('progressBar').style.display = 'none';
+        this.updateProgress(0);
+      }, 600);
+      btn.classList.remove('loading');
+      btn.disabled = false;
+    }
+  }
+
+  updateProgress(pct) {
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  async loadItems() {
+    this.items = await this.db.getAll();
+    this.items.sort((a, b) => new Date(b.dateSaved) - new Date(a.dateSaved));
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let filtered = [...this.items];
+    if (this.currentFilter !== 'all') filtered = filtered.filter(i => i.platform === this.currentFilter);
+    if (this.searchQuery) {
+      filtered = filtered.filter(i =>
+        (i.title || '').toLowerCase().includes(this.searchQuery) ||
+        (i.sourceUrl || '').toLowerCase().includes(this.searchQuery) ||
+        (i.platform || '').toLowerCase().includes(this.searchQuery)
+      );
+    }
+    this.filteredItems = filtered;
+    this.renderGrid();
+  }
+
+  renderGrid() {
+    const grid = document.getElementById('mediaGrid');
+    const empty = document.getElementById('emptyState');
+
+    if (!this.filteredItems.length) {
+      grid.innerHTML = '';
+      empty.style.display = 'flex';
+      return;
+    }
+    empty.style.display = 'none';
+
+    const existingIds = new Set([...grid.querySelectorAll('.media-card')].map(c => c.dataset.id));
+    const newIds = new Set(this.filteredItems.map(i => i.id));
+
+    // Remove deleted cards
+    grid.querySelectorAll('.media-card').forEach(card => {
+      if (!newIds.has(card.dataset.id)) card.remove();
+    });
+
+    // Prepend new cards
+    for (let i = this.filteredItems.length - 1; i >= 0; i--) {
+      const item = this.filteredItems[i];
+      if (!existingIds.has(item.id)) {
+        grid.insertBefore(this.createCard(item), grid.firstChild);
+      } else {
+        const existing = grid.querySelector('[data-id="' + item.id + '"]');
+        if (existing) this.patchCard(existing, item);
+      }
+    }
+  }
+
+  createCard(item) {
+    const card = document.createElement('div');
+    card.className = 'media-card';
+    card.dataset.id = item.id;
+    card.innerHTML = this.cardHTML(item);
+    card.addEventListener('click', () => this.openModal(item.id));
+    // Observe lazy images
+    const img = card.querySelector('img[data-src]');
+    if (img) lazyObserver.observe(img);
+    return card;
+  }
+
+  cardHTML(item) {
+    // FIX #6: Use data-src for lazy loading instead of src
+    // FIX #7: Safe fallback SVG without nested quote escaping issues
+    const isVideo = item.mediaType === 'video';
+    const thumbSrc = item.imgbbThumb || item.imgbbUrl || item.mediaUrl;
+    // For local base64 data, use it directly (already in memory); for URLs use lazy loading
+    const isBase64 = item.localData && item.localData.startsWith('data:');
+    const statusClass = { done:'status-done', uploading:'status-uploading', failed:'status-failed' }[item.uploadStatus] || 'status-pending';
+    const icon = PLATFORM_ICONS[item.platform] || '🌐';
+    const label = PLATFORM_LABELS[item.platform] || item.platform;
+    const dateStr = new Date(item.dateSaved).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+    const fallbackSrc = 'data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 100 100%22%3E%3Crect fill%3D%22%23333%22 width%3D%22100%22 height%3D%22100%22/%3E%3Ctext y%3D%2260%22 font-size%3D%2240%22 x%3D%2250%25%22 text-anchor%3D%22middle%22%3E🖼%3C/text%3E%3C/svg%3E';
+
+    return `
+      <div class="card-media">
+        ${isVideo
+          ? `<video src="${escapeHtml(item.imgbbUrl || item.mediaUrl)}" muted playsinline loop preload="none" class="card-img"></video>
+             <div class="play-icon">▶</div>`
+          : isBase64
+            ? `<img src="${item.localData}" alt="${escapeHtml(item.title || 'Media')}" class="card-img">`
+            : `<img data-src="${escapeHtml(thumbSrc)}" src="${fallbackSrc}" alt="${escapeHtml(item.title || 'Media')}" class="card-img">`
+        }
+        <div class="card-overlay">
+          <span class="platform-badge ${item.platform}">${icon} ${label}</span>
+          <span class="card-date">${dateStr}</span>
+        </div>
+        <div class="upload-dot ${statusClass}" title="${statusClass.replace('status-','')}"></div>
+      </div>
+      ${item.title ? `<div class="card-title">${escapeHtml(item.title.substring(0, 80))}</div>` : ''}
+    `;
+  }
+
+  patchCard(card, item) {
+    const dot = card.querySelector('.upload-dot');
+    if (dot) {
+      dot.className = 'upload-dot ' + ({ done:'status-done', uploading:'status-uploading', failed:'status-failed' }[item.uploadStatus] || 'status-pending');
+    }
+    // Upgrade thumb to ImgBB version once uploaded
+    const img = card.querySelector('img');
+    if (img && item.imgbbThumb && !img.src.startsWith('data:')) {
+      img.src = item.imgbbThumb;
+    }
+  }
+
+  updateCardStatus(id, status) {
+    const idx = this.items.findIndex(i => i.id === id);
+    if (idx !== -1) this.items[idx].uploadStatus = status;
+    const card = document.querySelector('[data-id="' + id + '"]');
+    if (card) {
+      const dot = card.querySelector('.upload-dot');
+      if (dot) dot.className = 'upload-dot status-' + status;
+    }
+  }
+
+  updateCardAfterUpload(item) {
+    const idx = this.items.findIndex(i => i.id === item.id);
+    if (idx !== -1) this.items[idx] = item;
+    const card = document.querySelector('[data-id="' + item.id + '"]');
+    if (card) this.patchCard(card, item);
+    this.showToast('Uploaded to ImgBB ✓', 'success');
+  }
+
+  updateCardError(id, msg) {
+    this.updateCardStatus(id, 'failed');
+    console.warn('Upload failed:', id, msg);
+  }
+
+  openModal(id) {
+    const item = this.items.find(i => i.id === id);
+    if (!item) return;
+    this.currentPreviewId = id;
+
+    const mediaUrl = item.imgbbUrl || item.localData || item.mediaUrl;
+    const isVideo = item.mediaType === 'video';
+    document.getElementById('modalMedia').innerHTML = isVideo
+      ? `<video src="${escapeHtml(mediaUrl)}" controls autoplay loop class="modal-media-el"></video>`
+      : `<img src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title || '')}" class="modal-media-el" />`;
+
+    document.getElementById('modalTitle').textContent = item.title || 'Untitled';
+    document.getElementById('modalPlatform').textContent = PLATFORM_LABELS[item.platform] || item.platform;
+    document.getElementById('modalDate').textContent = new Date(item.dateSaved).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('modalSource').href = item.sourceUrl;
+    const imgbbLink = document.getElementById('modalImgbb');
+    imgbbLink.href = item.imgbbUrl || '#';
+    imgbbLink.style.opacity = item.imgbbUrl ? '1' : '0.4';
+
+    const status = document.getElementById('modalUploadStatus');
+    const statusMap = { done:'✓ Uploaded to ImgBB', failed:'✗ Upload failed', uploading:'⟳ Uploading…', pending:'○ Pending upload' };
+    status.textContent = statusMap[item.uploadStatus] || '';
+    status.className = 'modal-upload-status ' + (item.uploadStatus || 'pending');
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('modalMedia').innerHTML = '';
+    this.currentPreviewId = null;
+  }
+
+  async downloadCurrent() {
+    if (!this.currentPreviewId) return;
+    const item = this.items.find(i => i.id === this.currentPreviewId);
+    if (!item) return;
+    const url = item.imgbbUrl || item.mediaUrl;
+    const ext = url.match(/\.(jpg|jpeg|png|gif|webp|mp4|webm)/i)?.[1] || 'jpg';
+    const a = document.createElement('a');
+    a.href = url; a.download = 'mediavault_' + item.id + '.' + ext;
+    a.target = '_blank'; a.click();
+  }
+
+  async deleteCurrent() {
+    if (!this.currentPreviewId) return;
+    const id = this.currentPreviewId;
+    if (!confirm('Delete this media item?')) return;
+    await this.db.delete(id);
+    this.items = this.items.filter(i => i.id !== id);
+    this.closeModal();
+    this.applyFilters();
+    this.updateStats();
+    this.showToast('Deleted', 'info');
+  }
+
+  async saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    await this.db.setSetting('imgbbApiKey', key);
+    this.showToast(key ? 'API key saved!' : 'API key cleared', key ? 'success' : 'info');
+    // Retry failed/pending uploads now that we have a key
+    if (key) {
+      this.items.filter(i => i.uploadStatus === 'pending' || i.uploadStatus === 'failed')
+        .forEach(i => this.uploadQueue.enqueue({ ...i }));
+    }
+  }
+
+  toggleSettings(force) {
+    const panel = document.getElementById('settingsPanel');
+    const shouldOpen = force !== undefined ? force : !panel.classList.contains('open');
+    panel.classList.toggle('open', shouldOpen);
+  }
+
+  toggleDarkMode(val) {
+    this.darkMode = val;
+    document.documentElement.classList.toggle('dark', val);
+    this.db.setSetting('darkMode', val);
+  }
+
+  updateStats() {
+    const total = this.items.length;
+    const platforms = {};
+    this.items.forEach(i => { platforms[i.platform] = (platforms[i.platform] || 0) + 1; });
+    document.getElementById('totalCount').textContent = total;
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+      const f = btn.dataset.filter;
+      const badge = btn.querySelector('.filter-count');
+      if (badge) badge.textContent = f === 'all' ? total : (platforms[f] || 0);
+    });
+  }
+
+  async clearAll() {
+    if (!confirm('Delete ALL saved media? This cannot be undone.')) return;
+    for (const item of this.items) await this.db.delete(item.id);
+    this.items = [];
+    this.applyFilters();
+    this.updateStats();
+    this.showToast('All media cleared', 'info');
+  }
+
+  showToast(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    const icons = { success:'✓', error:'✗', warning:'⚠', info:'ℹ' };
+    toast.innerHTML = '<span>' + (icons[type] || 'ℹ') + '</span> ' + escapeHtml(msg);
+    container.appendChild(toast);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
+  }
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+  const app = new App();
+  await app.init();
+});
 </script>
 
 </body>
