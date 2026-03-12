@@ -3,1105 +3,627 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SocialVault — Media App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SocialVault">
+<meta name="theme-color" content="#000000">
+<title>SocialVault</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-body {
-font-family: -apple-system, BlinkMacSystemFont, ‘SF Pro Display’, sans-serif;
-background: radial-gradient(ellipse at 30% 10%, #1a0533 0%, #0a0a12 55%, #001a0a 100%);
-min-height: 100vh;
-display: flex;
-align-items: center;
-justify-content: center;
-}
-
-/* ── PHONE ── */
-.phone {
-width: 393px;
-height: 852px;
-background: #000;
-border-radius: 54px;
-box-shadow:
-0 0 0 2px #3a3a3a,
-0 0 0 4px #111,
-0 50px 140px rgba(0,0,0,0.9),
-0 0 80px rgba(80,200,120,0.08);
-position: relative;
-overflow: hidden;
-flex-shrink: 0;
-}
-.phone::before {
-content:’’; position:absolute; left:-3px; top:160px;
-width:3px; height:36px; background:#333; border-radius:2px 0 0 2px;
-box-shadow: 0 48px 0 #333, 0 90px 0 #333;
-}
-.phone::after {
-content:’’; position:absolute; right:-3px; top:200px;
-width:3px; height:70px; background:#333; border-radius:0 2px 2px 0;
-}
-
-.screen { position:absolute; inset:0; border-radius:54px; overflow:hidden; background:#000; display:flex; flex-direction:column; }
-
-/* Dynamic Island */
-.di {
-position:absolute; top:14px; left:50%; transform:translateX(-50%);
-width:126px; height:37px; background:#000; border-radius:20px; z-index:200;
-display:flex; align-items:center; justify-content:center; gap:12px;
-flex-shrink:0;
-}
-.di-cam { width:12px;height:12px;background:#111;border-radius:50%;border:2px solid #0a0a0a; }
-.di-spk { width:44px;height:6px;background:#0d0d0d;border-radius:3px; }
-
-/* Status bar */
-.sbar {
-height:59px; display:flex; align-items:flex-start; padding:17px 28px 0;
-justify-content:space-between; z-index:150; flex-shrink:0;
-pointer-events:none; position:absolute; top:0; left:0; right:0;
-}
-.sbar-time { font-size:15px; font-weight:600; color:#fff; }
-.sbar-icons { display:flex; gap:5px; align-items:center; font-size:12px; color:#fff; }
-
-/* App shell */
-.app { position:absolute; inset:0; display:flex; flex-direction:column; border-radius:54px; overflow:hidden; }
-
-/* ── SCREENS ── */
-.sv { display:none; flex-direction:column; flex:1; overflow:hidden; }
-.sv.active { display:flex; }
-
-/* Shared header */
-.hd {
-padding:62px 20px 14px;
-background: linear-gradient(180deg, #000 80%, transparent);
-flex-shrink:0;
-}
-.hd-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-.hd h1 { font-size:28px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
-.hd-sub { font-size:13px; color:#636366; margin-top:2px; }
-
-/* API key banner */
-.api-banner {
-margin:0 16px 10px;
-background: linear-gradient(135deg,rgba(52,199,89,0.15),rgba(52,199,89,0.05));
-border:1px solid rgba(52,199,89,0.3);
-border-radius:14px; padding:12px 14px;
-display:flex; align-items:center; gap:10px; cursor:pointer;
-}
-.api-banner .ab-icon { font-size:20px; }
-.api-banner .ab-text h4 { font-size:13px; font-weight:600; color:#34c759; margin-bottom:2px; }
-.api-banner .ab-text p { font-size:11px; color:#636366; }
-.api-banner .ab-status { margin-left:auto; font-size:11px; font-weight:600; }
-.api-banner .ab-status.ok { color:#34c759; }
-.api-banner .ab-status.no { color:#ff9500; }
-
-/* Search pill */
-.spill {
-display:flex; align-items:center; gap:8px;
-background:#1c1c1e; border-radius:12px; padding:10px 14px;
-}
-.spill input { background:none;border:none;outline:none;color:#fff;font-size:15px;flex:1;font-family:inherit; }
-.spill input::placeholder { color:#636366; }
-
-/* Source chips */
-.chips {
-display:flex; gap:8px; padding:10px 16px;
-overflow-x:auto; scrollbar-width:none; flex-shrink:0;
-background:rgba(0,0,0,0.9);
-}
-.chips::-webkit-scrollbar { display:none; }
-.chip {
-display:flex; align-items:center; gap:5px; padding:7px 14px;
-border-radius:20px; font-size:13px; font-weight:600;
-white-space:nowrap; cursor:pointer; border:1.5px solid transparent;
-flex-shrink:0; transition:all 0.15s;
-}
-.chip.on { background:#fff; color:#000; border-color:#fff; }
-.chip.off { background:#1c1c1e; color:#8e8e93; border-color:#2c2c2e; }
-
-/* Feed */
-.feed { flex:1; overflow-y:auto; scrollbar-width:none; padding-bottom:20px; }
-.feed::-webkit-scrollbar { display:none; }
-
-/* Masonry */
-.mgrid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:0 12px; }
-
-.pin {
-background:#1c1c1e; border-radius:16px; overflow:hidden;
-cursor:pointer; position:relative;
-transition:transform 0.15s, opacity 0.15s;
-animation:fadeUp 0.35s ease both;
-}
-.pin:active { transform:scale(0.95); opacity:0.85; }
-
-@keyframes fadeUp {
-from { opacity:0; transform:translateY(14px); }
-to   { opacity:1; transform:translateY(0); }
-}
-
-.pin-img {
-width:100%; display:block; object-fit:cover;
-background:#2c2c2e;
-}
-.pin:nth-child(5n+1) .pin-img { height:180px; }
-.pin:nth-child(5n+2) .pin-img { height:130px; }
-.pin:nth-child(5n+3) .pin-img { height:160px; }
-.pin:nth-child(5n+4) .pin-img { height:200px; }
-.pin:nth-child(5n)   .pin-img { height:140px; }
-
-.pin-noimg {
-height:100px; display:flex; align-items:center; justify-content:center;
-font-size:2rem; background:#2c2c2e;
-}
-
-.pin-body { padding:10px 10px 12px; }
-.pin-title {
-font-size:12px; font-weight:600; color:#fff; line-height:1.35;
-display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-margin-bottom:7px;
-}
-.pin-foot { display:flex; align-items:center; justify-content:space-between; }
-
-.src-badge {
-display:flex; align-items:center; gap:4px;
-padding:3px 7px; border-radius:8px; font-size:10px; font-weight:700;
-}
-.sb-p { background:rgba(230,0,35,0.15); color:#e60023; }
-.sb-x { background:rgba(255,255,255,0.08); color:#ccc; }
-.sb-r { background:rgba(255,69,0,0.15); color:#ff4500; }
-.sb-m { background:rgba(52,199,89,0.12); color:#34c759; }
-
-.pin-fav {
-position:absolute; top:8px; right:8px;
-width:26px; height:26px; border-radius:50%;
-background:rgba(0,0,0,0.55); backdrop-filter:blur(8px);
-display:flex; align-items:center; justify-content:center;
-font-size:12px; cursor:pointer; border:none;
-transition:transform 0.15s;
-}
-.pin-fav:active { transform:scale(0.8); }
-
-.pin-cloud {
-position:absolute; top:8px; left:8px;
-background:rgba(52,199,89,0.85); border-radius:6px;
-font-size:9px; font-weight:700; color:#000;
-padding:2px 6px;
-}
-
-/* ── UPLOAD SCREEN ── */
-.upload-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:0 18px 30px; }
-.upload-scroll::-webkit-scrollbar { display:none; }
-
-/* Drop zone */
-.dropzone {
-border:2px dashed #2c2c2e; border-radius:20px;
-padding:32px 20px; text-align:center; cursor:pointer;
-transition:all 0.2s; margin-bottom:16px; position:relative;
-background:#0d0d0f;
-}
-.dropzone.dragover { border-color:#34c759; background:rgba(52,199,89,0.05); }
-.dropzone input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer; }
-.dz-icon { font-size:40px; margin-bottom:10px; }
-.dz-title { font-size:16px; font-weight:600; color:#fff; margin-bottom:4px; }
-.dz-sub { font-size:12px; color:#636366; }
-
-/* Upload preview */
-.up-preview {
-width:100%; height:180px; object-fit:cover;
-border-radius:16px; margin-bottom:14px; display:none;
-}
-
-/* Progress bar */
-.progress-wrap {
-background:#1c1c1e; border-radius:8px; overflow:hidden;
-height:6px; margin-bottom:12px; display:none;
-}
-.progress-bar {
-height:100%; background:linear-gradient(90deg,#34c759,#30d158);
-border-radius:8px; width:0%; transition:width 0.3s;
-}
-
-/* Upload status */
-.up-status {
-text-align:center; font-size:13px; color:#636366; margin-bottom:12px; display:none;
-}
-.up-status.ok { color:#34c759; }
-.up-status.err { color:#ff3b30; }
-
-/* Platform grid */
-.plat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px; }
-.plat-btn {
-background:#1c1c1e; border-radius:14px; padding:12px 6px;
-display:flex; flex-direction:column; align-items:center; gap:5px;
-cursor:pointer; border:2px solid transparent; transition:all 0.15s;
-}
-.plat-btn:active { transform:scale(0.92); }
-.pb-p.sel { background:rgba(230,0,35,0.1); border-color:#e60023; }
-.pb-x.sel { background:rgba(255,255,255,0.06); border-color:#ddd; }
-.pb-r.sel { background:rgba(255,69,0,0.1); border-color:#ff4500; }
-.pb-m.sel { background:rgba(52,199,89,0.1); border-color:#34c759; }
-.plat-icon { width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px; }
-.pi-p { background:rgba(230,0,35,0.15); }
-.pi-x { background:rgba(255,255,255,0.08); }
-.pi-r { background:rgba(255,69,0,0.15); }
-.pi-m { background:rgba(52,199,89,0.12); }
-.plat-lbl { font-size:10px; font-weight:600; color:#8e8e93; text-align:center; }
-
-/* iOS fields */
-.sec-lbl { font-size:12px;font-weight:600;color:#636366;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:7px;padding-left:2px; }
-.ios-sec { background:#1c1c1e; border-radius:14px; overflow:hidden; margin-bottom:14px; }
-.ios-row { display:flex;align-items:center;padding:13px 14px;border-bottom:1px solid #2c2c2e;gap:10px; }
-.ios-row:last-child { border-bottom:none; }
-.ios-row label { font-size:15px;color:#fff;width:64px;flex-shrink:0; }
-.ios-row input { flex:1;background:none;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit; }
-.ios-row input::placeholder { color:#3a3a3c; }
-.ios-row textarea { flex:1;background:none;border:none;outline:none;color:#8e8e93;font-size:14px;font-family:inherit;resize:none; }
-
-.save-btn {
-width:100%; background:linear-gradient(135deg,#34c759,#30d158);
-border:none; border-radius:16px; padding:16px;
-font-size:17px; font-weight:700; color:#000; font-family:inherit;
-cursor:pointer; transition:opacity 0.15s, transform 0.1s;
-margin-top:6px;
-}
-.save-btn:active { opacity:0.85; transform:scale(0.98); }
-.save-btn:disabled { opacity:0.4; pointer-events:none; }
-
-/* ── PROFILE ── */
-.prof-hd { padding:62px 20px 16px; background:#000; text-align:center; }
-.prof-av { width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,#34c759,#30d158);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 12px; }
-.prof-hd h2 { font-size:22px;font-weight:700;color:#fff;margin-bottom:3px; }
-.prof-hd p { font-size:13px;color:#636366; }
-
-.stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#2c2c2e;border-radius:16px;overflow:hidden;margin:0 20px 18px; }
-.stat-cell { background:#1c1c1e;padding:15px 8px;text-align:center; }
-.stat-num { font-size:22px;font-weight:700;color:#fff; }
-.stat-lbl { font-size:10px;color:#636366;margin-top:2px;text-transform:uppercase;letter-spacing:0.05em; }
-
-.prof-scroll { flex:1;overflow-y:auto;scrollbar-width:none;padding:0 20px 20px; }
-.prof-scroll::-webkit-scrollbar { display:none; }
-
-.sg { margin-bottom:18px; }
-.sg-lbl { font-size:12px;font-weight:600;color:#636366;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;padding-left:2px; }
-.srow {
-display:flex;align-items:center;padding:14px 16px;
-background:#1c1c1e;border-bottom:1px solid #2c2c2e;
-gap:12px;cursor:pointer;transition:opacity 0.15s;
-}
-.srow:last-child { border-bottom:none;border-radius:0 0 14px 14px; }
-.srow:first-child { border-radius:14px 14px 0 0; }
-.srow:only-child { border-radius:14px; }
-.srow:active { opacity:0.7; }
-.srow-icon { font-size:16px;width:22px;text-align:center; }
-.srow-title { font-size:15px;color:#fff;flex:1; }
-.srow-val { font-size:13px;color:#636366;margin-right:4px; }
-.srow-arrow { font-size:12px;color:#3a3a3c; }
-
-/* API Key input section */
-.api-key-section {
-background:#1c1c1e; border-radius:14px; padding:16px; margin-bottom:18px;
-}
-.api-key-section h4 { font-size:14px;font-weight:600;color:#fff;margin-bottom:4px; }
-.api-key-section p { font-size:12px;color:#636366;margin-bottom:12px;line-height:1.5; }
-.api-input-row { display:flex;gap:8px; }
-.api-input-row input {
-flex:1;background:#2c2c2e;border:none;border-radius:10px;
-padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none;
-}
-.api-input-row input::placeholder { color:#636366; }
-.api-save-btn {
-background:#34c759;border:none;border-radius:10px;
-padding:10px 16px;font-size:14px;font-weight:600;color:#000;
-font-family:inherit;cursor:pointer;white-space:nowrap;
-}
-
-/* ── DETAIL SHEET ── */
-.dsheet {
-position:absolute; inset:0; background:#000; z-index:300;
-border-radius:54px; transform:translateY(100%);
-transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);
-display:flex; flex-direction:column; overflow:hidden;
-}
-.dsheet.open { transform:translateY(0); }
-.dsh-handle { width:36px;height:5px;background:#3a3a3c;border-radius:3px;margin:12px auto 0;flex-shrink:0; }
-.dsh-img { width:100%;max-height:260px;object-fit:cover;flex-shrink:0; }
-.dsh-body { flex:1;overflow-y:auto;padding:20px;scrollbar-width:none; }
-.dsh-body::-webkit-scrollbar { display:none; }
-
-.dsh-cloud-badge {
-display:inline-flex; align-items:center; gap:5px;
-background:rgba(52,199,89,0.15); color:#34c759;
-border-radius:20px; padding:5px 12px; font-size:12px; font-weight:600;
-margin-bottom:10px;
-}
-
-.dsh-src {
-display:inline-flex;align-items:center;gap:5px;
-padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;
-margin-bottom:12px;
-}
-.dsh-title { font-size:21px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:8px; }
-.dsh-desc { font-size:14px;color:#8e8e93;line-height:1.6;margin-bottom:14px; }
-.dsh-tags { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px; }
-.dsh-tag { font-size:12px;padding:4px 10px;border-radius:20px;background:#1c1c1e;color:#8e8e93; }
-.dsh-date { font-size:12px;color:#3a3a3c;margin-bottom:18px; }
-
-.dsh-btns { display:flex;gap:8px; }
-.dsh-btn { flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:600;color:#fff;border:none;cursor:pointer;font-family:inherit;transition:opacity 0.15s; }
-.dsh-btn:active { opacity:0.8; }
-.db-open { background:#1c1c1e; }
-.db-imgbb { background:rgba(52,199,89,0.2);color:#34c759; }
-.db-del { background:rgba(255,59,48,0.15);color:#ff3b30; }
-
-.dsh-close {
-position:absolute;top:60px;right:18px;
-width:30px;height:30px;background:rgba(28,28,30,0.9);
-border-radius:50%;display:flex;align-items:center;justify-content:center;
-font-size:13px;color:#fff;cursor:pointer;backdrop-filter:blur(8px);border:none;
-}
-
-/* ── TAB BAR ── */
-.tabbar {
-height:82px; background:rgba(18,18,20,0.95);
-backdrop-filter:blur(24px) saturate(180%);
-border-top:1px solid rgba(255,255,255,0.07);
-display:flex;align-items:flex-start;padding-top:10px;
-flex-shrink:0; z-index:100;
-}
-.ti { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:0 4px;transition:all 0.15s; }
-.ti:active { opacity:0.7; }
-.ti-icon { font-size:22px;transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
-.ti.active .ti-icon { transform:scale(1.1); }
-.ti-lbl { font-size:10px;font-weight:500;color:#636366;transition:color 0.15s; }
-.ti.active .ti-lbl { color:#34c759; }
-.ti-dot { width:4px;height:4px;border-radius:50%;background:#34c759;opacity:0;transition:opacity 0.15s;margin-top:-1px; }
-.ti.active .ti-dot { opacity:1; }
-
-/* FAB */
-.fab {
-position:absolute;bottom:94px;right:18px;
-width:52px;height:52px;border-radius:50%;
-background:linear-gradient(135deg,#34c759,#30d158);
-display:flex;align-items:center;justify-content:center;
-font-size:26px;cursor:pointer;border:none;color:#000;font-weight:700;
-box-shadow:0 4px 20px rgba(52,199,89,0.45);z-index:90;
-transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.2s;
-}
-.fab:active { transform:scale(0.88); box-shadow:0 2px 10px rgba(52,199,89,0.3); }
-
-/* Empty state */
-.empty { display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center; }
-.empty .ei { font-size:52px;margin-bottom:14px; }
-.empty h3 { font-size:20px;font-weight:700;color:#fff;margin-bottom:7px; }
-.empty p { font-size:14px;color:#636366;max-width:250px;line-height:1.5; }
-
-/* Toast */
-.toast {
-position:absolute;top:88px;left:50%;
-transform:translateX(-50%) translateY(-16px);
-background:rgba(44,44,46,0.96);color:#fff;
-padding:10px 18px;border-radius:24px;
-font-size:13px;font-weight:500;
-backdrop-filter:blur(20px);z-index:400;
-white-space:nowrap;opacity:0;pointer-events:none;
-transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1);
-}
-.toast.show { opacity:1;transform:translateX(-50%) translateY(0); }
-.toast.green { background:rgba(52,199,89,0.9);color:#000; }
-
-/* Uploading overlay */
-.uploading-overlay {
-position:absolute;inset:0;background:rgba(0,0,0,0.7);
-backdrop-filter:blur(10px);z-index:500;
-display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-border-radius:54px;
-}
-.uploading-overlay.show { display:flex; }
-.up-spinner {
-width:50px;height:50px;border:3px solid #2c2c2e;
-border-top-color:#34c759;border-radius:50%;
-animation:spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-.up-ol-txt { font-size:15px;font-weight:600;color:#fff; }
-.up-ol-sub { font-size:12px;color:#636366; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--safe-top:env(safe-area-inset-top,44px);--safe-bot:env(safe-area-inset-bottom,20px);--g:#34c759;--g2:#30d158;--card:#1c1c1e;--card2:#2c2c2e;--muted:#636366}
+html,body{height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;color:#fff;-webkit-font-smoothing:antialiased}
+.app{width:100%;height:100%;display:flex;flex-direction:column;background:#000;position:relative;overflow:hidden}
+.sv{display:none;flex-direction:column;flex:1;overflow:hidden;padding-top:var(--safe-top)}
+.sv.active{display:flex}
+.hd{padding:10px 20px 14px;flex-shrink:0;background:rgba(0,0,0,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.hd-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.hd h1{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.hd-sub{font-size:13px;color:var(--muted);margin-top:1px}
+.av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;flex-shrink:0}
+.spill{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:12px;padding:10px 14px}
+.spill input{background:none;border:none;outline:none;color:#fff;font-size:15px;flex:1;font-family:inherit}
+.spill input::placeholder{color:var(--muted)}
+.ab{margin:0 16px 10px;background:rgba(52,199,89,.1);border:1px solid rgba(52,199,89,.25);border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
+.ab-icon{font-size:18px}
+.ab h4{font-size:13px;font-weight:600;color:var(--g);margin-bottom:1px}
+.ab p{font-size:11px;color:var(--muted)}
+.ab-st{margin-left:auto;font-size:11px;font-weight:700;white-space:nowrap}
+.ab-st.ok{color:var(--g)}.ab-st.no{color:#ff9500}
+.chips{display:flex;gap:8px;padding:8px 16px 10px;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer;border:1.5px solid transparent;flex-shrink:0;transition:all .15s}
+.chip.on{background:#fff;color:#000;border-color:#fff}
+.chip.off{background:var(--card);color:var(--muted);border-color:var(--card2)}
+.feed{flex:1;overflow-y:auto;scrollbar-width:none;padding-bottom:16px}
+.feed::-webkit-scrollbar{display:none}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 12px 0}
+.pin{background:var(--card);border-radius:16px;overflow:hidden;cursor:pointer;position:relative;transition:transform .15s,opacity .15s;animation:fu .3s ease both}
+.pin:active{transform:scale(.95);opacity:.8}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.pin-img{width:100%;display:block;object-fit:cover;background:var(--card2)}
+.pin:nth-child(5n+1) .pin-img{height:170px}
+.pin:nth-child(5n+2) .pin-img{height:125px}
+.pin:nth-child(5n+3) .pin-img{height:155px}
+.pin:nth-child(5n+4) .pin-img{height:190px}
+.pin:nth-child(5n)   .pin-img{height:135px}
+.pin-noimg{height:95px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:var(--card2)}
+.pin-body{padding:9px 10px 11px}
+.pin-title{font-size:12px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:7px}
+.pin-foot{display:flex;align-items:center;justify-content:space-between}
+.sb{display:flex;align-items:center;gap:3px;padding:3px 7px;border-radius:7px;font-size:10px;font-weight:700}
+.sb-p{background:rgba(230,0,35,.15);color:#e60023}
+.sb-x{background:rgba(255,255,255,.08);color:#ccc}
+.sb-r{background:rgba(255,69,0,.15);color:#ff4500}
+.sb-m{background:rgba(52,199,89,.12);color:var(--g)}
+.pin-fav{position:absolute;top:8px;right:8px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:none;transition:transform .15s}
+.pin-fav:active{transform:scale(.8)}
+.pin-cloud{position:absolute;top:8px;left:8px;background:rgba(52,199,89,.88);border-radius:6px;font-size:9px;font-weight:700;color:#000;padding:2px 6px}
+.uscroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 18px 30px}
+.uscroll::-webkit-scrollbar{display:none}
+.dz{border:2px dashed var(--card2);border-radius:18px;padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:14px;position:relative;background:#0a0a0c;transition:all .2s}
+.dz.over{border-color:var(--g);background:rgba(52,199,89,.04)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.dz-icon{font-size:38px;margin-bottom:8px}
+.dz-title{font-size:16px;font-weight:600;margin-bottom:3px}
+.dz-sub{font-size:12px;color:var(--muted)}
+.uprev{width:100%;height:180px;object-fit:cover;border-radius:14px;margin-bottom:12px;display:none}
+.ustatus{text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px;display:none}
+.ustatus.ok{color:var(--g)}.ustatus.err{color:#ff3b30}
+.slbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;padding-left:2px}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.pbtn{background:var(--card);border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.pbtn:active{transform:scale(.92)}
+.pbtn.pp.sel{background:rgba(230,0,35,.1);border-color:#e60023}
+.pbtn.px.sel{background:rgba(255,255,255,.05);border-color:#ddd}
+.pbtn.pr.sel{background:rgba(255,69,0,.1);border-color:#ff4500}
+.pbtn.pm.sel{background:rgba(52,199,89,.1);border-color:var(--g)}
+.picon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.pip{background:rgba(230,0,35,.15)}.pix{background:rgba(255,255,255,.08)}.pir{background:rgba(255,69,0,.15)}.pim{background:rgba(52,199,89,.12)}
+.plbl{font-size:10px;font-weight:600;color:var(--muted);text-align:center}
+.isec{background:var(--card);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.irow{display:flex;align-items:center;padding:13px 14px;border-bottom:1px solid var(--card2);gap:10px}
+.irow:last-child{border-bottom:none}
+.irow label{font-size:15px;color:#fff;width:64px;flex-shrink:0}
+.irow input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:15px;font-family:inherit}
+.irow input::placeholder{color:#3a3a3c}
+.irow textarea{flex:1;background:none;border:none;outline:none;color:var(--muted);font-size:14px;font-family:inherit;resize:none}
+.savebtn{width:100%;background:linear-gradient(135deg,var(--g),var(--g2));border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:700;color:#000;font-family:inherit;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:4px}
+.savebtn:active{opacity:.85;transform:scale(.98)}
+.rhbtn{width:100%;background:linear-gradient(135deg,#1d9bf0,#0e76d0);border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:600;color:#fff;font-family:inherit;cursor:pointer;margin-bottom:14px}
+.rhbtn:active{opacity:.8}
+.sres{flex:1;overflow-y:auto;scrollbar-width:none;padding:8px 14px}
+.sres::-webkit-scrollbar{display:none}
+.ri{display:flex;align-items:center;gap:12px;padding:12px;background:var(--card);border-radius:14px;margin-bottom:8px;cursor:pointer;animation:fu .25s ease both}
+.ri:active{opacity:.7}
+.rth{width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.rph{width:52px;height:52px;border-radius:10px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ptop{padding:14px 20px 16px;text-align:center;flex-shrink:0}
+.pav{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 10px}
+.ptop h2{font-size:20px;font-weight:700;margin-bottom:3px}
+.ptop p{font-size:13px;color:var(--muted)}
+.strow{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--card2);border-radius:14px;overflow:hidden;margin:0 18px 16px;flex-shrink:0}
+.stcell{background:var(--card);padding:14px 8px;text-align:center}
+.stnum{font-size:22px;font-weight:700}
+.stlbl{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.pscroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 18px}
+.pscroll::-webkit-scrollbar{display:none}
+.sg{margin-bottom:16px}
+.sglbl{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;padding-left:2px}
+.sr{display:flex;align-items:center;padding:14px;background:var(--card);border-bottom:1px solid var(--card2);gap:12px;cursor:pointer;transition:opacity .15s}
+.sr:last-child{border-bottom:none;border-radius:0 0 14px 14px}
+.sr:first-child{border-radius:14px 14px 0 0}
+.sr:only-child{border-radius:14px}
+.sr:active{opacity:.7}
+.sri{font-size:16px;width:22px;text-align:center}
+.srt{font-size:15px;flex:1}
+.sra{font-size:12px;color:#3a3a3c}
+.akbox{background:var(--card);border-radius:14px;padding:16px;margin-bottom:16px}
+.akbox h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.akbox p{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.akrow{display:flex;gap:8px}
+.akrow input{flex:1;background:var(--card2);border:none;border-radius:10px;padding:10px 12px;color:#fff;font-size:14px;font-family:inherit;outline:none}
+.akrow input::placeholder{color:var(--muted)}
+.aksave{background:var(--g);border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;color:#000;font-family:inherit;cursor:pointer}
+.akst{margin-top:8px;font-size:11px;color:var(--muted)}
+.ds{position:absolute;inset:0;background:#000;z-index:300;transform:translateY(100%);transition:transform .4s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;overflow:hidden;padding-bottom:var(--safe-bot)}
+.ds.open{transform:translateY(0)}
+.ds-handle{width:36px;height:5px;background:#3a3a3c;border-radius:3px;margin:12px auto 0;flex-shrink:0}
+.ds-img{width:100%;max-height:250px;object-fit:cover;flex-shrink:0}
+.ds-body{flex:1;overflow-y:auto;padding:18px 20px 24px;scrollbar-width:none}
+.ds-body::-webkit-scrollbar{display:none}
+.ds-cloud{display:inline-flex;align-items:center;gap:5px;background:rgba(52,199,89,.15);color:var(--g);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;margin-bottom:10px}
+.ds-src{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:10px}
+.ds-title{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:8px}
+.ds-desc{font-size:14px;color:#8e8e93;line-height:1.6;margin-bottom:12px}
+.ds-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ds-tag{font-size:12px;padding:4px 10px;border-radius:20px;background:var(--card);color:var(--muted)}
+.ds-date{font-size:12px;color:#3a3a3c;margin-bottom:18px}
+.ds-btns{display:flex;gap:8px}
+.dsbtn{flex:1;padding:14px;border-radius:14px;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+.dsbtn:active{opacity:.8}
+.db-o{background:var(--card);color:#fff}
+.db-i{background:rgba(52,199,89,.18);color:var(--g)}
+.db-d{background:rgba(255,59,48,.15);color:#ff3b30}
+.ds-x{position:absolute;top:56px;right:18px;width:30px;height:30px;background:rgba(28,28,30,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;backdrop-filter:blur(8px);border:none;color:#fff}
+.fab{position:absolute;right:20px;bottom:calc(60px + var(--safe-bot) + 14px);width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--g2));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;cursor:pointer;border:none;color:#000;box-shadow:0 4px 20px rgba(52,199,89,.4);z-index:90;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.fab:active{transform:scale(.88)}
+.tbar{height:calc(60px + var(--safe-bot));padding-bottom:var(--safe-bot);background:rgba(18,18,20,.96);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding-top:10px;flex-shrink:0;z-index:100}
+.ti{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:0 4px}
+.ti:active{opacity:.7}
+.ti-icon{font-size:22px;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.ti.active .ti-icon{transform:scale(1.1)}
+.ti-lbl{font-size:10px;font-weight:500;color:var(--muted);transition:color .15s}
+.ti.active .ti-lbl{color:var(--g)}
+.ti-dot{width:4px;height:4px;border-radius:50%;background:var(--g);opacity:0;margin-top:-1px;transition:opacity .15s}
+.ti.active .ti-dot{opacity:1}
+.uov{position:absolute;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.uov.show{display:flex}
+.spin{width:48px;height:48px;border:3px solid var(--card2);border-top-color:var(--g);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.uov-t{font-size:15px;font-weight:600}
+.uov-s{font-size:12px;color:var(--muted)}
+.toast{position:absolute;top:calc(var(--safe-top) + 10px);left:50%;transform:translateX(-50%) translateY(-16px);background:rgba(44,44,46,.96);color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;font-weight:500;backdrop-filter:blur(20px);z-index:600;white-space:nowrap;opacity:0;pointer-events:none;transition:all .28s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.green{background:rgba(52,199,89,.92);color:#000}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;text-align:center}
+.empty .ei{font-size:50px;margin-bottom:14px}
+.empty h3{font-size:20px;font-weight:700;margin-bottom:7px}
+.empty p{font-size:14px;color:var(--muted);max-width:240px;line-height:1.5}
 </style>
-
 </head>
 <body>
-
-<div class="phone">
-  <div class="screen">
-    <div class="di"><div class="di-spk"></div><div class="di-cam"></div></div>
-    <div class="sbar">
-      <div class="sbar-time" id="clock">9:41</div>
-      <div class="sbar-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
-    </div>
-
-```
 <div class="app">
 
-  <!-- ══ HOME ══ -->
+  <!-- HOME -->
+
   <div class="sv active" id="sv-home">
     <div class="hd">
       <div class="hd-row">
-        <div>
-          <h1>SocialVault</h1>
-          <div class="hd-sub">Your permanent media library</div>
-        </div>
-        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#34c759,#30d158);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer" onclick="goTo('profile')">🌿</div>
+        <div><h1>SocialVault</h1><div class="hd-sub">Your permanent media library</div></div>
+        <div class="av" onclick="goTo('profile')">🌿</div>
       </div>
       <div class="spill" onclick="goTo('search')">
-        <span style="color:#636366;font-size:14px">🔍</span>
+        <span style="color:var(--muted);font-size:14px">🔍</span>
         <input type="text" placeholder="Search saved media..." readonly>
       </div>
     </div>
-
-    <div id="api-banner" class="api-banner" onclick="goTo('profile')">
+    <div class="ab" id="ab" onclick="goTo('profile')">
       <div class="ab-icon">🔑</div>
-      <div class="ab-text">
-        <h4>ImgBB API Key</h4>
-        <p id="api-banner-p">Tap to add your key — enables permanent media upload</p>
-      </div>
-      <div class="ab-status no" id="api-banner-status">Setup</div>
+      <div><h4>ImgBB API Key</h4><p id="ab-p">Tap to add — enables permanent uploads</p></div>
+      <div class="ab-st no" id="ab-st">Setup</div>
     </div>
-
-    <div class="chips" id="home-chips">
-      <div class="chip on" onclick="filterChip('all',this)">All</div>
-      <div class="chip off" onclick="filterChip('pinterest',this)">📌 Pinterest</div>
-      <div class="chip off" onclick="filterChip('twitter',this)">✖ X</div>
-      <div class="chip off" onclick="filterChip('reddit',this)">👾 Reddit</div>
-      <div class="chip off" onclick="filterChip('manual',this)">🌿 Other</div>
+    <div class="chips">
+      <div class="chip on"  onclick="setFilter('all',this)">All</div>
+      <div class="chip off" onclick="setFilter('pinterest',this)">📌 Pinterest</div>
+      <div class="chip off" onclick="setFilter('twitter',this)">✖ X</div>
+      <div class="chip off" onclick="setFilter('reddit',this)">👾 Reddit</div>
+      <div class="chip off" onclick="setFilter('manual',this)">🌿 Other</div>
     </div>
-
-    <div class="feed" id="home-feed">
-      <div class="mgrid" id="mgrid"></div>
-    </div>
+    <div class="feed" id="home-feed"></div>
   </div>
 
-  <!-- ══ SEARCH ══ -->
+  <!-- SEARCH -->
+
   <div class="sv" id="sv-search">
     <div class="hd">
       <h1>Search</h1>
       <div style="margin-top:12px" class="spill">
-        <span style="color:#636366;font-size:14px">🔍</span>
+        <span style="color:var(--muted);font-size:14px">🔍</span>
         <input type="text" id="srch" placeholder="Titles, tags, platform..." oninput="doSearch()">
       </div>
     </div>
-    <div class="feed" id="srch-results">
-      <div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search across all your saved media</p></div>
+    <div class="sres" id="sres">
+      <div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search by title, tags or platform</p></div>
     </div>
   </div>
 
-  <!-- ══ UPLOAD / SAVE ══ -->
-  <div class="sv" id="sv-upload">
-    <div class="hd">
-      <h1>Save Media</h1>
-      <div class="hd-sub">Upload or link — stored permanently on ImgBB</div>
-    </div>
-    <div class="upload-scroll">
+  <!-- UPLOAD -->
 
-      <!-- Drop zone -->
-      <div class="dropzone" id="dropzone">
-        <input type="file" id="file-input" accept="image/*,video/*" onchange="handleFile(this.files[0])">
+  <div class="sv" id="sv-upload">
+    <div class="hd"><h1>Save Media</h1><div class="hd-sub">Upload or link — stored on ImgBB permanently</div></div>
+    <div class="uscroll">
+      <div class="dz" id="dz">
+        <input type="file" id="file-in" accept="image/*,video/*" onchange="handleFile(this.files[0])">
         <div class="dz-icon">📸</div>
         <div class="dz-title">Tap to pick a photo or video</div>
-        <div class="dz-sub">JPG, PNG, GIF, MP4 · Uploads to ImgBB permanently</div>
+        <div class="dz-sub">Uploads permanently to ImgBB free cloud</div>
       </div>
-
-      <img id="up-preview" class="up-preview" alt="preview">
-      <div class="progress-wrap" id="prog-wrap"><div class="progress-bar" id="prog-bar"></div></div>
-      <div class="up-status" id="up-status"></div>
-
-      <!-- OR URL -->
-      <div class="sec-lbl">— OR paste image URL to re-host —</div>
-      <div class="ios-sec" style="margin-bottom:16px">
-        <div class="ios-row">
-          <label>URL</label>
-          <input type="url" id="f-imgurl" placeholder="https://i.imgur.com/...">
-        </div>
+      <img id="uprev" class="uprev" alt="">
+      <div class="ustatus" id="ustatus"></div>
+      <div class="slbl">— OR paste image URL to re-host —</div>
+      <div class="isec" style="margin-bottom:10px">
+        <div class="irow"><label>URL</label><input type="url" id="f-imgurl" placeholder="https://..."></div>
       </div>
-      <button class="save-btn" style="background:linear-gradient(135deg,#1d9bf0,#0e76d0);color:#fff;margin-bottom:16px;font-size:14px;padding:13px" onclick="reHostUrl()">⬆ Re-host URL to ImgBB permanently</button>
-
-      <!-- Platform -->
-      <div class="sec-lbl">Platform Source</div>
-      <div class="plat-grid" id="plat-grid">
-        <div class="plat-btn pb-p" id="pb-pinterest" onclick="selPlat('pinterest')">
-          <div class="plat-icon pi-p">📌</div><div class="plat-lbl">Pinterest</div>
-        </div>
-        <div class="plat-btn pb-x" id="pb-twitter" onclick="selPlat('twitter')">
-          <div class="plat-icon pi-x">✖</div><div class="plat-lbl">X / Twitter</div>
-        </div>
-        <div class="plat-btn pb-r" id="pb-reddit" onclick="selPlat('reddit')">
-          <div class="plat-icon pi-r">👾</div><div class="plat-lbl">Reddit</div>
-        </div>
-        <div class="plat-btn pb-m" id="pb-manual" onclick="selPlat('manual')">
-          <div class="plat-icon pi-m">🌿</div><div class="plat-lbl">Other</div>
-        </div>
+      <button class="rhbtn" onclick="reHostUrl()">⬆ Re-host this URL to ImgBB permanently</button>
+      <div class="slbl">Platform Source</div>
+      <div class="pgrid">
+        <div class="pbtn pp" id="pb-pinterest" onclick="selP('pinterest')"><div class="picon pip">📌</div><div class="plbl">Pinterest</div></div>
+        <div class="pbtn px" id="pb-twitter"   onclick="selP('twitter')">  <div class="picon pix">✖</div><div class="plbl">X / Twitter</div></div>
+        <div class="pbtn pr" id="pb-reddit"    onclick="selP('reddit')">   <div class="picon pir">👾</div><div class="plbl">Reddit</div></div>
+        <div class="pbtn pm" id="pb-manual"    onclick="selP('manual')">   <div class="picon pim">🌿</div><div class="plbl">Other</div></div>
       </div>
-
-      <div class="sec-lbl">Details</div>
-      <div class="ios-sec">
-        <div class="ios-row"><label>Title</label><input type="text" id="f-title" placeholder="Add a title"></div>
-        <div class="ios-row"><label>Link</label><input type="url" id="f-url" placeholder="Original post URL"></div>
+      <div class="slbl">Details</div>
+      <div class="isec">
+        <div class="irow"><label>Title</label><input type="text" id="f-title" placeholder="Add a title"></div>
+        <div class="irow"><label>Link</label> <input type="url"  id="f-url"   placeholder="Original post URL"></div>
       </div>
-
-      <div class="sec-lbl">Notes & Tags</div>
-      <div class="ios-sec">
-        <div class="ios-row"><textarea id="f-desc" rows="2" placeholder="Notes about this post..."></textarea></div>
-        <div class="ios-row"><label>Tags</label><input type="text" id="f-tags" placeholder="ui, dark, design..."></div>
+      <div class="slbl">Notes &amp; Tags</div>
+      <div class="isec">
+        <div class="irow"><textarea id="f-desc" rows="2" placeholder="Notes..."></textarea></div>
+        <div class="irow"><label>Tags</label><input type="text" id="f-tags" placeholder="ui, dark, design..."></div>
       </div>
-
-      <button class="save-btn" id="final-save-btn" onclick="finalSave()">Save to Vault</button>
-      <div style="height:30px"></div>
+      <button class="savebtn" onclick="finalSave()">Save to Vault</button>
+      <div style="height:24px"></div>
     </div>
   </div>
 
-  <!-- ══ PROFILE ══ -->
+  <!-- PROFILE -->
+
   <div class="sv" id="sv-profile">
-    <div class="prof-hd">
-      <div class="prof-av">🌿</div>
-      <h2>My Vault</h2>
-      <p>Permanent media collection</p>
+    <div class="ptop">
+      <div class="pav">🌿</div>
+      <h2>My Vault</h2><p>Permanent media collection</p>
     </div>
-
-    <div class="stats-row">
-      <div class="stat-cell"><div class="stat-num" id="st-total">0</div><div class="stat-lbl">Saved</div></div>
-      <div class="stat-cell"><div class="stat-num" id="st-cloud">0</div><div class="stat-lbl">On ImgBB</div></div>
-      <div class="stat-cell"><div class="stat-num" id="st-fav">0</div><div class="stat-lbl">Favorites</div></div>
+    <div class="strow">
+      <div class="stcell"><div class="stnum" id="st-total">0</div><div class="stlbl">Saved</div></div>
+      <div class="stcell"><div class="stnum" id="st-cloud">0</div><div class="stlbl">On ImgBB</div></div>
+      <div class="stcell"><div class="stnum" id="st-fav">0</div><div class="stlbl">Favorites</div></div>
     </div>
-
-    <div class="prof-scroll">
-
-      <!-- API Key -->
-      <div class="api-key-section">
+    <div class="pscroll">
+      <div class="akbox">
         <h4>🔑 ImgBB API Key</h4>
-        <p>Get a free key at <strong style="color:#34c759">imgbb.com/api</strong> — enables permanent media uploads. Your images never expire.</p>
-        <div class="api-input-row">
-          <input type="password" id="api-key-input" placeholder="Paste your ImgBB API key..." autocomplete="off">
-          <button class="api-save-btn" onclick="saveApiKey()">Save</button>
+        <p>Get a free key at <strong style="color:var(--g)">imgbb.com/api</strong> — images stored permanently, never expire.</p>
+        <div class="akrow">
+          <input type="password" id="ak-in" placeholder="Paste your key..." autocomplete="off">
+          <button class="aksave" onclick="saveKey()">Save</button>
         </div>
-        <div style="margin-top:8px;font-size:11px;color:#636366" id="api-key-status">
-          No key saved yet
-        </div>
+        <div class="akst" id="ak-st">No key saved yet</div>
       </div>
-
       <div class="sg">
-        <div class="sg-lbl">Cloud & Backup</div>
-        <div class="ios-sec">
-          <div class="srow" onclick="cloudSync()"><span class="srow-icon">☁️</span><span class="srow-title">Sync vault to JSONBin</span><span class="srow-arrow">›</span></div>
-          <div class="srow" onclick="showRestore()"><span class="srow-icon">⬇️</span><span class="srow-title">Restore from cloud</span><span class="srow-arrow">›</span></div>
-          <div class="srow" onclick="exportJSON()"><span class="srow-icon">📤</span><span class="srow-title">Export JSON</span><span class="srow-arrow">›</span></div>
-          <div class="srow" onclick="showImport()"><span class="srow-icon">📥</span><span class="srow-title">Import JSON</span><span class="srow-arrow">›</span></div>
+        <div class="sglbl">Cloud &amp; Backup</div>
+        <div class="isec">
+          <div class="sr" onclick="cloudSync()"> <span class="sri">☁️</span><span class="srt">Sync to JSONBin</span>      <span class="sra">›</span></div>
+          <div class="sr" onclick="showRestore()"><span class="sri">⬇️</span><span class="srt">Restore from cloud</span>   <span class="sra">›</span></div>
+          <div class="sr" onclick="exportJSON()"> <span class="sri">📤</span><span class="srt">Export JSON</span>           <span class="sra">›</span></div>
+          <div class="sr" onclick="showImport()"> <span class="sri">📥</span><span class="srt">Import JSON</span>           <span class="sra">›</span></div>
         </div>
       </div>
-
       <div class="sg">
-        <div class="sg-lbl">Data</div>
-        <div class="ios-sec">
-          <div class="srow" onclick="clearAll()"><span class="srow-icon">🗑️</span><span class="srow-title" style="color:#ff3b30">Clear All Posts</span><span class="srow-arrow">›</span></div>
+        <div class="sglbl">Data</div>
+        <div class="isec">
+          <div class="sr" onclick="clearAll()"><span class="sri">🗑️</span><span class="srt" style="color:#ff3b30">Clear All Posts</span><span class="sra">›</span></div>
         </div>
       </div>
-
       <div style="height:20px"></div>
     </div>
   </div>
 
   <!-- FAB -->
-  <button class="fab" id="fab" onclick="goTo('upload')">＋</button>
+
+<button class="fab" id="fab" onclick="goTo('upload')">＋</button>
 
   <!-- TAB BAR -->
-  <div class="tabbar">
-    <div class="ti active" id="ti-home" onclick="goTo('home')">
-      <div class="ti-icon">🏠</div><div class="ti-lbl">Home</div><div class="ti-dot"></div>
-    </div>
-    <div class="ti" id="ti-search" onclick="goTo('search')">
-      <div class="ti-icon">🔍</div><div class="ti-lbl">Search</div><div class="ti-dot"></div>
-    </div>
-    <div class="ti" id="ti-upload" onclick="goTo('upload')">
-      <div class="ti-icon">📸</div><div class="ti-lbl">Upload</div><div class="ti-dot"></div>
-    </div>
-    <div class="ti" id="ti-profile" onclick="goTo('profile')">
-      <div class="ti-icon">👤</div><div class="ti-lbl">Profile</div><div class="ti-dot"></div>
+
+  <div class="tbar">
+    <div class="ti active" id="ti-home"    onclick="goTo('home')"   ><div class="ti-icon">🏠</div><div class="ti-lbl">Home</div>  <div class="ti-dot"></div></div>
+    <div class="ti"        id="ti-search"  onclick="goTo('search')" ><div class="ti-icon">🔍</div><div class="ti-lbl">Search</div><div class="ti-dot"></div></div>
+    <div class="ti"        id="ti-upload"  onclick="goTo('upload')" ><div class="ti-icon">📸</div><div class="ti-lbl">Upload</div><div class="ti-dot"></div></div>
+    <div class="ti"        id="ti-profile" onclick="goTo('profile')"><div class="ti-icon">👤</div><div class="ti-lbl">Profile</div><div class="ti-dot"></div></div>
+  </div>
+
+  <!-- DETAIL SHEET -->
+
+  <div class="ds" id="ds">
+    <div class="ds-handle"></div>
+    <button class="ds-x" onclick="closeSheet()">✕</button>
+    <img id="ds-img" class="ds-img" src="" alt="" style="display:none">
+    <div class="ds-body">
+      <div id="ds-cloud" class="ds-cloud" style="display:none">☁️ Stored on ImgBB</div>
+      <div id="ds-src"   class="ds-src"></div>
+      <div id="ds-title" class="ds-title"></div>
+      <div id="ds-desc"  class="ds-desc"></div>
+      <div id="ds-tags"  class="ds-tags"></div>
+      <div id="ds-date"  class="ds-date"></div>
+      <div class="ds-btns">
+        <button class="dsbtn db-o" onclick="openPost()">Open Link 🔗</button>
+        <button class="dsbtn db-i" id="ds-ibb" onclick="openImgBB()" style="display:none">ImgBB ☁️</button>
+        <button class="dsbtn db-d" onclick="deletePost()">Delete</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- ══ DETAIL SHEET ══ -->
-<div class="dsheet" id="dsheet">
-  <div class="dsh-handle"></div>
-  <button class="dsh-close" onclick="closeSheet()">✕</button>
-  <img id="dsh-img" class="dsh-img" src="" alt="" style="display:none">
-  <div class="dsh-body">
-    <div id="dsh-cloud" class="dsh-cloud-badge" style="display:none">☁️ Stored on ImgBB</div>
-    <div id="dsh-src" class="dsh-src"></div>
-    <div id="dsh-title" class="dsh-title"></div>
-    <div id="dsh-desc" class="dsh-desc"></div>
-    <div id="dsh-tags" class="dsh-tags"></div>
-    <div id="dsh-date" class="dsh-date"></div>
-    <div class="dsh-btns">
-      <button class="dsh-btn db-open" onclick="openPost()">Open Link 🔗</button>
-      <button class="dsh-btn db-imgbb" id="dsh-imgbb-btn" onclick="openImgBB()">ImgBB ☁️</button>
-      <button class="dsh-btn db-del" onclick="deletePost()">Delete</button>
-    </div>
+  <!-- OVERLAY -->
+
+  <div class="uov" id="uov">
+    <div class="spin"></div>
+    <div class="uov-t" id="uov-t">Uploading...</div>
+    <div class="uov-s">Stored permanently on free cloud</div>
   </div>
+
+  <!-- TOAST -->
+
+  <div class="toast" id="toast"></div>
+
 </div>
-
-<!-- Uploading overlay -->
-<div class="uploading-overlay" id="up-overlay">
-  <div class="up-spinner"></div>
-  <div class="up-ol-txt" id="up-ol-txt">Uploading to ImgBB...</div>
-  <div class="up-ol-sub">Your media will be stored permanently</div>
-</div>
-
-<!-- Toast -->
-<div class="toast" id="toast"></div>
-```
-
-  </div>
-</div>
-
 <script>
-// ─── STATE ───
-let posts   = JSON.parse(localStorage.getItem('sv3_posts') || '[]');
-let apiKey  = localStorage.getItem('sv3_imgbb_key') || '';
-let filter  = 'all';
-let selPlat = '';
-let curId   = null;
-let stagedImgUrl = '';   // ImgBB URL after upload
-let stagedImgDel = '';   // ImgBB delete URL
+var posts   = JSON.parse(localStorage.getItem('sv_posts') || '[]');
+var apiKey  = localStorage.getItem('sv_key') || '';
+var curF    = 'all';
+var curP    = '';
+var curId   = null;
+var imgUrl  = '';
+var imgDel  = '';
 
-// ─── INIT ───
 if (!posts.length) loadDemo();
 renderFeed();
 updateStats();
-updateApiBanner();
-updateClock();
-setInterval(updateClock, 15000);
-
-// Load API key input
+updateBanner();
 if (apiKey) {
-  document.getElementById('api-key-input').value = apiKey;
-  document.getElementById('api-key-status').textContent = '✅ Key saved — ImgBB uploads active';
-  document.getElementById('api-key-status').style.color = '#34c759';
+document.getElementById(‘ak-in’).value = apiKey;
+document.getElementById(‘ak-st’).textContent = ‘✅ Key saved — ImgBB active’;
+document.getElementById(‘ak-st’).style.color = ‘#34c759’;
 }
 
-function persist() {
-  localStorage.setItem('sv3_posts', JSON.stringify(posts));
-  updateStats();
+function savePosts() { localStorage.setItem(‘sv_posts’, JSON.stringify(posts)); updateStats(); }
+
+function goTo(s) {
+document.querySelectorAll(’.sv’).forEach(function(v){ v.classList.remove(‘active’); });
+document.querySelectorAll(’.ti’).forEach(function(t){ t.classList.remove(‘active’); });
+document.getElementById(‘sv-’+s).classList.add(‘active’);
+var ti = document.getElementById(‘ti-’+s); if (ti) ti.classList.add(‘active’);
+document.getElementById(‘fab’).style.display = s===‘home’ ? ‘flex’ : ‘none’;
+if (s===‘home’)    renderFeed();
+if (s===‘upload’)  resetUp();
+if (s===‘profile’) updateStats();
 }
 
-function updateClock() {
-  const n = new Date(), h = String(n.getHours()).padStart(2,'0'), m = String(n.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent = `${h}:${m}`;
+function saveKey() {
+var k = document.getElementById(‘ak-in’).value.trim();
+if (!k) { toast(‘Paste your ImgBB key first’); return; }
+apiKey = k; localStorage.setItem(‘sv_key’, k);
+document.getElementById(‘ak-st’).textContent = ‘✅ Key saved — ImgBB active’;
+document.getElementById(‘ak-st’).style.color = ‘#34c759’;
+updateBanner(); toast(‘API key saved!’, true);
 }
 
-// ─── API KEY ───
-function saveApiKey() {
-  const k = document.getElementById('api-key-input').value.trim();
-  if (!k) { toast('Paste your ImgBB API key first'); return; }
-  apiKey = k;
-  localStorage.setItem('sv3_imgbb_key', k);
-  document.getElementById('api-key-status').textContent = '✅ Key saved — ImgBB uploads active';
-  document.getElementById('api-key-status').style.color = '#34c759';
-  updateApiBanner();
-  toast('API key saved ✅', true);
+function updateBanner() {
+var s = document.getElementById(‘ab-st’), p = document.getElementById(‘ab-p’);
+if (apiKey) { s.textContent=‘✅ Active’; s.className=‘ab-st ok’; p.textContent=‘ImgBB enabled — media stored permanently’; }
+else        { s.textContent=‘Setup’;    s.className=‘ab-st no’; p.textContent=‘Tap to add — enables permanent uploads’; }
 }
 
-function updateApiBanner() {
-  const s = document.getElementById('api-banner-status');
-  const p = document.getElementById('api-banner-p');
-  if (apiKey) {
-    s.textContent = '✅ Active'; s.className = 'ab-status ok';
-    p.textContent = 'ImgBB uploads enabled — media stored permanently';
-  } else {
-    s.textContent = 'Setup'; s.className = 'ab-status no';
-    p.textContent = 'Tap to add your key — enables permanent media upload';
-  }
+function selP(p) {
+curP = p;
+document.querySelectorAll(’.pbtn’).forEach(function(b){ b.classList.remove(‘sel’); });
+document.getElementById(‘pb-’+p).classList.add(‘sel’);
 }
 
-// ─── NAV ───
-function goTo(screen) {
-  document.querySelectorAll('.sv').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.ti').forEach(t => t.classList.remove('active'));
-  document.getElementById(`sv-${screen}`).classList.add('active');
-  const ti = document.getElementById(`ti-${screen}`);
-  if (ti) ti.classList.add('active');
-  document.getElementById('fab').style.display = screen === 'home' ? 'flex' : 'none';
-  if (screen === 'home') renderFeed();
-  if (screen === 'upload') resetUpload();
-  if (screen === 'profile') updateStats();
-}
-
-function resetUpload() {
-  stagedImgUrl = ''; stagedImgDel = '';
-  selPlat = '';
-  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('sel'));
-  ['f-title','f-url','f-desc','f-tags','f-imgurl'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('up-preview').style.display = 'none';
-  document.getElementById('prog-wrap').style.display = 'none';
-  document.getElementById('up-status').style.display = 'none';
-  document.getElementById('file-input').value = '';
-}
-
-// ─── PLATFORM SELECT ───
-function selPlat(p) {
-  selPlat = p;
-  const map = { pinterest:'pb-p', twitter:'pb-x', reddit:'pb-r', manual:'pb-m' };
-  document.querySelectorAll('.plat-btn').forEach(b => b.classList.remove('sel'));
-  document.getElementById(`pb-${p}`).classList.add('sel');
-}
-
-// ─── FILE HANDLING ───
 function handleFile(file) {
-  if (!file) return;
-  if (!apiKey) {
-    toast('Add your ImgBB API key first (Profile tab)');
-    goTo('profile');
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prev = document.getElementById('up-preview');
-    prev.src = e.target.result;
-    prev.style.display = 'block';
-    uploadToImgBB(file);
-  };
-  reader.readAsDataURL(file);
+if (!file) return;
+if (!apiKey) { toast(‘Add ImgBB API key in Profile first’); goTo(‘profile’); return; }
+var reader = new FileReader();
+reader.onload = function(e) {
+var pr = document.getElementById(‘uprev’); pr.src = e.target.result; pr.style.display = ‘block’;
+uploadIBB(file);
+};
+reader.readAsDataURL(file);
 }
 
-// Drag & drop
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
+var dz = document.getElementById(‘dz’);
+dz.addEventListener(‘dragover’,  function(e){ e.preventDefault(); dz.classList.add(‘over’); });
+dz.addEventListener(‘dragleave’, function(){  dz.classList.remove(‘over’); });
+dz.addEventListener(‘drop’, function(e){
+e.preventDefault(); dz.classList.remove(‘over’);
+var f = e.dataTransfer.files[0]; if (f) handleFile(f);
 });
 
-// ─── IMGBB UPLOAD (file) ───
-async function uploadToImgBB(file) {
-  showUploadOverlay('Uploading to ImgBB...');
-  const formData = new FormData();
-  formData.append('image', file);
-  try {
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-      method: 'POST', body: formData
-    });
-    const data = await res.json();
-    hideUploadOverlay();
-    if (data.success) {
-      stagedImgUrl = data.data.url;
-      stagedImgDel = data.data.delete_url || '';
-      setStatus('✅ Uploaded permanently to ImgBB!', 'ok');
-      toast('Image uploaded to ImgBB ✅', true);
-    } else {
-      setStatus('❌ Upload failed: ' + (data.error?.message || 'Unknown error'), 'err');
-      toast('Upload failed — check your API key');
-    }
-  } catch(e) {
-    hideUploadOverlay();
-    setStatus('❌ Network error — check connection', 'err');
-    toast('Upload failed');
-  }
+async function uploadIBB(file) {
+showOv(‘Uploading to ImgBB…’);
+var fd = new FormData(); fd.append(‘image’, file);
+try {
+var r = await fetch(‘https://api.imgbb.com/1/upload?key=’+apiKey, {method:‘POST’,body:fd});
+var d = await r.json(); hideOv();
+if (d.success) {
+imgUrl = d.data.url; imgDel = d.data.delete_url||’’;
+setUSt(‘✅ Uploaded permanently to ImgBB!’,‘ok’); toast(‘Uploaded ✅’,true);
+} else { setUSt(’❌ ’+(d.error&&d.error.message||‘Upload failed’),‘err’); toast(‘Upload failed — check API key’); }
+} catch(e) { hideOv(); setUSt(‘❌ Network error’,‘err’); toast(‘Upload failed’); }
 }
 
-// ─── IMGBB RE-HOST (URL) ───
 async function reHostUrl() {
-  const url = document.getElementById('f-imgurl').value.trim();
-  if (!url) { toast('Paste an image URL first'); return; }
-  if (!apiKey) { toast('Add your ImgBB API key first'); goTo('profile'); return; }
-
-  showUploadOverlay('Re-hosting image...');
-  const formData = new FormData();
-  formData.append('image', url); // ImgBB accepts URLs too
-  try {
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-      method: 'POST', body: formData
-    });
-    const data = await res.json();
-    hideUploadOverlay();
-    if (data.success) {
-      stagedImgUrl = data.data.url;
-      stagedImgDel = data.data.delete_url || '';
-      const prev = document.getElementById('up-preview');
-      prev.src = stagedImgUrl; prev.style.display = 'block';
-      setStatus('✅ Image re-hosted permanently on ImgBB!', 'ok');
-      toast('Re-hosted on ImgBB ✅', true);
-    } else {
-      setStatus('❌ ' + (data.error?.message || 'Upload failed'), 'err');
-      toast('Re-host failed');
-    }
-  } catch(e) {
-    hideUploadOverlay();
-    toast('Network error');
-  }
+var url = document.getElementById(‘f-imgurl’).value.trim();
+if (!url) { toast(‘Paste an image URL first’); return; }
+if (!apiKey) { toast(‘Add ImgBB API key in Profile first’); goTo(‘profile’); return; }
+showOv(‘Re-hosting image…’);
+var fd = new FormData(); fd.append(‘image’, url);
+try {
+var r = await fetch(‘https://api.imgbb.com/1/upload?key=’+apiKey, {method:‘POST’,body:fd});
+var d = await r.json(); hideOv();
+if (d.success) {
+imgUrl = d.data.url; imgDel = d.data.delete_url||’’;
+var pr = document.getElementById(‘uprev’); pr.src = imgUrl; pr.style.display = ‘block’;
+setUSt(‘✅ Re-hosted permanently on ImgBB!’,‘ok’); toast(‘Re-hosted ✅’,true);
+} else { setUSt(’❌ ’+(d.error&&d.error.message||‘Failed’),‘err’); toast(‘Re-host failed’); }
+} catch(e) { hideOv(); toast(‘Network error’); }
 }
 
-function setStatus(msg, type) {
-  const el = document.getElementById('up-status');
-  el.textContent = msg; el.className = `up-status ${type}`; el.style.display = 'block';
+function setUSt(m,t){ var e=document.getElementById(‘ustatus’); e.textContent=m; e.className=’ustatus ’+t; e.style.display=‘block’; }
+function showOv(m){ document.getElementById(‘uov-t’).textContent=m; document.getElementById(‘uov’).classList.add(‘show’); }
+function hideOv(){ document.getElementById(‘uov’).classList.remove(‘show’); }
+
+function resetUp() {
+imgUrl=’’; imgDel=’’; curP=’’;
+document.querySelectorAll(’.pbtn’).forEach(function(b){ b.classList.remove(‘sel’); });
+[‘f-title’,‘f-url’,‘f-desc’,‘f-tags’,‘f-imgurl’].forEach(function(id){ document.getElementById(id).value=’’; });
+document.getElementById(‘uprev’).style.display=‘none’;
+document.getElementById(‘ustatus’).style.display=‘none’;
+document.getElementById(‘file-in’).value=’’;
 }
 
-function showUploadOverlay(msg) {
-  document.getElementById('up-ol-txt').textContent = msg;
-  document.getElementById('up-overlay').classList.add('show');
-}
-function hideUploadOverlay() {
-  document.getElementById('up-overlay').classList.remove('show');
-}
-
-// ─── FINAL SAVE ───
 function finalSave() {
-  const title = document.getElementById('f-title').value.trim();
-  const url   = document.getElementById('f-url').value.trim();
-  const desc  = document.getElementById('f-desc').value.trim();
-  const tags  = document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-
-  if (!title) { toast('Please add a title'); return; }
-  if (!selPlat) { toast('Select a platform source'); return; }
-
-  // Use staged ImgBB URL if available, else fall back to pasted URL
-  const imgSrc = stagedImgUrl || document.getElementById('f-imgurl').value.trim();
-
-  posts.unshift({
-    id: 'p' + Date.now() + Math.random().toString(36).slice(2,5),
-    title, url, img: imgSrc,
-    imgbbDel: stagedImgDel,
-    onCloud: !!stagedImgUrl,
-    desc, tags, source: selPlat, fav: false,
-    date: new Date().toISOString()
-  });
-
-  persist();
-  toast('Saved to vault ✅', true);
-  goTo('home');
+var title = document.getElementById(‘f-title’).value.trim();
+var url   = document.getElementById(‘f-url’).value.trim();
+var desc  = document.getElementById(‘f-desc’).value.trim();
+var tags  = document.getElementById(‘f-tags’).value.split(’,’).map(function(t){return t.trim();}).filter(Boolean);
+if (!title){ toast(‘Please add a title’); return; }
+if (!curP) { toast(‘Select a platform source’); return; }
+var src = imgUrl || document.getElementById(‘f-imgurl’).value.trim();
+posts.unshift({
+id:‘p’+Date.now()+Math.random().toString(36).slice(2,5),
+title:title,url:url,img:src,imgbbDel:imgDel,
+onCloud:!!imgUrl,desc:desc,tags:tags,
+source:curP,fav:false,date:new Date().toISOString()
+});
+savePosts(); toast(‘Saved to vault ✅’,true); goTo(‘home’);
 }
 
-// ─── RENDER ───
 function renderFeed() {
-  const container = document.getElementById('home-feed');
-  let filtered = filter === 'all' ? posts : posts.filter(p => p.source === filter);
-
-  if (!filtered.length) {
-    container.innerHTML = `<div class="empty"><div class="ei">📭</div><h3>Nothing here yet</h3><p>Tap ＋ to upload or save your first media</p></div>`;
-    return;
-  }
-
-  container.innerHTML = `<div class="mgrid" id="mgrid">${filtered.map((p,i) => pinCard(p,i)).join('')}</div>`;
+var feed = document.getElementById(‘home-feed’);
+var list = curF===‘all’ ? posts : posts.filter(function(p){return p.source===curF;});
+if (!list.length) {
+feed.innerHTML=’<div class="empty"><div class="ei">📭</div><h3>Nothing here yet</h3><p>Tap ＋ to upload or save your first media</p></div>’;
+return;
+}
+feed.innerHTML=’<div class="mgrid">’+list.map(function(p,i){return pinCard(p,i);}).join(’’)+’</div>’;
 }
 
-function pinCard(p, i) {
-  const si = { pinterest:'📌', twitter:'✖', reddit:'👾', manual:'🌿' };
-  const sc = { pinterest:'sb-p', twitter:'sb-x', reddit:'sb-r', manual:'sb-m' };
-  const imgEl = p.img
-    ? `<img class="pin-img" src="${x(p.img)}" loading="lazy" onerror="this.style.display='none'">`
-    : `<div class="pin-noimg">${si[p.source]||'🌿'}</div>`;
-  return `
-    <div class="pin" onclick="openDetail('${p.id}')" style="animation-delay:${i*0.04}s">
-      ${imgEl}
-      ${p.onCloud ? `<div class="pin-cloud">☁ ImgBB</div>` : ''}
-      <button class="pin-fav" onclick="event.stopPropagation();toggleFav('${p.id}',this)">${p.fav?'❤️':'🤍'}</button>
-      <div class="pin-body">
-        <div class="pin-title">${x(p.title||'Untitled')}</div>
-        <div class="pin-foot">
-          <span class="src-badge ${sc[p.source]||'sb-m'}">${si[p.source]||'🌿'} ${p.source||'other'}</span>
-        </div>
-      </div>
-    </div>`;
+function pinCard(p,i) {
+var si={pinterest:‘📌’,twitter:‘✖’,reddit:‘👾’,manual:‘🌿’};
+var sc={pinterest:‘sb-p’,twitter:‘sb-x’,reddit:‘sb-r’,manual:‘sb-m’};
+var ie = p.img
+? ‘<img class="pin-img" src="'+xe(p.img)+'" loading="lazy" onerror="this.style.display=\'none\'">’
+: ‘<div class="pin-noimg">’+(si[p.source]||‘🌿’)+’</div>’;
+return ‘<div class="pin" onclick="openDetail(\''+p.id+'\')" style="animation-delay:'+(i*0.04)+'s">’
++ie+(p.onCloud?’<div class="pin-cloud">☁ ImgBB</div>’:’’)
++’<button class="pin-fav" onclick="event.stopPropagation();toggleFav(\''+p.id+'\',this)">’+(p.fav?‘❤️’:‘🤍’)+’</button>’
++’<div class="pin-body"><div class="pin-title">’+xe(p.title||‘Untitled’)+’</div>’
++’<div class="pin-foot"><span class="sb '+(sc[p.source]||'sb-m')+'">’+(si[p.source]||‘🌿’)+’ ‘+(p.source||‘other’)+’</span></div>’
++’</div></div>’;
 }
 
-// ─── FILTER ───
-function filterChip(f, el) {
-  filter = f;
-  document.querySelectorAll('.chip').forEach(c => { c.classList.remove('on'); c.classList.add('off'); });
-  el.classList.add('on'); el.classList.remove('off');
-  renderFeed();
+function setFilter(f,el) {
+curF=f;
+document.querySelectorAll(’.chip’).forEach(function(c){c.classList.remove(‘on’);c.classList.add(‘off’);});
+el.classList.add(‘on’); el.classList.remove(‘off’);
+renderFeed();
 }
 
-// ─── DETAIL SHEET ───
 function openDetail(id) {
-  const p = posts.find(x => x.id === id);
-  if (!p) return;
-  curId = id;
-  const si = { pinterest:{l:'📌 Pinterest',c:'#e60023',bg:'rgba(230,0,35,0.15)'},
-               twitter:{l:'✖ X / Twitter',c:'#1d9bf0',bg:'rgba(29,155,240,0.15)'},
-               reddit:{l:'👾 Reddit',c:'#ff4500',bg:'rgba(255,69,0,0.15)'},
-               manual:{l:'🌿 Other',c:'#34c759',bg:'rgba(52,199,89,0.15)'} };
-  const s = si[p.source] || si.manual;
-
-  const imgEl = document.getElementById('dsh-img');
-  if (p.img) { imgEl.src = p.img; imgEl.style.display = 'block'; }
-  else imgEl.style.display = 'none';
-
-  const cb = document.getElementById('dsh-cloud');
-  cb.style.display = p.onCloud ? 'inline-flex' : 'none';
-
-  const srcEl = document.getElementById('dsh-src');
-  srcEl.textContent = s.l;
-  srcEl.style.cssText = `background:${s.bg};color:${s.c};`;
-
-  document.getElementById('dsh-title').textContent = p.title || 'Untitled';
-  document.getElementById('dsh-desc').textContent  = p.desc || '';
-  document.getElementById('dsh-tags').innerHTML = (p.tags||[]).map(t=>`<span class="dsh-tag">#${x(t)}</span>`).join('');
-  document.getElementById('dsh-date').textContent = p.date ? 'Saved '+new Date(p.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : '';
-
-  const imgbbBtn = document.getElementById('dsh-imgbb-btn');
-  imgbbBtn.style.display = p.onCloud ? 'block' : 'none';
-
-  document.getElementById('dsheet').classList.add('open');
+var p = posts.find(function(x){return x.id===id;}); if(!p) return; curId=id;
+var si={pinterest:{l:‘📌 Pinterest’,c:’#e60023’,bg:‘rgba(230,0,35,0.15)’},twitter:{l:‘✖ X’,c:’#1d9bf0’,bg:‘rgba(29,155,240,0.15)’},reddit:{l:‘👾 Reddit’,c:’#ff4500’,bg:‘rgba(255,69,0,0.15)’},manual:{l:‘🌿 Other’,c:’#34c759’,bg:‘rgba(52,199,89,0.15)’}};
+var s=si[p.source]||si.manual;
+var img=document.getElementById(‘ds-img’);
+if(p.img){img.src=p.img;img.style.display=‘block’;}else{img.style.display=‘none’;}
+document.getElementById(‘ds-cloud’).style.display=p.onCloud?‘inline-flex’:‘none’;
+var src=document.getElementById(‘ds-src’); src.textContent=s.l; src.style.cssText=‘background:’+s.bg+’;color:’+s.c+’;’;
+document.getElementById(‘ds-title’).textContent=p.title||‘Untitled’;
+document.getElementById(‘ds-desc’).textContent=p.desc||’’;
+document.getElementById(‘ds-tags’).innerHTML=(p.tags||[]).map(function(t){return ‘<span class="ds-tag">#’+xe(t)+’</span>’;}).join(’’);
+document.getElementById(‘ds-date’).textContent=p.date?‘Saved ‘+new Date(p.date).toLocaleDateString(‘en-US’,{month:‘long’,day:‘numeric’,year:‘numeric’}):’’;
+document.getElementById(‘ds-ibb’).style.display=p.onCloud?‘block’:‘none’;
+document.getElementById(‘ds’).classList.add(‘open’);
 }
 
-function closeSheet() { document.getElementById('dsheet').classList.remove('open'); curId = null; }
-
-function openPost() {
-  const p = posts.find(q => q.id === curId);
-  if (p?.url) window.open(p.url, '_blank');
-  else toast('No original URL saved');
+function closeSheet(){ document.getElementById(‘ds’).classList.remove(‘open’); curId=null; }
+function openPost()  { var p=posts.find(function(x){return x.id===curId;}); if(p&&p.url)window.open(p.url,’_blank’); else toast(‘No URL saved’); }
+function openImgBB() { var p=posts.find(function(x){return x.id===curId;}); if(p&&p.img)window.open(p.img,’_blank’); }
+function deletePost(){ posts=posts.filter(function(p){return p.id!==curId;}); savePosts(); closeSheet(); renderFeed(); toast(‘Deleted’); }
+function toggleFav(id,btn){
+var p=posts.find(function(x){return x.id===id;}); if(!p) return;
+p.fav=!p.fav; savePosts(); btn.textContent=p.fav?‘❤️’:‘🤍’;
+toast(p.fav?‘Added to favorites ❤️’:‘Removed’);
 }
 
-function openImgBB() {
-  const p = posts.find(q => q.id === curId);
-  if (p?.img) window.open(p.img, '_blank');
-}
-
-function deletePost() {
-  posts = posts.filter(p => p.id !== curId);
-  persist(); closeSheet(); renderFeed();
-  toast('Deleted');
-}
-
-function toggleFav(id, btn) {
-  const p = posts.find(q => q.id === id);
-  if (!p) return;
-  p.fav = !p.fav;
-  persist();
-  btn.textContent = p.fav ? '❤️' : '🤍';
-  toast(p.fav ? 'Added to favorites ❤️' : 'Removed');
-}
-
-// ─── SEARCH ───
 function doSearch() {
-  const q = document.getElementById('srch').value.toLowerCase().trim();
-  const res = document.getElementById('srch-results');
-  if (!q) { res.innerHTML = `<div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search across all your saved media</p></div>`; return; }
-  const found = posts.filter(p =>
-    (p.title||'').toLowerCase().includes(q) ||
-    (p.desc||'').toLowerCase().includes(q) ||
-    (p.tags||[]).some(t => t.toLowerCase().includes(q)) ||
-    (p.source||'').includes(q)
-  );
-  if (!found.length) { res.innerHTML = `<div class="empty"><div class="ei">😶‍🌫️</div><h3>No results</h3><p>Nothing matches "${q}"</p></div>`; return; }
-  const si = { pinterest:'📌', twitter:'✖', reddit:'👾', manual:'🌿' };
-  res.innerHTML = `<div style="padding:8px 14px">${found.map((p,i) => `
-    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#1c1c1e;border-radius:14px;margin-bottom:8px;cursor:pointer;animation:fadeUp 0.25s ease ${i*0.04}s both" onclick="openDetail('${p.id}')">
-      ${p.img ? `<img style="width:52px;height:52px;border-radius:10px;object-fit:cover;flex-shrink:0" src="${x(p.img)}" onerror="this.style.display='none'">` : `<div style="width:52px;height:52px;border-radius:10px;background:#2c2c2e;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${si[p.source]||'🌿'}</div>`}
-      <div style="flex:1;min-width:0">
-        <div style="font-size:14px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${x(p.title||'Untitled')}</div>
-        <div style="font-size:12px;color:#636366;margin-top:2px">${p.source||'other'} ${p.onCloud?'· ☁️ ImgBB':''}</div>
-      </div>
-    </div>`).join('')}</div>`;
+var q=document.getElementById(‘srch’).value.toLowerCase().trim();
+var res=document.getElementById(‘sres’);
+if(!q){res.innerHTML=’<div class="empty"><div class="ei">🔍</div><h3>Find anything</h3><p>Search by title, tags or platform</p></div>’;return;}
+var found=posts.filter(function(p){
+return (p.title||’’).toLowerCase().includes(q)||(p.desc||’’).toLowerCase().includes(q)
+||(p.tags||[]).some(function(t){return t.toLowerCase().includes(q);})||(p.source||’’).includes(q);
+});
+if(!found.length){res.innerHTML=’<div class="empty"><div class="ei">😶‍🌫️</div><h3>No results</h3><p>Nothing matches “’+q+’”</p></div>’;return;}
+var si={pinterest:‘📌’,twitter:‘✖’,reddit:‘👾’,manual:‘🌿’};
+res.innerHTML=found.map(function(p,i){
+return ‘<div class="ri" onclick="openDetail(\''+p.id+'\')" style="animation-delay:'+(i*0.04)+'s">’
++(p.img?’<img class="rth" src="'+xe(p.img)+'" onerror="this.style.display=\'none\'">’:’<div class="rph">’+(si[p.source]||‘🌿’)+’</div>’)
++’<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">’+xe(p.title||‘Untitled’)+’</div>’
++’<div style="font-size:12px;color:var(--muted);margin-top:2px">’+(p.source||‘other’)+(p.onCloud?’ · ☁️ ImgBB’:’’)+’</div></div></div>’;
+}).join(’’);
 }
 
-// ─── STATS ───
-function updateStats() {
-  document.getElementById('st-total').textContent = posts.length;
-  document.getElementById('st-cloud').textContent = posts.filter(p=>p.onCloud).length;
-  document.getElementById('st-fav').textContent   = posts.filter(p=>p.fav).length;
+function updateStats(){
+document.getElementById(‘st-total’).textContent=posts.length;
+document.getElementById(‘st-cloud’).textContent=posts.filter(function(p){return p.onCloud;}).length;
+document.getElementById(‘st-fav’).textContent=posts.filter(function(p){return p.fav;}).length;
 }
 
-// ─── CLOUD BACKUP ───
-async function cloudSync() {
-  if (!posts.length) { toast('Nothing to sync'); return; }
-  try {
-    showUploadOverlay('Syncing to JSONBin...');
-    const res = await fetch('https://api.jsonbin.io/v3/b', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','X-Bin-Name':'SocialVault3'},
-      body: JSON.stringify({ posts })
-    });
-    const data = await res.json();
-    hideUploadOverlay();
-    const id = data.metadata?.id;
-    if (!id) throw new Error();
-    localStorage.setItem('sv3_bin', id);
-    setTimeout(() => prompt('Cloud sync done! Save this Bin ID to restore anywhere:', id), 300);
-    toast('Synced to cloud ☁️', true);
-  } catch(e) { hideUploadOverlay(); toast('Sync failed'); }
+async function cloudSync(){
+if(!posts.length){toast(‘Nothing to sync’);return;}
+try{
+showOv(‘Syncing to JSONBin…’);
+var r=await fetch(‘https://api.jsonbin.io/v3/b’,{method:‘POST’,headers:{‘Content-Type’:‘application/json’,‘X-Bin-Name’:‘SocialVault’},body:JSON.stringify({posts:posts})});
+var d=await r.json(); hideOv();
+var id=d.metadata&&d.metadata.id; if(!id)throw new Error();
+localStorage.setItem(‘sv_bin’,id);
+setTimeout(function(){prompt(‘Cloud sync done! Save this Bin ID:’,id);},300);
+toast(‘Synced ☁️’,true);
+}catch(e){hideOv();toast(‘Sync failed’);}
 }
 
-function showRestore() {
-  const id = localStorage.getItem('sv3_bin') || '';
-  const bin = prompt('Enter your JSONBin.io Bin ID:', id);
-  if (bin) doRestore(bin);
+function showRestore(){
+var id=localStorage.getItem(‘sv_bin’)||’’;
+var bin=prompt(‘Enter your JSONBin.io Bin ID:’,id); if(bin)doRestore(bin);
 }
 
-async function doRestore(bin) {
-  try {
-    showUploadOverlay('Restoring...');
-    const res = await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`);
-    const data = await res.json();
-    hideUploadOverlay();
-    if (!Array.isArray(data.record?.posts)) throw new Error();
-    posts = data.record.posts;
-    persist(); renderFeed();
-    toast(`Restored ${posts.length} posts ✅`, true);
-  } catch(e) { hideUploadOverlay(); toast('Restore failed — check Bin ID'); }
+async function doRestore(bin){
+try{
+showOv(‘Restoring…’);
+var r=await fetch(‘https://api.jsonbin.io/v3/b/’+bin+’/latest’);
+var d=await r.json(); hideOv();
+if(!Array.isArray(d.record&&d.record.posts))throw new Error();
+posts=d.record.posts; savePosts(); renderFeed(); toast(‘Restored ‘+posts.length+’ posts ✅’,true);
+}catch(e){hideOv();toast(‘Restore failed — check Bin ID’);}
 }
 
-function exportJSON() {
-  const blob = new Blob([JSON.stringify(posts,null,2)],{type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `socialvault-${Date.now()}.json`;
-  a.click();
-  toast('Exported 📤');
+function exportJSON(){
+var b=new Blob([JSON.stringify(posts,null,2)],{type:‘application/json’});
+var a=document.createElement(‘a’); a.href=URL.createObjectURL(b); a.download=‘vault-’+Date.now()+’.json’; a.click(); toast(‘Exported 📤’);
 }
 
-function showImport() {
-  const raw = prompt('Paste your exported JSON:');
-  if (!raw) return;
-  try {
-    const imp = JSON.parse(raw);
-    if (!Array.isArray(imp)) throw new Error();
-    const ids = new Set(posts.map(p=>p.id));
-    const newOnes = imp.filter(p=>!ids.has(p.id));
-    posts = [...newOnes, ...posts];
-    persist(); renderFeed();
-    toast(`Imported ${newOnes.length} posts`);
-  } catch(e) { toast('Invalid JSON'); }
+function showImport(){
+var raw=prompt(‘Paste your exported JSON:’); if(!raw)return;
+try{
+var imp=JSON.parse(raw); if(!Array.isArray(imp))throw new Error();
+var ids=new Set(posts.map(function(p){return p.id;}));
+var n=imp.filter(function(p){return!ids.has(p.id);});
+posts=n.concat(posts); savePosts(); renderFeed(); toast(‘Imported ‘+n.length+’ posts’);
+}catch(e){toast(‘Invalid JSON’);}
 }
 
-function clearAll() {
-  if (confirm('Delete all posts from vault?')) {
-    posts = []; persist(); renderFeed(); toast('Vault cleared');
-  }
+function clearAll(){
+if(confirm(‘Delete all posts from vault?’)){posts=[];savePosts();renderFeed();toast(‘Vault cleared’);}
 }
 
-// ─── TOAST ───
-let _tt;
-function toast(msg, green=false) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `toast show${green?' green':''}`;
-  clearTimeout(_tt);
-  _tt = setTimeout(() => el.classList.remove('show','green'), 2400);
+var _tt;
+function toast(msg,green){
+var el=document.getElementById(‘toast’);
+el.textContent=msg; el.className=‘toast show’+(green?’ green’:’’);
+clearTimeout(_tt); _tt=setTimeout(function(){el.classList.remove(‘show’,‘green’);},2400);
 }
 
-// ─── HELPERS ───
-function x(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function xe(s){return String(s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);}
 
-// ─── DEMO DATA ───
-function loadDemo() {
-  posts = [
-    { id:'d1', title:'Minimal Dark Dashboard UI', url:'https://dribbble.com', img:'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80', onCloud:false, desc:'Beautiful dark concept', tags:['ui','dark','design'], source:'pinterest', fav:true, date:new Date().toISOString() },
-    { id:'d2', title:'0 to 10k users — building in public', url:'https://x.com', img:'', onCloud:false, desc:'Incredible thread on growth', tags:['startup','growth'], source:'twitter', fav:false, date:new Date().toISOString() },
-    { id:'d3', title:'Iceland Aurora Borealis', url:'https://reddit.com/r/earthporn', img:'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', onCloud:false, desc:'r/EarthPorn community', tags:['photography','travel'], source:'reddit', fav:true, date:new Date().toISOString() },
-    { id:'d4', title:'Neon color palette — Midnight edition', url:'', img:'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=80', onCloud:false, desc:'Deep purples and electric accents', tags:['colors','palette'], source:'pinterest', fav:false, date:new Date().toISOString() },
-    { id:'d5', title:'Brutalist typography showcase', url:'https://reddit.com', img:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80', onCloud:false, desc:'Bold type dominating 2025', tags:['typography','brutalist'], source:'reddit', fav:false, date:new Date().toISOString() },
-  ];
-  persist();
+function loadDemo(){
+posts=[
+{id:‘d1’,title:‘Minimal Dark Dashboard UI’,url:‘https://dribbble.com’,img:‘https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80’,onCloud:false,desc:‘Beautiful dark concept’,tags:[‘ui’,‘dark’],source:‘pinterest’,fav:true,date:new Date().toISOString()},
+{id:‘d2’,title:‘0 to 10k users — building in public’,url:‘https://x.com’,img:’’,onCloud:false,desc:‘Thread on growth hacking’,tags:[‘startup’],source:‘twitter’,fav:false,date:new Date().toISOString()},
+{id:‘d3’,title:‘Iceland Aurora Borealis’,url:‘https://reddit.com/r/earthporn’,img:‘https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80’,onCloud:false,desc:‘r/EarthPorn community’,tags:[‘photography’,‘travel’],source:‘reddit’,fav:true,date:new Date().toISOString()},
+{id:‘d4’,title:‘Neon color palette — Midnight’,url:’’,img:‘https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=80’,onCloud:false,desc:‘Deep purples and neon accents’,tags:[‘colors’],source:‘pinterest’,fav:false,date:new Date().toISOString()},
+{id:‘d5’,title:‘Brutalist typography 2025’,url:‘https://reddit.com’,img:‘https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80’,onCloud:false,desc:‘Bold type trends’,tags:[‘typography’],source:‘reddit’,fav:false,date:new Date().toISOString()},
+];
+savePosts();
 }
 </script>
 
