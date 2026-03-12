@@ -2,1342 +2,1524 @@
 
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MediaVault — Personal Archive</title>
-  <meta name="description" content="Save and archive media from Reddit, Twitter/X, Pinterest, and more." />
-  <meta name="theme-color" content="#c4440a" />
-  <meta property="og:title" content="MediaVault" />
-  <meta property="og:description" content="Personal social media archive" />
-  <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23c4440a' rx='6' width='32' height='32'/><text y='22' font-size='20' x='6'>🗃</text></svg>" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Archyve">
+<meta name="theme-color" content="#0a0a0f">
+<title>Archyve</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
 :root {
-–bg: #f4f1eb; –bg2: #ede9e0; –surface: #ffffff; –surface2: #f8f5ef;
-–border: #ddd8cc; –border2: #c8c0b0;
-–text: #1a1612; –text2: #5a5248; –text3: #9a9088;
-–accent: #c4440a; –accent2: #e8550d;
-–success: #1d7a4d; –warning: #c47a00; –error: #c41a1a; –info: #1a4ac4;
-–shadow: 0 2px 12px rgba(0,0,0,.08); –shadow-lg: 0 8px 40px rgba(0,0,0,.14);
-–radius: 4px; –radius-lg: 8px;
-–font-display: ‘Fraunces’, Georgia, serif;
-–font-mono: ‘DM Mono’, ‘Courier New’, monospace;
-–transition: 0.2s ease;
+–bg: #0a0a0f;
+–bg2: #111118;
+–bg3: #1a1a24;
+–bg4: #222230;
+–border: rgba(255,255,255,0.07);
+–accent: #7c5cfc;
+–accent2: #c084fc;
+–accent3: #38bdf8;
+–text: #f0f0f8;
+–text2: #9898b0;
+–text3: #5a5a70;
+–success: #34d399;
+–danger: #f87171;
+–warn: #fbbf24;
+–radius: 16px;
+–radius-sm: 10px;
+–nav-h: 80px;
+–safe-bottom: env(safe-area-inset-bottom, 0px);
+–safe-top: env(safe-area-inset-top, 0px);
+–shadow: 0 8px 32px rgba(0,0,0,0.5);
+–glow: 0 0 20px rgba(124,92,252,0.3);
 }
-:root.dark {
-–bg: #0f0d0b; –bg2: #181410; –surface: #1e1a16; –surface2: #242018;
-–border: #2e2820; –border2: #3e3628;
-–text: #f0ece4; –text2: #a09880; –text3: #5a5248;
-–accent: #e8660e; –accent2: #ff7a20;
-–shadow: 0 2px 12px rgba(0,0,0,.4); –shadow-lg: 0 8px 40px rgba(0,0,0,.6);
+.light {
+–bg: #f5f5fa;
+–bg2: #ffffff;
+–bg3: #ebebf5;
+–bg4: #dddde8;
+–border: rgba(0,0,0,0.08);
+–text: #111118;
+–text2: #555565;
+–text3: #aaaabc;
+–shadow: 0 4px 20px rgba(0,0,0,0.1);
+–glow: 0 0 20px rgba(124,92,252,0.15);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(–font-mono);background:var(–bg);color:var(–text);min-height:100vh;font-size:14px;line-height:1.6;transition:background var(–transition),color var(–transition);overflow-x:hidden}
-img,video{max-width:100%;display:block}
-a{color:var(–accent);text-decoration:none}
-a:hover{text-decoration:underline}
-button{cursor:pointer;font-family:var(–font-mono)}
-.app-wrap{max-width:1400px;margin:0 auto;padding:0 20px}
 
-/* HEADER */
-header{background:var(–surface);border-bottom:1px solid var(–border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);background:color-mix(in srgb,var(–surface) 92%,transparent)}
-.header-inner{max-width:1400px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
-.logo{display:flex;align-items:baseline;gap:8px;flex-shrink:0}
-.logo-name{font-family:var(–font-display);font-size:22px;font-weight:800;color:var(–text);letter-spacing:-.03em}
-.logo-name span{color:var(–accent)}
-.logo-sub{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(–text3)}
-.header-actions{display:flex;align-items:center;gap:10px}
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; background: var(–bg); color: var(–text); font-family: ‘DM Sans’, sans-serif; font-size: 15px; }
 
-/* HERO */
-.hero{padding:40px 20px 24px;max-width:1400px;margin:0 auto}
-.hero-heading{font-family:var(–font-display);font-size:clamp(28px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.04em;color:var(–text);margin-bottom:4px}
-.hero-sub{color:var(–text2);font-size:13px;margin-bottom:24px;letter-spacing:.02em}
-.input-row{display:flex;gap:10px;align-items:stretch;max-width:680px}
-.url-input{flex:1;padding:14px 18px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–surface);color:var(–text);font-family:var(–font-mono);font-size:13px;outline:none;transition:border-color var(–transition),box-shadow var(–transition);min-width:0}
-.url-input::placeholder{color:var(–text3)}
-.url-input:focus{border-color:var(–accent);box-shadow:0 0 0 3px color-mix(in srgb,var(–accent) 15%,transparent)}
-.save-btn{padding:14px 24px;background:var(–accent);color:white;border:none;border-radius:var(–radius);font-size:13px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;transition:background var(–transition),transform var(–transition);white-space:nowrap;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.save-btn:hover{background:var(–accent2)}
-.save-btn:active{transform:scale(.97)}
-.save-btn:disabled{opacity:.6;cursor:not-allowed}
-.save-btn.loading::after{content:’’;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-#progressBar{height:3px;background:var(–border);margin-top:10px;max-width:680px;border-radius:2px;overflow:hidden;display:none}
-#progressFill{height:100%;background:linear-gradient(90deg,var(–accent),var(–accent2));width:0%;transition:width .4s ease;border-radius:2px}
+/* ── LAYOUT ── */
+#app { display: flex; flex-direction: column; height: 100%; height: -webkit-fill-available; }
+#views { flex: 1; overflow: hidden; position: relative; }
+.view { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-top: calc(var(–safe-top) + 0px); padding-bottom: calc(var(–nav-h) + var(–safe-bottom)); display: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.view.active { display: block; }
+.view::-webkit-scrollbar { display: none; }
 
-/* TOOLBAR */
-.toolbar{max-width:1400px;margin:0 auto;padding:0 20px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.filter-group{display:flex;gap:4px;flex-wrap:wrap;flex:1}
-.filter-btn{padding:6px 14px;border:1.5px solid var(–border2);border-radius:20px;background:var(–surface);color:var(–text2);font-family:var(–font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:all var(–transition);display:flex;align-items:center;gap:6px}
-.filter-btn:hover{border-color:var(–accent);color:var(–accent)}
-.filter-btn.active{background:var(–accent);border-color:var(–accent);color:white}
-.filter-count{background:rgba(255,255,255,.25);border-radius:10px;padding:0 5px;font-size:10px;min-width:18px;text-align:center}
-.filter-btn:not(.active) .filter-count{background:var(–bg2);color:var(–text3)}
-.search-wrap{position:relative;flex-shrink:0}
-.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(–text3);font-size:13px;pointer-events:none}
-.search-input{padding:8px 14px 8px 34px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–surface);color:var(–text);font-family:var(–font-mono);font-size:12px;width:200px;outline:none;transition:border-color var(–transition)}
-.search-input:focus{border-color:var(–accent)}
-.search-input::placeholder{color:var(–text3)}
+/* ── NAV BAR ── */
+#nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+height: calc(var(–nav-h) + var(–safe-bottom));
+padding-bottom: var(–safe-bottom);
+background: rgba(10,10,15,0.85); backdrop-filter: blur(20px) saturate(180%);
+-webkit-backdrop-filter: blur(20px) saturate(180%);
+border-top: 1px solid var(–border);
+display: flex; align-items: flex-start; padding-top: 8px; }
+.light #nav { background: rgba(245,245,250,0.85); }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+padding: 6px 0; cursor: pointer; transition: all 0.2s; border: none; background: none; color: var(–text3); }
+.nav-btn.active { color: var(–accent); }
+.nav-btn svg { width: 24px; height: 24px; transition: transform 0.2s; }
+.nav-btn.active svg { transform: scale(1.1); }
+.nav-btn span { font-size: 10px; font-weight: 500; letter-spacing: 0.3px; }
 
-/* MASONRY GRID — Pinterest style */
-.grid-section{max-width:1400px;margin:0 auto;padding:0 20px 60px}
-#mediaGrid{columns:5;column-gap:14px}
-@media(max-width:1200px){#mediaGrid{columns:4}}
-@media(max-width:900px){#mediaGrid{columns:3}}
-@media(max-width:600px){#mediaGrid{columns:2}}
-@media(max-width:380px){#mediaGrid{columns:1}}
+/* ── HEADER ── */
+.view-header { padding: 16px 20px 8px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10;
+background: var(–bg); border-bottom: 1px solid var(–border); }
+.view-title { font-family: ‘Syne’, sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.view-subtitle { font-size: 12px; color: var(–text3); margin-top: 1px; }
 
-/* CARD */
-.media-card{break-inside:avoid;margin-bottom:14px;background:var(–surface);border:1px solid var(–border);border-radius:var(–radius-lg);overflow:hidden;cursor:pointer;transition:transform var(–transition),box-shadow var(–transition),border-color var(–transition);animation:cardIn .35s ease both}
-@keyframes cardIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-.media-card:hover{transform:translateY(-4px) scale(1.01);box-shadow:var(–shadow-lg);border-color:var(–border2)}
-.card-media{position:relative;background:var(–bg2);overflow:hidden;min-height:100px}
-.card-img{width:100%;height:auto;display:block;transition:transform .4s ease;object-fit:cover}
-.card-img[data-src]{min-height:120px;background:var(–bg2)}
-.media-card:hover .card-img{transform:scale(1.05)}
-.play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none}
-.card-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px 10px 10px;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 100%);display:flex;align-items:flex-end;justify-content:space-between;opacity:0;transition:opacity var(–transition)}
-.media-card:hover .card-overlay{opacity:1}
-.platform-badge{font-size:10px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:white;backdrop-filter:blur(4px);padding:3px 8px;border-radius:4px}
-.platform-badge.reddit{background:rgba(255,69,0,.6)}
-.platform-badge.twitter{background:rgba(0,0,0,.6)}
-.platform-badge.pinterest{background:rgba(189,8,28,.6)}
-.platform-badge.imgur{background:rgba(31,163,110,.6)}
-.platform-badge.google{background:rgba(26,74,196,.6)}
-.platform-badge.tumblr{background:rgba(53,109,163,.6)}
-.platform-badge.flickr{background:rgba(255,0,132,.6)}
-.platform-badge.deviantart{background:rgba(5,140,80,.6)}
-.platform-badge.direct{background:rgba(100,100,200,.6)}
-.platform-badge.other{background:rgba(80,80,80,.6)}
-.card-date{font-size:10px;color:rgba(255,255,255,.75)}
-.upload-dot{position:absolute;top:9px;right:9px;width:10px;height:10px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85)}
-.status-done{background:#1d7a4d}
-.status-uploading{background:#c47a00;animation:pulse 1.2s ease infinite}
-.status-pending{background:#9a9088}
-.status-failed{background:#c41a1a}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.card-title{padding:8px 10px;font-size:11px;color:var(–text2);line-height:1.4;letter-spacing:.01em;border-top:1px solid var(–border)}
+/* ── HOME VIEW ── */
+#save-box { padding: 16px 20px; }
+.save-card { background: var(–bg2); border: 1px solid var(–border); border-radius: var(–radius); padding: 16px; }
+.save-input-row { display: flex; gap: 10px; margin-bottom: 12px; }
+.save-input { flex: 1; background: var(–bg3); border: 1.5px solid var(–border); border-radius: var(–radius-sm); padding: 12px 14px; color: var(–text); font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.save-input:focus { border-color: var(–accent); }
+.save-input::placeholder { color: var(–text3); }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 11px 18px; border-radius: var(–radius-sm); font-family: ‘Syne’, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.3px; border: none; cursor: pointer; transition: all 0.18s; white-space: nowrap; }
+.btn-primary { background: var(–accent); color: #fff; box-shadow: 0 4px 16px rgba(124,92,252,0.4); }
+.btn-primary:active { transform: scale(0.96); }
+.btn-ghost { background: var(–bg3); color: var(–text2); border: 1px solid var(–border); }
+.btn-ghost:active { background: var(–bg4); transform: scale(0.96); }
+.btn-danger { background: rgba(248,113,113,0.15); color: var(–danger); border: 1px solid rgba(248,113,113,0.2); }
+.btn-sm { padding: 7px 13px; font-size: 12px; }
+.save-row2 { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.folder-select { flex: 1; min-width: 120px; background: var(–bg3); border: 1.5px solid var(–border); border-radius: var(–radius-sm); padding: 10px 12px; color: var(–text); font-size: 13px; font-family: inherit; outline: none; cursor: pointer; }
+.folder-select:focus { border-color: var(–accent); }
 
-/* EMPTY STATE */
-#emptyState{display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center;color:var(–text3)}
-.empty-icon{font-size:52px;margin-bottom:16px;opacity:.5}
-.empty-title{font-family:var(–font-display);font-size:22px;font-weight:600;color:var(–text2);margin-bottom:8px}
-.empty-sub{font-size:13px;max-width:340px}
+/* ── MASONRY GRID ── */
+#media-grid { padding: 8px 12px 12px; columns: 2; column-gap: 8px; }
+@media (min-width: 500px) { #media-grid { columns: 3; } }
+@media (min-width: 700px) { #media-grid { columns: 4; } }
+.media-card { break-inside: avoid; margin-bottom: 8px; border-radius: var(–radius-sm); overflow: hidden; cursor: pointer; position: relative; background: var(–bg3); border: 1px solid var(–border); transition: transform 0.2s, box-shadow 0.2s; }
+.media-card:active { transform: scale(0.97); }
+.media-card img, .media-card video { width: 100%; display: block; object-fit: cover; }
+.media-card .card-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); opacity: 0; transition: opacity 0.2s; display: flex; gap: 6px; }
+.media-card:hover .card-overlay { opacity: 1; }
+.card-badge { position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.6); backdrop-filter: blur(6px); border-radius: 6px; padding: 2px 7px; font-size: 10px; font-weight: 600; color: #fff; letter-spacing: 0.3px; }
+.card-sync { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.card-sync.pending { background: rgba(251,191,36,0.8); }
+.card-sync.done { background: rgba(52,211,153,0.8); }
+.card-sync svg { width: 11px; height: 11px; }
+.media-card.is-video::after { content: ‘▶’; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 36px; height: 36px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #fff; pointer-events: none; line-height: 36px; text-align: center; }
 
-/* MODAL */
-#modalOverlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s ease}
-#modalOverlay.open{opacity:1;pointer-events:all}
-.modal-inner{background:var(–surface);border:1px solid var(–border2);border-radius:var(–radius-lg);width:100%;max-width:900px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;animation:modalIn .25s ease}
-@keyframes modalIn{from{transform:scale(.95) translateY(12px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
-.modal-media-pane{background:#000;flex-shrink:0;max-height:60vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.modal-media-el{max-width:100%;max-height:60vh;object-fit:contain}
-.modal-info{padding:20px 24px;overflow-y:auto;flex:1;border-top:1px solid var(–border)}
-.modal-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
-#modalTitle{font-family:var(–font-display);font-size:18px;font-weight:600;color:var(–text);line-height:1.3}
-.modal-close-btn{background:var(–bg2);border:1px solid var(–border);border-radius:var(–radius);color:var(–text2);width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;transition:all var(–transition)}
-.modal-close-btn:hover{background:var(–accent);color:white;border-color:var(–accent)}
-.modal-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.meta-chip{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(–text3);background:var(–bg2);border:1px solid var(–border);border-radius:3px;padding:3px 8px}
-.modal-upload-status{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
-.modal-upload-status.done{color:var(–success)}
-.modal-upload-status.failed{color:var(–error)}
-.modal-upload-status.uploading{color:var(–warning)}
-.modal-upload-status.pending{color:var(–text3)}
-.modal-links{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
-.modal-link{font-size:11px;color:var(–accent);border:1px solid var(–accent);border-radius:3px;padding:4px 10px;transition:all var(–transition);letter-spacing:.04em;text-transform:uppercase}
-.modal-link:hover{background:var(–accent);color:white;text-decoration:none}
-.modal-actions{display:flex;gap:8px;flex-wrap:wrap}
-.action-btn{padding:10px 18px;border-radius:var(–radius);font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;border:1.5px solid;transition:all var(–transition)}
-.action-btn.primary{background:var(–accent);border-color:var(–accent);color:white}
-.action-btn.primary:hover{background:var(–accent2);border-color:var(–accent2)}
-.action-btn.danger{background:transparent;border-color:var(–error);color:var(–error)}
-.action-btn.danger:hover{background:var(–error);color:white}
+.empty-state { padding: 60px 20px; text-align: center; color: var(–text3); }
+.empty-state svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.3; }
+.empty-state h3 { font-family: ‘Syne’, sans-serif; font-size: 18px; font-weight: 700; color: var(–text2); margin-bottom: 8px; }
 
-/* SETTINGS */
-#settingsPanel{position:fixed;top:0;right:-380px;width:360px;height:100vh;background:var(–surface);border-left:1px solid var(–border2);z-index:500;transition:right .3s ease;overflow-y:auto;box-shadow:var(–shadow-lg)}
-#settingsPanel.open{right:0}
-.settings-header{padding:20px 24px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between}
-.settings-title{font-family:var(–font-display);font-size:18px;font-weight:600;color:var(–text)}
-.settings-body{padding:24px}
-.settings-section{margin-bottom:28px}
-.settings-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(–text3);margin-bottom:8px;display:block}
-.settings-input{width:100%;padding:10px 14px;border:1.5px solid var(–border2);border-radius:var(–radius);background:var(–bg2);color:var(–text);font-family:var(–font-mono);font-size:12px;outline:none;transition:border-color var(–transition)}
-.settings-input:focus{border-color:var(–accent)}
-.settings-hint{font-size:11px;color:var(–text3);margin-top:6px;line-height:1.5}
-.settings-hint a{color:var(–accent)}
-.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-.toggle input{opacity:0;width:0;height:0}
-.toggle-track{position:absolute;inset:0;background:var(–border2);border-radius:12px;cursor:pointer;transition:background var(–transition)}
-.toggle input:checked+.toggle-track{background:var(–accent)}
-.toggle-track::after{content:’’;position:absolute;left:3px;top:3px;width:18px;height:18px;background:white;border-radius:50%;transition:transform var(–transition);box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.toggle input:checked+.toggle-track::after{transform:translateX(20px)}
-.icon-btn{padding:8px 10px;background:var(–surface2);border:1px solid var(–border);border-radius:var(–radius);color:var(–text2);font-size:12px;transition:all var(–transition);display:flex;align-items:center;gap:6px;font-family:var(–font-mono)}
-.icon-btn:hover{background:var(–bg2);border-color:var(–border2);color:var(–text)}
-.small-btn{padding:8px 16px;background:var(–accent);color:white;border:none;border-radius:var(–radius);font-family:var(–font-mono);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;transition:background var(–transition);margin-top:10px}
-.small-btn:hover{background:var(–accent2)}
-.danger-btn{padding:8px 16px;background:transparent;color:var(–error);border:1px solid var(–error);border-radius:var(–radius);font-family:var(–font-mono);font-size:12px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;transition:all var(–transition);margin-top:10px}
-.danger-btn:hover{background:var(–error);color:white}
+/* ── FOLDERS VIEW ── */
+#folders-list { padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.folder-card { background: var(–bg2); border: 1px solid var(–border); border-radius: var(–radius); padding: 16px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.folder-card::before { content: ‘’; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(–accent), var(–accent2)); opacity: 0; transition: opacity 0.2s; }
+.folder-card.active-folder::before { opacity: 1; }
+.folder-card:active { transform: scale(0.97); }
+.folder-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 20px; }
+.folder-name { font-family: ‘Syne’, sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.folder-count { font-size: 11px; color: var(–text3); }
+.folder-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+.folder-card:hover .folder-actions { opacity: 1; }
+.icon-btn { width: 28px; height: 28px; border-radius: 7px; background: var(–bg3); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(–text2); transition: all 0.15s; }
+.icon-btn:active { transform: scale(0.9); }
+.icon-btn svg { width: 14px; height: 14px; }
 
-/* TOASTS */
-#toastContainer{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
-.toast{padding:10px 18px;border-radius:var(–radius);font-size:13px;font-weight:500;color:white;box-shadow:var(–shadow-lg);transform:translateY(20px);opacity:0;transition:all .3s ease;display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:all;letter-spacing:.02em}
-.toast.show{transform:translateY(0);opacity:1}
-.toast-success{background:#1d7a4d}
-.toast-error{background:#c41a1a}
-.toast-warning{background:#c47a00}
-.toast-info{background:#1a4ac4}
+/* ── SEARCH VIEW ── */
+#search-bar { padding: 12px 16px; position: sticky; top: 0; z-index: 5; background: var(–bg); }
+.search-input { width: 100%; background: var(–bg3); border: 1.5px solid var(–border); border-radius: 50px; padding: 12px 18px; color: var(–text); font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.search-input:focus { border-color: var(–accent); }
+.filter-chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px 10px; scrollbar-width: none; }
+.filter-chips::-webkit-scrollbar { display: none; }
+.chip { padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 500; border: 1.5px solid var(–border); cursor: pointer; white-space: nowrap; transition: all 0.15s; color: var(–text2); background: var(–bg2); }
+.chip.active { background: var(–accent); border-color: var(–accent); color: #fff; }
 
-/* SCROLLBAR */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(–border2);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(–text3)}
+/* ── SETTINGS VIEW ── */
+.settings-section { margin: 16px; background: var(–bg2); border: 1px solid var(–border); border-radius: var(–radius); overflow: hidden; }
+.settings-title { padding: 12px 16px 6px; font-size: 11px; font-weight: 600; color: var(–text3); letter-spacing: 1px; text-transform: uppercase; }
+.settings-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(–border); cursor: pointer; transition: background 0.15s; }
+.settings-item:last-child { border-bottom: none; }
+.settings-item:active { background: var(–bg3); }
+.settings-item-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.settings-item-text { flex: 1; }
+.settings-item-label { font-size: 14px; font-weight: 500; }
+.settings-item-sub { font-size: 12px; color: var(–text3); margin-top: 1px; }
+.settings-item-right { color: var(–text3); display: flex; align-items: center; gap: 6px; font-size: 13px; }
+.toggle { width: 44px; height: 26px; border-radius: 13px; background: var(–bg4); border: none; cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(–accent); }
+.toggle::after { content: ‘’; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+.toggle.on::after { transform: translateX(18px); }
+.api-input { width: 100%; background: var(–bg3); border: 1.5px solid var(–border); border-radius: var(–radius-sm); padding: 10px 14px; color: var(–text); font-size: 13px; font-family: ‘DM Sans’, monospace; outline: none; }
+.api-input:focus { border-color: var(–accent); }
 
-/* RESPONSIVE */
-@media(max-width:640px){
-.hero{padding:24px 20px 16px}
-.hero-heading{font-size:28px}
-.input-row{flex-direction:column}
-.save-btn{justify-content:center}
-.toolbar{padding:0 20px 16px;gap:8px}
-.search-input{width:100%}
-.logo-sub{display:none}
-#settingsPanel{width:100%;right:-100%}
-.modal-inner{max-height:95vh}
-.modal-media-pane{max-height:45vh}
-}
-:focus-visible{outline:2px solid var(–accent);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(–bg2); border-radius: var(–radius) var(–radius) 0 0; padding: 20px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); border-top: 1px solid var(–border); }
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; background: var(–border); border-radius: 2px; margin: -8px auto 16px; }
+.modal-title { font-family: ‘Syne’, sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 16px; }
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(–text3); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+.form-input { width: 100%; background: var(–bg3); border: 1.5px solid var(–border); border-radius: var(–radius-sm); padding: 12px 14px; color: var(–text); font-size: 14px; font-family: inherit; outline: none; }
+.form-input:focus { border-color: var(–accent); }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions .btn { flex: 1; justify-content: center; }
+
+/* ── FULL SCREEN VIEWER ── */
+#viewer { position: fixed; inset: 0; z-index: 300; background: #000; display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+#viewer.open { opacity: 1; pointer-events: all; }
+#viewer-media { flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#viewer-media img, #viewer-media video { max-width: 100%; max-height: 100%; object-fit: contain; }
+#viewer-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; padding-top: calc(12px + var(–safe-top)); background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); }
+#viewer-bar .btn-ghost { padding: 9px 14px; }
+#viewer-close { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; }
+#viewer-title { flex: 1; font-size: 12px; color: rgba(255,255,255,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#viewer-bottom { display: flex; gap: 8px; padding: 12px 16px; padding-bottom: calc(12px + var(–safe-bottom)); background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); justify-content: center; flex-wrap: wrap; }
+
+/* ── TOAST ── */
+#toast-stack { position: fixed; top: calc(20px + var(–safe-top)); left: 50%; transform: translateX(-50%); z-index: 400; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; width: 90%; max-width: 360px; }
+.toast { background: var(–bg2); border: 1px solid var(–border); border-radius: 50px; padding: 10px 18px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; box-shadow: var(–shadow); animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards; white-space: nowrap; }
+.toast.success { border-color: rgba(52,211,153,0.3); color: var(–success); }
+.toast.error { border-color: rgba(248,113,113,0.3); color: var(–danger); }
+.toast.info { border-color: rgba(56,189,248,0.3); color: var(–accent3); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-10px) scale(0.95); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(-10px) scale(0.95); } }
+
+/* ── PROGRESS BAR ── */
+#progress-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 500; background: linear-gradient(90deg, var(–accent), var(–accent2)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+
+/* ── LOADING SPINNER ── */
+.spinner { width: 20px; height: 20px; border: 2px solid var(–border); border-top-color: var(–accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── LONG PRESS MENU ── */
+#ctx-menu { position: fixed; z-index: 350; background: var(–bg2); border: 1px solid var(–border); border-radius: var(–radius); padding: 6px; min-width: 180px; box-shadow: var(–shadow); opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+#ctx-menu.open { opacity: 1; pointer-events: all; }
+.ctx-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(–radius-sm); cursor: pointer; font-size: 13px; transition: background 0.1s; }
+.ctx-item:hover { background: var(–bg3); }
+.ctx-item svg { width: 16px; height: 16px; color: var(–text3); flex-shrink: 0; }
+.ctx-item.danger { color: var(–danger); }
+.ctx-item.danger svg { color: var(–danger); }
+
+/* ── DRAG OVERLAY ── */
+#drag-overlay { position: fixed; inset: 0; z-index: 250; background: rgba(124,92,252,0.15); backdrop-filter: blur(4px); border: 3px dashed var(–accent); border-radius: var(–radius); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 12px; color: var(–accent); font-family: ‘Syne’, sans-serif; font-size: 18px; font-weight: 700; }
+#drag-overlay.active { display: flex; }
+
+/* ── MISC ── */
+.platform-icon { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+.pi-reddit { background: #ff4500; }
+.pi-twitter { background: #1da1f2; }
+.pi-x { background: #1da1f2; }
+.pi-pinterest { background: #e60023; }
+.pi-telegram { background: #229ed9; }
+.pi-google { background: #4285f4; }
+.pi-direct { background: var(–text3); }
+.pi-og { background: var(–accent); }
+
+.section-label { padding: 14px 16px 6px; font-size: 11px; font-weight: 600; color: var(–text3); letter-spacing: 1px; text-transform: uppercase; }
+
+.upload-queue-btn { position: fixed; bottom: calc(var(–nav-h) + var(–safe-bottom) + 16px); right: 16px; z-index: 90; background: var(–accent); color: #fff; border: none; border-radius: 50px; padding: 10px 16px; font-size: 12px; font-weight: 700; font-family: ‘Syne’, sans-serif; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 20px rgba(124,92,252,0.5); cursor: pointer; transition: all 0.2s; opacity: 0; pointer-events: none; }
+.upload-queue-btn.visible { opacity: 1; pointer-events: all; }
+
+.logo-text { font-family: ‘Syne’, sans-serif; font-weight: 800; background: linear-gradient(135deg, var(–accent), var(–accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+hr.divider { border: none; border-top: 1px solid var(–border); margin: 4px 0; }
 </style>
 
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <div class="logo">
-      <span class="logo-name">Media<span>Vault</span></span>
-      <span class="logo-sub">Archive</span>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" id="settingsBtn" title="Settings" aria-label="Open settings">⚙ Settings</button>
-    </div>
-  </div>
-</header>
+<div id="progress-bar"></div>
+<div id="toast-stack"></div>
+<div id="drag-overlay">
+  <svg width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+  Drop media here
+</div>
 
-<section class="hero" aria-label="Save media">
-  <div class="app-wrap">
-    <h1 class="hero-heading">Your Personal<br>Media Archive.</h1>
-    <p class="hero-sub">Paste a link from Reddit, X, Pinterest, Imgur, Tumblr, Flickr, DeviantArt, or any image URL.</p>
-    <div class="input-row" role="search">
-      <input type="url" id="urlInput" class="url-input"
-        placeholder="https://reddit.com/r/…  or any image URL"
-        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-        aria-label="Media URL" />
-      <button id="saveBtn" class="save-btn" aria-label="Save media from URL">
-        <span>↓</span> Save Media
+<div id="app">
+  <div id="views">
+
+```
+<!-- HOME -->
+<div class="view active" id="view-home">
+  <div class="view-header">
+    <div>
+      <div class="view-title"><span class="logo-text">Archyve</span></div>
+      <div class="view-subtitle" id="home-count">0 items saved</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="icon-btn" id="gallery-btn-header" title="Save from Gallery" style="width:36px;height:36px;background:linear-gradient(135deg,rgba(124,92,252,0.2),rgba(192,132,252,0.2));border:1px solid rgba(124,92,252,0.3);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="2" width="18" height="18"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/></svg>
+      </button>
+      <button class="icon-btn" id="dark-toggle-home" title="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
-    <div id="progressBar" role="progressbar" aria-label="Upload progress">
-      <div id="progressFill"></div>
+  </div>
+  <div id="save-box">
+    <div class="save-card">
+      <div class="save-input-row">
+        <input class="save-input" id="link-input" type="url" inputmode="url" placeholder="Paste a link or drop media…" autocomplete="off" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="save-row2">
+        <select class="folder-select" id="folder-select-home"><option value="">📁 Default</option></select>
+        <button class="btn btn-primary" id="save-btn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Save
+        </button>
+        <button class="btn btn-ghost" id="quick-save-btn">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Quick
+        </button>
+        <button class="btn btn-ghost" id="gallery-btn-card" title="Save from Gallery" style="padding:11px 13px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5L5 21"/></svg>
+        </button>
+      </div>
     </div>
   </div>
-</section>
+  <div class="section-label">Saved Media</div>
+  <div id="media-grid"></div>
+</div>
 
-<nav class="toolbar" aria-label="Filter and search">
-  <div class="filter-group" role="group" aria-label="Filter by platform">
-    <button class="filter-btn active" data-filter="all">All <span class="filter-count" id="totalCount">0</span></button>
-    <button class="filter-btn" data-filter="reddit">🤖 Reddit <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="twitter">𝕏 Twitter <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="pinterest">📌 Pinterest <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="imgur">🖼 Imgur <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="google">🔍 Google <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="tumblr">💙 Tumblr <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="flickr">📷 Flickr <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="deviantart">🎨 DeviantArt <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="direct">🔗 Direct <span class="filter-count">0</span></button>
-    <button class="filter-btn" data-filter="other">🌐 Other <span class="filter-count">0</span></button>
+<!-- FOLDERS -->
+<div class="view" id="view-folders">
+  <div class="view-header">
+    <div>
+      <div class="view-title">Folders</div>
+      <div class="view-subtitle" id="folders-subtitle">Organize your media</div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="new-folder-btn">
+      <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+      New
+    </button>
   </div>
-  <div class="search-wrap">
-    <span class="search-icon" aria-hidden="true">🔍</span>
-    <input type="search" id="searchInput" class="search-input" placeholder="Search archive…" aria-label="Search saved media" />
-  </div>
-</nav>
+  <div id="folders-list"></div>
+  <div id="folder-media-grid" style="padding:0 12px 12px; columns:2; column-gap:8px;"></div>
+</div>
 
-<main class="grid-section">
-  <div id="mediaGrid" role="list" aria-label="Saved media"></div>
-  <div id="emptyState" aria-live="polite">
-    <div class="empty-icon">🗃️</div>
-    <h2 class="empty-title">Your archive is empty</h2>
-    <p class="empty-sub">Paste any media URL above to get started. Supports Reddit, X, Imgur, Pinterest, Tumblr, Flickr, DeviantArt, and direct image links.</p>
+<!-- SEARCH -->
+<div class="view" id="view-search">
+  <div class="view-header">
+    <div class="view-title">Search</div>
   </div>
-</main>
+  <div id="search-bar">
+    <input class="search-input" id="search-input" type="search" placeholder="Search by link, platform, folder…">
+  </div>
+  <div class="filter-chips" id="filter-chips">
+    <div class="chip active" data-filter="all">All</div>
+    <div class="chip" data-filter="image">Images</div>
+    <div class="chip" data-filter="video">Videos</div>
+    <div class="chip" data-filter="reddit">Reddit</div>
+    <div class="chip" data-filter="twitter">Twitter/X</div>
+    <div class="chip" data-filter="pinterest">Pinterest</div>
+    <div class="chip" data-filter="telegram">Telegram</div>
+    <div class="chip" data-filter="google">Google</div>
+  </div>
+  <div id="search-results" style="padding:0 12px 12px; columns:2; column-gap:8px;"></div>
+</div>
 
-<div id="modalOverlay" role="dialog" aria-modal="true" aria-label="Media preview">
-  <div class="modal-inner">
-    <div class="modal-media-pane" id="modalMedia" aria-label="Media content"></div>
-    <div class="modal-info">
-      <div class="modal-header">
-        <h2 id="modalTitle">Untitled</h2>
-        <button class="modal-close-btn" id="modalClose" aria-label="Close preview">✕</button>
+<!-- SETTINGS -->
+<div class="view" id="view-settings">
+  <div class="view-header">
+    <div class="view-title">Settings</div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">API Configuration</div>
+    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px;">
+      <div style="font-size:13px; font-weight:500; width:100%;">Media Extractor Endpoint</div>
+      <input class="api-input" id="api-endpoint-input" type="url" placeholder="https://your-api.com/extract" autocomplete="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="settings-item" style="flex-direction:column; align-items:flex-start; gap:8px; border-bottom:none;">
+      <div style="font-size:13px; font-weight:500; width:100%;">ImgBB API Key</div>
+      <input class="api-input" id="imgbb-key-input" type="password" placeholder="Your ImgBB API key" autocomplete="off">
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Appearance</div>
+    <div class="settings-item" id="dark-mode-toggle">
+      <div class="settings-item-icon" style="background:rgba(124,92,252,0.15);">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#7c5cfc" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </div>
-      <div class="modal-meta">
-        <span class="meta-chip" id="modalPlatform">—</span>
-        <span class="meta-chip" id="modalDate">—</span>
-        <span class="modal-upload-status" id="modalUploadStatus"></span>
+      <div class="settings-item-text"><div class="settings-item-label">Dark Mode</div></div>
+      <button class="toggle on" id="dark-toggle"></button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-title">Data</div>
+    <div class="settings-item" id="export-btn">
+      <div class="settings-item-icon" style="background:rgba(52,211,153,0.15);">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#34d399" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
       </div>
-      <div class="modal-links">
-        <a href="#" id="modalSource" class="modal-link" target="_blank" rel="noopener noreferrer">↗ Source</a>
-        <a href="#" id="modalImgbb" class="modal-link" target="_blank" rel="noopener noreferrer">☁ ImgBB</a>
+      <div class="settings-item-text"><div class="settings-item-label">Export Archive</div><div class="settings-item-sub">Download as JSON</div></div>
+      <div class="settings-item-right"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="settings-item" id="import-btn">
+      <div class="settings-item-icon" style="background:rgba(56,189,248,0.15);">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#38bdf8" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
       </div>
-      <div class="modal-actions">
-        <button class="action-btn primary" id="modalDownload" aria-label="Download media">↓ Download</button>
-        <button class="action-btn danger" id="modalDelete" aria-label="Delete media">🗑 Delete</button>
+      <div class="settings-item-text"><div class="settings-item-label">Import Archive</div><div class="settings-item-sub">Restore from JSON</div></div>
+      <div class="settings-item-right"><svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg></div>
+    </div>
+    <div class="settings-item danger" id="clear-data-btn" style="border-bottom:none;">
+      <div class="settings-item-icon" style="background:rgba(248,113,113,0.15);">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#f87171" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
       </div>
+      <div class="settings-item-text"><div class="settings-item-label" style="color:var(--danger);">Clear All Data</div><div class="settings-item-sub">Permanently delete archive</div></div>
+    </div>
+  </div>
+  <div style="padding:20px 16px; text-align:center; color:var(--text3); font-size:12px;">
+    Archyve v1.0 · Personal Media Archive
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+
+  <nav id="nav">
+    <button class="nav-btn active" data-view="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" data-view="folders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/></svg>
+      <span>Folders</span>
+    </button>
+    <button class="nav-btn" data-view="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35"/></svg>
+      <span>Search</span>
+    </button>
+    <button class="nav-btn" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+
+<div class="modal-overlay" id="folder-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="folder-modal-title">New Folder</div>
+    <div class="form-group">
+      <label class="form-label">Folder Name</label>
+      <input class="form-input" id="folder-name-input" type="text" placeholder="My Collection" maxlength="40">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emoji Icon</label>
+      <input class="form-input" id="folder-emoji-input" type="text" placeholder="📁" maxlength="4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="folder-modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="folder-modal-save">Save Folder</button>
     </div>
   </div>
 </div>
 
-<aside id="settingsPanel" aria-label="Settings">
-  <div class="settings-header">
-    <h2 class="settings-title">Settings</h2>
-    <button class="icon-btn" id="settingsClose" aria-label="Close settings">✕</button>
+<div class="modal-overlay" id="move-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Move to Folder</div>
+    <div id="move-folders-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="move-modal-cancel">Cancel</button>
+    </div>
   </div>
-  <div class="settings-body">
-    <div class="settings-section">
-      <label class="settings-label" for="apiKeyInput">ImgBB API Key</label>
-      <input type="password" id="apiKeyInput" class="settings-input" placeholder="Paste your ImgBB API key…" autocomplete="off" />
-      <p class="settings-hint">Get a free key at <a href="https://api.imgbb.com" target="_blank" rel="noopener">api.imgbb.com</a>. Without a key media is cached locally only.</p>
-      <button class="small-btn" id="saveApiKey">Save Key</button>
-    </div>
-    <div class="settings-section">
-      <label class="settings-label">Appearance</label>
-      <div class="settings-row">
-        <span style="font-size:13px;color:var(--text2)">Dark mode</span>
-        <label class="toggle" aria-label="Toggle dark mode">
-          <input type="checkbox" id="darkModeToggle" />
-          <span class="toggle-track"></span>
-        </label>
-      </div>
-    </div>
-    <div class="settings-section">
-      <label class="settings-label">Upload Status</label>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--text2)">
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#1d7a4d;display:inline-block"></span>Uploaded to ImgBB</div>
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#c47a00;display:inline-block"></span>Uploading…</div>
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#9a9088;display:inline-block"></span>Pending (add API key)</div>
-        <div style="display:flex;align-items:center;gap:10px"><span style="width:10px;height:10px;border-radius:50%;background:#c41a1a;display:inline-block"></span>Upload failed</div>
-      </div>
-    </div>
-    <div class="settings-section">
-      <label class="settings-label">Supported Platforms</label>
-      <div style="font-size:12px;color:var(--text2);line-height:2">
-        🤖 <strong>Reddit</strong> — posts, galleries, videos<br>
-        𝕏 <strong>Twitter/X</strong> — via fxtwitter proxy<br>
-        📌 <strong>Pinterest</strong> — via picn.me proxy<br>
-        🖼 <strong>Imgur</strong> — direct &amp; album links<br>
-        🔍 <strong>Google</strong> — image result links<br>
-        💙 <strong>Tumblr</strong> — posts, high-res<br>
-        📷 <strong>Flickr</strong> — via oEmbed<br>
-        🎨 <strong>DeviantArt</strong> — via oEmbed<br>
-        🔗 <strong>Direct URLs</strong> — .jpg, .png, .gif, .mp4…<br>
-        🌐 <strong>Any site</strong> — og:image / JSON-LD
-      </div>
-    </div>
-    <div class="settings-section">
-      <label class="settings-label" style="color:var(--error)">Danger Zone</label>
-      <button class="danger-btn" id="clearAllBtn">🗑 Clear All Media</button>
-    </div>
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:20px;letter-spacing:.06em">MediaVault v2.0 · GitHub Pages Ready</div>
-  </div>
-</aside>
+</div>
 
-<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="confirm-title">Confirm</div>
+    <div id="confirm-message" style="color:var(--text2); font-size:14px; line-height:1.6;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="confirm-cancel">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- FULL SCREEN VIEWER -->
+
+<div id="viewer">
+  <div id="viewer-bar">
+    <button id="viewer-close">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <div id="viewer-title"></div>
+  </div>
+  <div id="viewer-media"></div>
+  <div id="viewer-bottom"></div>
+</div>
+
+<!-- CONTEXT MENU -->
+
+<div id="ctx-menu">
+  <div class="ctx-item" id="ctx-download"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>Download</div>
+  <div class="ctx-item" id="ctx-move"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>Move to Folder</div>
+  <div class="ctx-item" id="ctx-open"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>Open Source</div>
+  <hr class="divider">
+  <div class="ctx-item danger" id="ctx-delete"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>Delete</div>
+</div>
+
+<!-- UPLOAD QUEUE BTN -->
+
+<button class="upload-queue-btn" id="upload-queue-btn">
+  <div class="spinner" style="width:14px;height:14px;border-width:1.5px;border-top-color:#fff;border-color:rgba(255,255,255,0.3);"></div>
+  <span id="upload-queue-count">0 uploading</span>
+</button>
+
+<input type="file" id="file-import-input" accept=".json" style="display:none">
+<input type="file" id="file-media-input" accept="image/*,video/*" style="display:none" multiple>
 
 <script>
-// ============================================================
-// CONSTANTS
-// ============================================================
-const DB_NAME = 'mediavault_db';
-const DB_VERSION = 2;
-const STORE_NAME = 'media_items';
-const SETTINGS_STORE = 'settings';
-
-const PLATFORMS = {
-  REDDIT:'reddit', TWITTER:'twitter', PINTEREST:'pinterest', IMGUR:'imgur',
-  GOOGLE:'google', TUMBLR:'tumblr', FLICKR:'flickr', DEVIANTART:'deviantart',
-  DIRECT:'direct', OTHER:'other'
-};
-
-const PLATFORM_LABELS = {
-  reddit:'Reddit', twitter:'X / Twitter', pinterest:'Pinterest', imgur:'Imgur',
-  google:'Google', tumblr:'Tumblr', flickr:'Flickr', deviantart:'DeviantArt',
-  direct:'Direct', other:'Other'
-};
-
-const PLATFORM_ICONS = {
-  reddit:'🤖', twitter:'𝕏', pinterest:'📌', imgur:'🖼',
-  google:'🔍', tumblr:'💙', flickr:'📷', deviantart:'🎨',
-  direct:'🔗', other:'🌐'
-};
-
-// FIX #9: Removed cors-anywhere (requires manual activation); kept two reliable proxies
-const CORS_PROXIES = [
-  'https://corsproxy.io/?',
-  'https://api.allorigins.win/raw?url='
-];
-
-// ============================================================
-// DATABASE (IndexedDB)
-// ============================================================
-class MediaDB {
-  constructor() { this.db = null; }
-
-  async init() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, DB_VERSION);
-      req.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-          store.createIndex('platform', 'platform', { unique: false });
-          store.createIndex('dateSaved', 'dateSaved', { unique: false });
-          // FIX #3: sourceUrl index not unique — we handle dedup in app logic
-          store.createIndex('sourceUrl', 'sourceUrl', { unique: false });
-        }
-        if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
-          db.createObjectStore(SETTINGS_STORE, { keyPath: 'key' });
-        }
-      };
-      req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async save(item) {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(STORE_NAME, 'readwrite');
-      tx.objectStore(STORE_NAME).put(item);
-      tx.oncomplete = () => resolve(item);
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  async getAll() {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(STORE_NAME, 'readonly');
-      const req = tx.objectStore(STORE_NAME).getAll();
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async delete(id) {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(STORE_NAME, 'readwrite');
-      tx.objectStore(STORE_NAME).delete(id);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  // FIX #3: Use getAll + JS filter for dedup (no unique constraint issues)
-  async findByUrl(sourceUrl) {
-    const all = await this.getAll();
-    return all.find(i => i.sourceUrl === sourceUrl || i.sourceUrl.startsWith(sourceUrl + '#')) || null;
-  }
-
-  async getSetting(key) {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(SETTINGS_STORE, 'readonly');
-      const req = tx.objectStore(SETTINGS_STORE).get(key);
-      req.onsuccess = () => resolve(req.result ? req.result.value : null);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async setSetting(key, value) {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction(SETTINGS_STORE, 'readwrite');
-      tx.objectStore(SETTINGS_STORE).put({ key, value });
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-}
-
-// ============================================================
-// PLATFORM DETECTOR
-// ============================================================
-class PlatformDetector {
-  static detect(url) {
-    try {
-      const u = new URL(url);
-      const host = u.hostname.toLowerCase().replace('www.', '');
-      if (host.includes('reddit.com') || host.includes('redd.it')) return PLATFORMS.REDDIT;
-      if (host.includes('twitter.com') || host.includes('x.com') || host.includes('t.co')) return PLATFORMS.TWITTER;
-      if (host.includes('pinterest.com') || host.includes('pin.it')) return PLATFORMS.PINTEREST;
-      if (host.includes('imgur.com') || host.includes('i.imgur.com')) return PLATFORMS.IMGUR;
-      if (host.includes('google.com') || host.includes('googleusercontent.com') || host.includes('gstatic.com')) return PLATFORMS.GOOGLE;
-      if (host.includes('tumblr.com')) return PLATFORMS.TUMBLR;
-      if (host.includes('flickr.com') || host.includes('staticflickr.com') || host.includes('flic.kr')) return PLATFORMS.FLICKR;
-      if (host.includes('deviantart.com') || host.includes('deviantart.net')) return PLATFORMS.DEVIANTART;
-      if (/\.(jpg|jpeg|png|gif|webp|svg|mp4|webm|mov)(\?.*)?$/i.test(u.pathname)) return PLATFORMS.DIRECT;
-      return PLATFORMS.OTHER;
-    } catch { return PLATFORMS.OTHER; }
-  }
-}
-
-// ============================================================
-// MEDIA EXTRACTOR
-// ============================================================
-class MediaExtractor {
-  static async extract(url, platform) {
-    switch (platform) {
-      case PLATFORMS.REDDIT:     return this.extractReddit(url);
-      case PLATFORMS.IMGUR:      return this.extractImgur(url);
-      case PLATFORMS.DIRECT:     return this.extractDirect(url);
-      case PLATFORMS.TWITTER:    return this.extractTwitter(url);
-      case PLATFORMS.PINTEREST:  return this.extractPinterest(url);
-      case PLATFORMS.GOOGLE:     return this.extractGoogle(url);
-      case PLATFORMS.TUMBLR:     return this.extractTumblr(url);
-      case PLATFORMS.FLICKR:     return this.extractFlickr(url);
-      case PLATFORMS.DEVIANTART: return this.extractDeviantArt(url);
-      default:                   return this.extractGeneric(url);
-    }
-  }
-
-  static async extractReddit(url) {
-    // FIX #1 & #2: Proper .json URL construction — strip trailing slash, strip existing .json, then append
-    const clean = url.replace(/\/$/, '').replace(/\.json$/, '');
-    const apiUrl = clean + '.json';
-
-    const data = await this.fetchJson(apiUrl);
-    const post = data?.[0]?.data?.children?.[0]?.data;
-    if (!post) throw new Error('Could not fetch Reddit post data');
-
-    const results = [];
-
-    if (post.is_gallery && post.media_metadata) {
-      for (const [key, meta] of Object.entries(post.media_metadata)) {
-        if (meta.status === 'valid') {
-          const src = meta.s;
-          const bestUrl = src?.gif || src?.u || `https://i.redd.it/${key}.jpg`;
-          results.push({ url: bestUrl.replace(/&amp;/g, '&'), type: src?.gif ? 'gif' : 'image', source: 'reddit' });
-        }
+// ═══════════════════════════════════════════════
+// SERVICE WORKER (inline blob)
+// ═══════════════════════════════════════════════
+const SW_CODE = `
+const CACHE = 'archyve-v1';
+self.addEventListener('install', e => {
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+});
+self.addEventListener('activate', e => { e.waitUntil(clients.claim()); });
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+      if (res && res.status === 200 && res.type === 'basic') {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
       }
-    }
+      return res;
+    }).catch(() => caches.match('/')))
+  );
+});
+`;
+if ('serviceWorker' in navigator) {
+  const blob = new Blob([SW_CODE], { type: 'application/javascript' });
+  const swUrl = URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(() => {});
+}
 
-    if (post.is_video && post.media?.reddit_video) {
-      const videoUrl = post.media.reddit_video.fallback_url?.replace(/&amp;/g, '&');
-      if (videoUrl) results.push({ url: videoUrl, type: 'video', source: 'reddit' });
-    }
+// ═══════════════════════════════════════════════
+// WEB APP MANIFEST (dynamic)
+// ═══════════════════════════════════════════════
+const MANIFEST = {
+  name: 'Archyve', short_name: 'Archyve',
+  description: 'Personal social media archive',
+  start_url: './', display: 'standalone',
+  background_color: '#0a0a0f', theme_color: '#0a0a0f',
+  orientation: 'portrait-primary',
+  icons: [
+    { src: genIcon(192), sizes: '192x192', type: 'image/png' },
+    { src: genIcon(512), sizes: '512x512', type: 'image/png' }
+  ]
+};
+function genIcon(size) {
+  const c = document.createElement('canvas'); c.width = size; c.height = size;
+  const ctx = c.getContext('2d');
+  const g = ctx.createLinearGradient(0,0,size,size);
+  g.addColorStop(0, '#7c5cfc'); g.addColorStop(1, '#c084fc');
+  ctx.fillStyle = g; ctx.roundRect(0,0,size,size,size*0.22); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = `bold ${size*0.45}px serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('A', size/2, size/2);
+  return c.toDataURL('image/png');
+}
+const mBlob = new Blob([JSON.stringify(MANIFEST)], { type: 'application/manifest+json' });
+const mLink = document.createElement('link');
+mLink.rel = 'manifest'; mLink.href = URL.createObjectURL(mBlob);
+document.head.appendChild(mLink);
+// apple touch icon
+const itIcon = document.createElement('link');
+itIcon.rel = 'apple-touch-icon'; itIcon.href = genIcon(180);
+document.head.appendChild(itIcon);
 
-    if (post.url && /\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i.test(post.url)) {
-      results.push({ url: post.url, type: 'image', source: 'reddit' });
-    }
+// ═══════════════════════════════════════════════
+// INDEXEDDB
+// ═══════════════════════════════════════════════
+let db;
+const DB_NAME = 'archyve', DB_VER = 2;
+function initDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('media')) {
+        const ms = d.createObjectStore('media', { keyPath: 'id' });
+        ms.createIndex('folder', 'folder', { unique: false });
+        ms.createIndex('ts', 'ts', { unique: false });
+        ms.createIndex('url', 'url', { unique: false });
+        ms.createIndex('platform', 'platform', { unique: false });
+      }
+      if (!d.objectStoreNames.contains('folders')) {
+        d.createObjectStore('folders', { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; res(db); };
+    req.onerror = () => rej(req.error);
+  });
+}
+function dbOp(storeName, mode, fn) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(storeName, mode);
+    const store = tx.objectStore(storeName);
+    const req = fn(store);
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+function dbGetAll(store) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+const dbPut = (store, val) => dbOp(store, 'readwrite', s => s.put(val));
+const dbDel = (store, key) => dbOp(store, 'readwrite', s => s.delete(key));
+const dbGet = (store, key) => dbOp(store, 'readonly', s => s.get(key));
 
-    if (results.length === 0 && post.preview?.images?.[0]) {
-      const img = post.preview.images[0];
-      const imgUrl = (img.variants?.gif?.source?.url || img.source?.url || '').replace(/&amp;/g, '&');
-      if (imgUrl) results.push({ url: imgUrl, type: 'image', source: 'reddit' });
-    }
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let mediaItems = [];
+let folders = [];
+let settings = { darkMode: true, apiEndpoint: '', imgbbKey: '' };
+let uploadQueue = [];
+let contextTarget = null;
+let viewerItem = null;
+let activeFolderFilter = null;
+let editingFolderId = null;
+let confirmCallback = null;
+let searchFilter = 'all';
+let pressTimer = null;
 
-    if (results.length === 0) throw new Error('No media found in Reddit post');
-    return { media: results, title: post.title || '' };
+// ═══════════════════════════════════════════════
+// SETTINGS PERSISTENCE (localStorage)
+// ═══════════════════════════════════════════════
+function loadSettings() {
+  try { Object.assign(settings, JSON.parse(localStorage.getItem('archyve_settings') || '{}')); } catch {}
+}
+function saveSettings() {
+  localStorage.setItem('archyve_settings', JSON.stringify(settings));
+}
+
+// ═══════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════
+function toast(msg, type = 'info', dur = 3000) {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  el.innerHTML = `<span>${icons[type]||'ℹ'}</span><span>${msg}</span>`;
+  document.getElementById('toast-stack').appendChild(el);
+  setTimeout(() => el.remove(), dur);
+}
+
+// ═══════════════════════════════════════════════
+// PROGRESS BAR
+// ═══════════════════════════════════════════════
+function progress(v) {
+  const bar = document.getElementById('progress-bar');
+  bar.style.transform = `scaleX(${v})`;
+  if (v >= 1) setTimeout(() => { bar.style.transform = 'scaleX(0)'; }, 400);
+}
+
+// ═══════════════════════════════════════════════
+// PLATFORM DETECTION
+// ═══════════════════════════════════════════════
+function detectPlatform(url) {
+  try {
+    const h = new URL(url).hostname.replace('www.','');
+    if (h.includes('reddit.com') || h.includes('redd.it')) return 'reddit';
+    if (h.includes('twitter.com') || h.includes('x.com') || h.includes('t.co')) return 'twitter';
+    if (h.includes('pinterest.com') || h.includes('pin.it')) return 'pinterest';
+    if (h.includes('t.me') || h.includes('telegram.me')) return 'telegram';
+    if (h.includes('google.com')) return 'google';
+    if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|avif)(\?|$)/i.test(url)) return 'direct';
+    if (/\.(mp4|webm|mov|avi|mkv|m3u8)(\?|$)/i.test(url)) return 'direct';
+    return 'og';
+  } catch { return 'direct'; }
+}
+
+function isDirectMedia(url) {
+  return /\.(jpg|jpeg|png|gif|webp|bmp|avif|mp4|webm|mov|m3u8)(\?|$)/i.test(url);
+}
+function isVideo(url) {
+  return /\.(mp4|webm|mov|avi|mkv|m3u8)(\?|$)/i.test(url);
+}
+
+// ═══════════════════════════════════════════════
+// MEDIA EXTRACTION
+// ═══════════════════════════════════════════════
+async function extractMedia(url) {
+  const platform = detectPlatform(url);
+
+  // Direct media link
+  if (isDirectMedia(url)) {
+    return { platform: 'direct', media: [url] };
   }
 
-  static async extractImgur(url) {
-    const results = [];
-    if (/i\.imgur\.com/.test(url)) {
-      results.push({ url, type: /\.gif$/.test(url) ? 'gif' : 'image', source: 'imgur' });
+  // Use configured API endpoint
+  if (settings.apiEndpoint) {
+    try {
+      progress(0.3);
+      const res = await fetch(settings.apiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      progress(0.7);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.media && data.media.length > 0) return data;
+      }
+    } catch (e) {
+      console.warn('API extraction failed, trying fallback', e);
+    }
+  }
+
+  // Fallback: Try to fetch OG tags via a CORS proxy or direct
+  try {
+    progress(0.5);
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl);
+    if (res.ok) {
+      const data = await res.json();
+      const html = data.contents || '';
+      const media = extractOGMedia(html, url);
+      if (media.length > 0) return { platform, media };
+    }
+  } catch {}
+
+  progress(0.9);
+  return { platform, media: [url] };
+}
+
+function extractOGMedia(html, sourceUrl) {
+  const found = [];
+  const ogImg = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i);
+  const ogVideo = html.match(/<meta[^>]+property=["']og:video["'][^>]+content=["']([^"']+)["']/i);
+  if (ogVideo) found.push(ogVideo[1]);
+  if (ogImg) found.push(ogImg[1]);
+  const imgs = [...html.matchAll(/<img[^>]+src=["']([^"']+)["'][^>]*>/gi)];
+  for (const m of imgs) {
+    const src = m[1];
+    if (src.startsWith('http') && !src.includes('avatar') && !src.includes('logo') && !src.includes('icon')) {
+      found.push(src);
+    }
+    if (found.length >= 6) break;
+  }
+  return [...new Set(found)];
+}
+
+// ═══════════════════════════════════════════════
+// IMGBB UPLOAD
+// ═══════════════════════════════════════════════
+async function uploadToImgBB(blobOrUrl, key) {
+  if (!key) return null;
+  try {
+    let base64;
+    if (blobOrUrl instanceof Blob) {
+      base64 = await blobToBase64(blobOrUrl);
+      base64 = base64.split(',')[1];
     } else {
-      const match = url.match(/imgur\.com\/(?:a\/|gallery\/)?([A-Za-z0-9]+)/);
-      if (match) results.push({ url: `https://i.imgur.com/${match[1]}.jpg`, type: 'image', source: 'imgur' });
-    }
-    if (results.length === 0) throw new Error('Could not extract Imgur media');
-    return { media: results, title: '' };
-  }
-
-  static async extractDirect(url) {
-    const type = /\.(mp4|webm|mov)(\?.*)?$/i.test(url) ? 'video' : 'image';
-    return { media: [{ url, type, source: 'direct' }], title: '' };
-  }
-
-  static async extractTwitter(url) {
-    // Use fxtwitter.com — serves proper OGP tags for images and videos, no API key needed
-    const fxUrl = url.replace(/https?:\/\/(www\.)?(twitter\.com|x\.com)/, 'https://fxtwitter.com');
-    try {
-      const html = await this.fetchHtmlViaProxy(fxUrl);
-
-      const videoMatch = html.match(/<meta\s+(?:property|name)=["']og:video(?::url)?["']\s+content=["']([^"']+)["']/i)
-                      || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:video(?::url)?["']/i);
-      if (videoMatch) {
-        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-        return { media: [{ url: videoMatch[1], type: 'video', source: 'twitter' }], title: titleMatch?.[1] || '' };
-      }
-
-      const imgMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
-                    || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
-      if (imgMatch) {
-        const imgUrl = imgMatch[1].replace(/&amp;/g, '&');
-        if (!imgUrl.includes('twitter_icon') && !imgUrl.includes('default_profile')) {
-          const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-          return { media: [{ url: imgUrl, type: 'image', source: 'twitter' }], title: titleMatch?.[1] || '' };
-        }
-      }
-      throw new Error('No media found — tweet may be text-only or from a protected account');
-    } catch (e) {
-      throw new Error('Twitter/X: ' + e.message);
-    }
-  }
-  // FIX #14: Removed dangling unreachable oEmbed code that was left after patching
-
-  static async extractPinterest(url) {
-    try {
-      let pinUrl = url;
-      // Resolve pin.it short links
-      if (url.includes('pin.it/')) {
-        const resolved = await this.fetchHtmlViaProxy(url);
-        const canonical = resolved.match(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["']/i)?.[1];
-        if (canonical) pinUrl = canonical;
-      }
-
-      const pinIdMatch = pinUrl.match(/\/pin\/(\d+)/i);
-
-      // Strategy 1: picn.me proxy (best quality)
-      if (pinIdMatch) {
-        try {
-          const picnUrl = `https://picn.me/p/${pinIdMatch[1]}`;
-          const html = await this.fetchHtmlViaProxy(picnUrl);
-          const imgMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
-                         || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
-          if (imgMatch && imgMatch[1].includes('pinimg.com')) {
-            const highRes = imgMatch[1].replace(/\/\d+x\//, '/originals/');
-            const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-            return { media: [{ url: highRes, type: 'image', source: 'pinterest' }], title: titleMatch?.[1] || '' };
-          }
-        } catch {}
-      }
-
-      // Strategy 2: scrape Pinterest directly
-      const html = await this.fetchHtmlViaProxy(pinUrl);
-      const jsonMatch = html.match(/"orig":\s*\{"url":"([^"]+)"/);
-      if (jsonMatch) {
-        return { media: [{ url: jsonMatch[1].replace(/\\u002F/g, '/'), type: 'image', source: 'pinterest' }], title: '' };
-      }
-
-      // Strategy 3: og:image fallback
-      const ogMatch = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
-                   || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
-      if (ogMatch) {
-        const highRes = ogMatch[1].replace(/\/\d+x\//, '/originals/').replace(/&amp;/g, '&');
-        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-        return { media: [{ url: highRes, type: 'image', source: 'pinterest' }], title: titleMatch?.[1] || '' };
-      }
-
-      throw new Error('Could not find image in pin');
-    } catch (e) {
-      throw new Error('Pinterest: ' + e.message);
-    }
-  }
-
-  static async extractGoogle(url) {
-    try {
-      const u = new URL(url);
-      // Direct image result link
-      const imgurl = u.searchParams.get('imgurl');
-      if (imgurl) return { media: [{ url: imgurl, type: 'image', source: 'google' }], title: u.searchParams.get('imgrefurl') || '' };
-
-      // Google image proxy (lh3.googleusercontent.com, gstatic)
-      if (url.includes('googleusercontent.com') || url.includes('gstatic.com')) {
-        const highRes = url.replace(/=[swh]\d+(-[swh]\d+)*(-[a-z]+)?$/i, '=s0');
-        return { media: [{ url: highRes, type: 'image', source: 'google' }], title: '' };
-      }
-
-      // Google search link — follow destination
-      const q = u.searchParams.get('q') || u.searchParams.get('url');
-      if (q && q.startsWith('http')) return this.extractGeneric(q, 'google');
-
-      // Scrape page for direct image URLs
-      const html = await this.fetchHtmlViaProxy(url);
-      const directImg = html.match(/"(https:\/\/[^"]+\.(?:jpg|jpeg|png|webp|gif)(?:[^"]{0,60}))"/i)?.[1];
-      if (directImg) return { media: [{ url: directImg, type: 'image', source: 'google' }], title: '' };
-
-      throw new Error('Paste the direct image URL (right-click image → Copy image address)');
-    } catch (e) {
-      throw new Error('Google: ' + e.message);
-    }
-  }
-
-  static async extractTumblr(url) {
-    try {
-      const html = await this.fetchHtmlViaProxy(url);
-
-      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
-                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
-      if (ogImg) {
-        const highRes = ogImg[1].replace(/_(\d+)(\.[a-z]+)$/i, '_raw$2').replace(/&amp;/g, '&');
-        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-        return { media: [{ url: highRes, type: 'image', source: 'tumblr' }], title: titleMatch?.[1] || '' };
-      }
-
-      const ogVid = html.match(/<meta\s+(?:property|name)=["']og:video["']\s+content=["']([^"']+)["']/i);
-      if (ogVid) return { media: [{ url: ogVid[1], type: 'video', source: 'tumblr' }], title: '' };
-
-      const mediaImgs = [...html.matchAll(/https:\/\/([a-z0-9]+\.)?media\.tumblr\.com\/[^"'\s]+\.(?:jpg|jpeg|png|gif|webp)/gi)].map(m => m[0]);
-      if (mediaImgs.length) {
-        return { media: [{ url: mediaImgs[0].replace(/_(\d+)(\.[a-z]+)$/i, '_raw$2'), type: 'image', source: 'tumblr' }], title: '' };
-      }
-
-      throw new Error('No media found in Tumblr post');
-    } catch (e) {
-      throw new Error('Tumblr: ' + e.message);
-    }
-  }
-
-  static async extractFlickr(url) {
-    try {
+      // url
       try {
-        const oEmbedUrl = `https://www.flickr.com/services/oembed/?url=${encodeURIComponent(url)}&format=json`;
-        const data = await this.fetchJson(oEmbedUrl);
-        if (data?.url) {
-          return { media: [{ url: data.url.replace(/_b\./, '_o.'), type: 'image', source: 'flickr' }], title: data.title || '' };
-        }
-      } catch {}
-
-      const html = await this.fetchHtmlViaProxy(url);
-      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)?.[1];
-      if (ogImg) {
-        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-        return { media: [{ url: ogImg.replace(/_[a-z]\./, '_b.').replace(/&amp;/g, '&'), type: 'image', source: 'flickr' }], title: titleMatch?.[1] || '' };
+        const res = await fetch(blobOrUrl);
+        const blob = await res.blob();
+        const b64 = await blobToBase64(blob);
+        base64 = b64.split(',')[1];
+      } catch {
+        base64 = null;
       }
-
-      throw new Error('No image found');
-    } catch (e) {
-      throw new Error('Flickr: ' + e.message);
     }
-  }
-
-  static async extractDeviantArt(url) {
-    try {
-      try {
-        const oEmbedUrl = `https://backend.deviantart.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-        const data = await this.fetchJson(oEmbedUrl);
-        if (data?.url) return { media: [{ url: data.url, type: 'image', source: 'deviantart' }], title: data.title || '' };
-      } catch {}
-
-      const html = await this.fetchHtmlViaProxy(url);
-      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)?.[1];
-      if (ogImg) {
-        const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i);
-        return { media: [{ url: ogImg.replace(/&amp;/g, '&'), type: 'image', source: 'deviantart' }], title: titleMatch?.[1] || '' };
-      }
-      throw new Error('No image found');
-    } catch (e) {
-      throw new Error('DeviantArt: ' + e.message);
-    }
-  }
-
-  static async extractGeneric(url, forceSource) {
-    const source = forceSource || 'other';
-    try {
-      const html = await this.fetchHtmlViaProxy(url);
-      const titleMatch = html.match(/<meta\s+(?:property|name)=["']og:title["']\s+content=["']([^"']+)["']/i)
-                       || html.match(/<title[^>]*>([^<]+)<\/title>/i);
-      const title = titleMatch?.[1] || '';
-
-      const ogVid = html.match(/<meta\s+(?:property|name)=["']og:video(?::url)?["']\s+content=["']([^"']+)["']/i)
-                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:video(?::url)?["']/i);
-      if (ogVid) return { media: [{ url: ogVid[1].replace(/&amp;/g, '&'), type: 'video', source }], title };
-
-      const ogImg = html.match(/<meta\s+(?:property|name)=["']og:image["']\s+content=["']([^"']+)["']/i)
-                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']og:image["']/i);
-      if (ogImg) return { media: [{ url: ogImg[1].replace(/&amp;/g, '&'), type: 'image', source }], title };
-
-      const twImg = html.match(/<meta\s+(?:property|name)=["']twitter:image(?::src)?["']\s+content=["']([^"']+)["']/i)
-                 || html.match(/<meta\s+content=["']([^"']+)["']\s+(?:property|name)=["']twitter:image(?::src)?["']/i);
-      if (twImg) return { media: [{ url: twImg[1].replace(/&amp;/g, '&'), type: 'image', source }], title };
-
-      // JSON-LD structured data
-      const jsonLdBlocks = html.match(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi) || [];
-      for (const block of jsonLdBlocks) {
-        try {
-          const json = JSON.parse(block.replace(/<script[^>]*>|<\/script>/gi, ''));
-          const imgUrl = json?.image?.url || json?.image || json?.thumbnailUrl;
-          if (imgUrl && typeof imgUrl === 'string' && imgUrl.startsWith('http')) {
-            return { media: [{ url: imgUrl, type: 'image', source }], title: json?.headline || title };
-          }
-        } catch {}
-      }
-
-      // Score <img> tags by pixel area
-      const imgs = [...html.matchAll(/<img[^>]+src=["'](https?:[^"'\s]+)["'][^>]*(?:width=["'](\d+)["'])?[^>]*(?:height=["'](\d+)["'])?/gi)]
-        .map(m => ({ url: m[1], w: parseInt(m[2]) || 0, h: parseInt(m[3]) || 0 }))
-        .filter(i => /\.(jpg|jpeg|png|webp|gif)/i.test(i.url) && !/(logo|icon|avatar|badge|btn|button|sprite|pixel|tracking|1x1)/i.test(i.url))
-        .sort((a, b) => (b.w * b.h) - (a.w * a.h));
-      if (imgs.length) return { media: [{ url: imgs[0].url, type: 'image', source }], title };
-
-      const vidSrc = html.match(/<(?:video|source)[^>]+src=["'](https?:[^"'\s]+\.(?:mp4|webm|ogg))["']/i)?.[1];
-      if (vidSrc) return { media: [{ url: vidSrc, type: 'video', source }], title };
-
-    } catch (e) {
-      throw new Error('Could not fetch page: ' + e.message);
-    }
-    throw new Error('No media found. Try right-clicking the image and pasting the direct URL.');
-  }
-
-  static async fetchJson(url) {
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
-  }
-
-  static async fetchHtmlViaProxy(url) {
-    for (const proxy of CORS_PROXIES) {
-      try {
-        const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(9000) });
-        if (res.ok) return res.text();
-      } catch {}
-    }
-    throw new Error('All proxies failed');
-  }
-
-  static async fetchAsBase64(url) {
-    try {
-      const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
-      if (res.ok) return blobToBase64(await res.blob());
-    } catch {}
-    for (const proxy of CORS_PROXIES) {
-      try {
-        const res = await fetch(proxy + encodeURIComponent(url), { signal: AbortSignal.timeout(15000) });
-        if (res.ok) return blobToBase64(await res.blob());
-      } catch {}
-    }
-    throw new Error('Could not download media');
-  }
+    if (!base64) return null;
+    const form = new FormData();
+    form.append('key', key);
+    form.append('image', base64);
+    const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: form });
+    const data = await res.json();
+    if (data.success) return data.data.url;
+  } catch (e) { console.warn('ImgBB upload failed', e); }
+  return null;
 }
 
 function blobToBase64(blob) {
-  return new Promise((resolve, reject) => {
+  return new Promise((res, rej) => {
     const r = new FileReader();
-    r.onloadend = () => resolve(r.result);
-    r.onerror = reject;
+    r.onload = () => res(r.result);
+    r.onerror = rej;
     r.readAsDataURL(blob);
   });
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ═══════════════════════════════════════════════
+// SAVE MEDIA
+// ═══════════════════════════════════════════════
+async function saveFromUrl(rawUrl, folderId) {
+  rawUrl = rawUrl.trim();
+  if (!rawUrl) { toast('Please enter a URL', 'error'); return; }
+
+  // Duplicate check
+  const existing = mediaItems.find(m => m.sourceUrl === rawUrl);
+  if (existing) { toast('Already saved this link!', 'info'); return; }
+
+  progress(0.1);
+  toast('Extracting media…', 'info');
+
+  let extracted;
+  try {
+    extracted = await extractMedia(rawUrl);
+  } catch (e) {
+    toast('Failed to extract media', 'error');
+    progress(1); return;
+  }
+
+  if (!extracted.media || extracted.media.length === 0) {
+    toast('No media found', 'error');
+    progress(1); return;
+  }
+
+  progress(0.8);
+  for (const mediaUrl of extracted.media) {
+    await saveMediaItem(mediaUrl, rawUrl, extracted.platform, folderId);
+  }
+  progress(1);
+  toast(`${extracted.media.length} item(s) saved!`, 'success');
+  renderMediaGrid();
+  updateHomeCounts();
 }
 
-// ============================================================
-// IMGBB UPLOADER
-// ============================================================
-const ImgBB = {
-  async upload(imageData, apiKey, name = '') {
-    if (!apiKey) throw new Error('ImgBB API key not configured. Add it in Settings.');
-    const fd = new FormData();
-    fd.append('key', apiKey);
-    fd.append('expiration', '0');
-    if (name) fd.append('name', name.substring(0, 100));
-    if (imageData.startsWith('http://') || imageData.startsWith('https://')) {
-      fd.append('image', imageData);
-    } else {
-      fd.append('image', imageData.replace(/^data:image\/[a-z]+;base64,/, ''));
+async function saveMediaItem(mediaUrl, sourceUrl, platform, folderId) {
+  const id = 'media_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+  const type = isVideo(mediaUrl) ? 'video' : 'image';
+
+  // Try to get blob for local preview
+  let blobUrl = null;
+  let blob = null;
+  try {
+    const res = await fetch(mediaUrl, { mode: 'cors' });
+    if (res.ok) {
+      blob = await res.blob();
+      blobUrl = URL.createObjectURL(blob);
     }
-    const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd });
-    const result = await res.json();
-    if (!result.success) throw new Error(result.error?.message || 'ImgBB upload failed');
-    return {
-      url: result.data.url,
-      thumbUrl: result.data.thumb?.url || result.data.url,
-      deleteUrl: result.data.delete_url,
-      id: result.data.id
-    };
-  }
-};
+  } catch {}
 
-// ============================================================
+  const item = {
+    id, mediaUrl, sourceUrl, platform, type,
+    folder: folderId || '',
+    ts: Date.now(),
+    blobUrl,
+    cloudUrl: null,
+    synced: false,
+    width: null, height: null
+  };
+
+  // get dimensions
+  if (type === 'image') {
+    try {
+      const dims = await getImageDimensions(blobUrl || mediaUrl);
+      item.width = dims.width; item.height = dims.height;
+    } catch {}
+  }
+
+  mediaItems.unshift(item);
+  await dbPut('media', { ...item, blobData: blob ? await blobToBase64(blob) : null });
+
+  // Queue upload
+  if (settings.imgbbKey) {
+    enqueueUpload(id, blob || mediaUrl);
+  }
+
+  return item;
+}
+
+function getImageDimensions(url) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => res({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = rej;
+    img.src = url;
+  });
+}
+
+// ═══════════════════════════════════════════════
 // UPLOAD QUEUE
-// ============================================================
-class UploadQueue {
-  constructor(db, onProgress, onComplete, onError) {
-    this.db = db; this.onProgress = onProgress;
-    this.onComplete = onComplete; this.onError = onError;
-    this.queue = []; this.running = false;
-  }
+// ═══════════════════════════════════════════════
+let uploadRunning = false;
+function enqueueUpload(id, source) {
+  uploadQueue.push({ id, source });
+  updateUploadQueueBtn();
+  if (!uploadRunning) processUploadQueue();
+}
 
-  enqueue(item) {
-    this.queue.push(item);
-    if (!this.running) this.process();
-  }
-
-  async process() {
-    this.running = true;
-    while (this.queue.length > 0) {
-      const item = this.queue.shift();
-      try {
-        this.onProgress(item.id, 'uploading');
-        const apiKey = await this.db.getSetting('imgbbApiKey');
-        const imageData = item.localData || item.mediaUrl;
-        const result = await ImgBB.upload(imageData, apiKey, item.id);
-        // FIX #5: Clean update without redundant null/delete
-        const updated = { ...item, imgbbUrl: result.url, imgbbThumb: result.thumbUrl,
-          imgbbDeleteUrl: result.deleteUrl, uploadStatus: 'done', localData: null };
-        await this.db.save(updated);
-        this.onComplete(updated);
-      } catch (err) {
-        const failed = { ...item, uploadStatus: 'failed', uploadError: err.message };
-        await this.db.save(failed);
-        this.onError(item.id, err.message);
+async function processUploadQueue() {
+  if (uploadQueue.length === 0) { uploadRunning = false; updateUploadQueueBtn(); return; }
+  uploadRunning = true;
+  const job = uploadQueue.shift();
+  updateUploadQueueBtn();
+  try {
+    const cloudUrl = await uploadToImgBB(job.source, settings.imgbbKey);
+    if (cloudUrl) {
+      const idx = mediaItems.findIndex(m => m.id === job.id);
+      if (idx !== -1) {
+        mediaItems[idx].cloudUrl = cloudUrl;
+        mediaItems[idx].synced = true;
+        const stored = await dbGet('media', job.id);
+        if (stored) { stored.cloudUrl = cloudUrl; stored.synced = true; await dbPut('media', stored); }
+        toast('Media synchronized successfully', 'success');
+        refreshCardSync(job.id);
       }
     }
-    this.running = false;
+  } catch {}
+  setTimeout(processUploadQueue, 500);
+}
+
+function updateUploadQueueBtn() {
+  const btn = document.getElementById('upload-queue-btn');
+  const count = uploadQueue.length + (uploadRunning ? 1 : 0);
+  btn.classList.toggle('visible', count > 0);
+  document.getElementById('upload-queue-count').textContent = `${count} uploading`;
+}
+
+function refreshCardSync(id) {
+  const el = document.querySelector(`[data-id="${id}"] .card-sync`);
+  if (el) { el.className = 'card-sync done'; el.innerHTML = '✓'; }
+}
+
+// ═══════════════════════════════════════════════
+// FOLDERS
+// ═══════════════════════════════════════════════
+async function createFolder(name, emoji) {
+  const id = 'folder_' + Date.now();
+  const folder = { id, name, emoji: emoji || '📁', ts: Date.now() };
+  folders.push(folder);
+  await dbPut('folders', folder);
+  renderFolders(); updateFolderSelects(); updateHomeCounts();
+  return folder;
+}
+async function updateFolder(id, name, emoji) {
+  const idx = folders.findIndex(f => f.id === id);
+  if (idx === -1) return;
+  folders[idx].name = name; folders[idx].emoji = emoji || folders[idx].emoji;
+  await dbPut('folders', folders[idx]);
+  renderFolders(); updateFolderSelects();
+}
+async function deleteFolder(id) {
+  folders = folders.filter(f => f.id !== id);
+  await dbDel('folders', id);
+  // Move media to default
+  for (const m of mediaItems) {
+    if (m.folder === id) { m.folder = ''; await dbPut('media', m); }
+  }
+  renderFolders(); updateFolderSelects(); renderMediaGrid();
+}
+async function moveToFolder(mediaId, folderId) {
+  const idx = mediaItems.findIndex(m => m.id === mediaId);
+  if (idx === -1) return;
+  mediaItems[idx].folder = folderId;
+  await dbPut('media', mediaItems[idx]);
+  renderMediaGrid(); renderFolders();
+}
+
+// ═══════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════
+function renderMediaGrid(container = 'media-grid', items = null, folderFilter = null) {
+  const grid = document.getElementById(container);
+  if (!grid) return;
+  let list = items || mediaItems;
+  if (folderFilter !== null) list = list.filter(m => m.folder === folderFilter);
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="column-span:all;">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
+      <h3>Nothing here yet</h3><p>Save your first link above</p></div>`;
+    return;
+  }
+  grid.innerHTML = '';
+  for (const item of list) {
+    const card = createMediaCard(item);
+    grid.appendChild(card);
   }
 }
 
-// ============================================================
-// LAZY IMAGE LOADER
-// ============================================================
-const lazyObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const img = entry.target;
-      // FIX #6: Use data-src for true lazy loading
-      if (img.dataset.src) {
-        img.src = img.dataset.src;
-        img.removeAttribute('data-src');
-        lazyObserver.unobserve(img);
+function createMediaCard(item) {
+  const card = document.createElement('div');
+  card.className = 'media-card' + (item.type === 'video' ? ' is-video' : '');
+  card.dataset.id = item.id;
+
+  const displayUrl = item.cloudUrl || item.blobUrl || item.mediaUrl;
+  const aspectStyle = (item.width && item.height)
+    ? `aspect-ratio:${item.width}/${item.height};`
+    : 'aspect-ratio:1;';
+
+  const platformClass = `pi-${item.platform}`;
+  const syncClass = item.synced ? 'done' : 'pending';
+  const syncIcon = item.synced ? '✓' : '↑';
+
+  if (item.type === 'video') {
+    card.innerHTML = `
+      <video src="${displayUrl}" muted playsinline preload="metadata" style="${aspectStyle}min-height:80px;"></video>
+      <div class="card-badge"><span class="platform-icon ${platformClass}"></span>${item.platform}</div>
+      <div class="card-sync ${syncClass}">${syncIcon}</div>`;
+  } else {
+    card.innerHTML = `
+      <img loading="lazy" src="${displayUrl}" alt="" style="${aspectStyle}min-height:80px;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%231a1a24%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
+      <div class="card-badge"><span class="platform-icon ${platformClass}"></span>${item.platform}</div>
+      <div class="card-sync ${syncClass}">${syncIcon}</div>`;
+  }
+
+  card.addEventListener('click', () => openViewer(item));
+  setupLongPress(card, item);
+  return card;
+}
+
+function renderFolders() {
+  const list = document.getElementById('folders-list');
+  const subtitle = document.getElementById('folders-subtitle');
+  subtitle.textContent = `${folders.length} folder${folders.length !== 1 ? 's' : ''} · ${mediaItems.length} items`;
+
+  const defaultCount = mediaItems.filter(m => !m.folder).length;
+  let html = `<div class="folder-card ${activeFolderFilter === '' ? 'active-folder' : ''}" data-folderid="" onclick="filterByFolder('')">
+    <div class="folder-icon" style="background:rgba(124,92,252,0.15);">📥</div>
+    <div class="folder-name">Default</div>
+    <div class="folder-count">${defaultCount} item${defaultCount !== 1 ? 's' : ''}</div>
+  </div>`;
+
+  for (const f of folders) {
+    const count = mediaItems.filter(m => m.folder === f.id).length;
+    html += `<div class="folder-card ${activeFolderFilter === f.id ? 'active-folder' : ''}" data-folderid="${f.id}" onclick="filterByFolder('${f.id}')">
+      <div class="folder-actions">
+        <button class="icon-btn" onclick="event.stopPropagation();editFolder('${f.id}')" title="Rename">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        </button>
+        <button class="icon-btn" onclick="event.stopPropagation();confirmDeleteFolder('${f.id}')" title="Delete" style="color:var(--danger);">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+      <div class="folder-icon" style="background:rgba(192,132,252,0.15);">${f.emoji}</div>
+      <div class="folder-name">${f.name}</div>
+      <div class="folder-count">${count} item${count !== 1 ? 's' : ''}</div>
+    </div>`;
+  }
+
+  list.innerHTML = html;
+
+  // Render folder content
+  if (activeFolderFilter !== null) {
+    const fmg = document.getElementById('folder-media-grid');
+    renderMediaGrid('folder-media-grid', null, activeFolderFilter);
+    fmg.style.display = 'block';
+  }
+}
+
+function filterByFolder(id) {
+  activeFolderFilter = id;
+  renderFolders();
+}
+
+function updateFolderSelects() {
+  const selects = document.querySelectorAll('.folder-select');
+  selects.forEach(sel => {
+    const val = sel.value;
+    sel.innerHTML = '<option value="">📁 Default</option>' +
+      folders.map(f => `<option value="${f.id}">${f.emoji} ${f.name}</option>`).join('');
+    sel.value = val;
+  });
+}
+
+function updateHomeCounts() {
+  document.getElementById('home-count').textContent =
+    `${mediaItems.length} item${mediaItems.length !== 1 ? 's' : ''} saved`;
+}
+
+// ═══════════════════════════════════════════════
+// VIEWER
+// ═══════════════════════════════════════════════
+function openViewer(item) {
+  viewerItem = item;
+  const viewer = document.getElementById('viewer');
+  const mediaEl = document.getElementById('viewer-media');
+  const titleEl = document.getElementById('viewer-title');
+  const bottom = document.getElementById('viewer-bottom');
+
+  const displayUrl = item.cloudUrl || item.blobUrl || item.mediaUrl;
+
+  if (item.type === 'video') {
+    mediaEl.innerHTML = `<video src="${displayUrl}" controls autoplay playsinline style="max-width:100%;max-height:100%;"></video>`;
+  } else {
+    mediaEl.innerHTML = `<img src="${displayUrl}" alt="" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+  }
+
+  titleEl.textContent = item.sourceUrl;
+  bottom.innerHTML = `
+    <button class="btn btn-ghost btn-sm" onclick="downloadMedia(viewerItem)">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg> Download
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="openMoveModal(viewerItem.id)">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg> Move
+    </button>
+    <button class="btn btn-ghost btn-sm" onclick="window.open(viewerItem.sourceUrl,'_blank')">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg> Source
+    </button>
+    <button class="btn btn-danger btn-sm" onclick="deleteMedia(viewerItem.id);closeViewer()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+    </button>`;
+
+  viewer.classList.add('open');
+
+  // Swipe down to close
+  let startY = 0, dragging = false;
+  viewer.ontouchstart = e => { startY = e.touches[0].clientY; dragging = true; };
+  viewer.ontouchmove = e => {
+    if (!dragging) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 0) viewer.style.transform = `translateY(${dy}px)`;
+  };
+  viewer.ontouchend = e => {
+    dragging = false;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (dy > 100) { closeViewer(); }
+    else { viewer.style.transform = ''; }
+  };
+}
+
+function closeViewer() {
+  const viewer = document.getElementById('viewer');
+  viewer.classList.remove('open');
+  viewer.style.transform = '';
+  setTimeout(() => { document.getElementById('viewer-media').innerHTML = ''; }, 300);
+  viewerItem = null;
+}
+
+// ═══════════════════════════════════════════════
+// DELETE / DOWNLOAD
+// ═══════════════════════════════════════════════
+async function deleteMedia(id) {
+  mediaItems = mediaItems.filter(m => m.id !== id);
+  await dbDel('media', id);
+  renderMediaGrid();
+  renderFolders();
+  updateHomeCounts();
+  toast('Deleted', 'info');
+}
+
+function downloadMedia(item) {
+  const url = item.cloudUrl || item.blobUrl || item.mediaUrl;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `archyve_${item.id}.${item.type === 'video' ? 'mp4' : 'jpg'}`;
+  a.target = '_blank';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ═══════════════════════════════════════════════
+// LONG PRESS CONTEXT MENU
+// ═══════════════════════════════════════════════
+function setupLongPress(card, item) {
+  card.addEventListener('touchstart', e => {
+    pressTimer = setTimeout(() => {
+      showContextMenu(e.touches[0].clientX, e.touches[0].clientY, item);
+    }, 600);
+  }, { passive: true });
+  card.addEventListener('touchend', () => clearTimeout(pressTimer));
+  card.addEventListener('touchmove', () => clearTimeout(pressTimer));
+  card.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    showContextMenu(e.clientX, e.clientY, item);
+  });
+}
+
+function showContextMenu(x, y, item) {
+  contextTarget = item;
+  const menu = document.getElementById('ctx-menu');
+  menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 180) + 'px';
+  menu.classList.add('open');
+}
+function hideContextMenu() { document.getElementById('ctx-menu').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════
+// MOVE MODAL
+// ═══════════════════════════════════════════════
+function openMoveModal(mediaId) {
+  contextTarget = mediaItems.find(m => m.id === mediaId);
+  const list = document.getElementById('move-folders-list');
+  list.innerHTML = `<button class="btn btn-ghost" style="width:100%;justify-content:flex-start;" onclick="moveToFolder('${mediaId}','');closeMoveModal()">📥 Default</button>` +
+    folders.map(f => `<button class="btn btn-ghost" style="width:100%;justify-content:flex-start;" onclick="moveToFolder('${mediaId}','${f.id}');closeMoveModal()">${f.emoji} ${f.name}</button>`).join('');
+  document.getElementById('move-modal').classList.add('open');
+}
+function closeMoveModal() { document.getElementById('move-modal').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════
+// FOLDER MODAL
+// ═══════════════════════════════════════════════
+function openFolderModal(editId = null) {
+  editingFolderId = editId;
+  const title = document.getElementById('folder-modal-title');
+  const nameIn = document.getElementById('folder-name-input');
+  const emojiIn = document.getElementById('folder-emoji-input');
+  if (editId) {
+    const f = folders.find(x => x.id === editId);
+    title.textContent = 'Edit Folder';
+    nameIn.value = f ? f.name : '';
+    emojiIn.value = f ? f.emoji : '';
+  } else {
+    title.textContent = 'New Folder';
+    nameIn.value = ''; emojiIn.value = '';
+  }
+  document.getElementById('folder-modal').classList.add('open');
+  setTimeout(() => nameIn.focus(), 300);
+}
+function closeFolderModal() { document.getElementById('folder-modal').classList.remove('open'); }
+function editFolder(id) { openFolderModal(id); }
+
+async function saveFolderModal() {
+  const name = document.getElementById('folder-name-input').value.trim();
+  const emoji = document.getElementById('folder-emoji-input').value.trim() || '📁';
+  if (!name) { toast('Enter a folder name', 'error'); return; }
+  if (editingFolderId) { await updateFolder(editingFolderId, name, emoji); toast('Folder updated', 'success'); }
+  else { await createFolder(name, emoji); toast('Folder created', 'success'); }
+  closeFolderModal();
+}
+
+function confirmDeleteFolder(id) {
+  const f = folders.find(x => x.id === id);
+  showConfirm(`Delete folder "${f?.name}"?`, 'Media will be moved to Default.', async () => {
+    await deleteFolder(id); toast('Folder deleted', 'info');
+  });
+}
+
+// ═══════════════════════════════════════════════
+// CONFIRM MODAL
+// ═══════════════════════════════════════════════
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').textContent = msg;
+  confirmCallback = cb;
+  document.getElementById('confirm-modal').classList.add('open');
+}
+function closeConfirm() { document.getElementById('confirm-modal').classList.remove('open'); confirmCallback = null; }
+
+// ═══════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════
+function runSearch() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let results = mediaItems.filter(m => {
+    const matchText = m.sourceUrl.toLowerCase().includes(q) || m.platform.toLowerCase().includes(q) ||
+      (m.folder && folders.find(f => f.id === m.folder)?.name.toLowerCase().includes(q));
+    const matchFilter = searchFilter === 'all' ? true :
+      searchFilter === 'image' ? m.type === 'image' :
+      searchFilter === 'video' ? m.type === 'video' :
+      m.platform === searchFilter;
+    return matchText && matchFilter;
+  });
+  renderMediaGrid('search-results', results);
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════
+function exportArchive() {
+  const data = { version: 1, exported: new Date().toISOString(), folders, media: mediaItems.map(m => ({ ...m, blobUrl: null })) };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `archyve_backup_${Date.now()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Archive exported', 'success');
+}
+
+async function importArchive(file) {
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data.media) { toast('Invalid archive file', 'error'); return; }
+    let imported = 0;
+    for (const f of (data.folders || [])) {
+      if (!folders.find(x => x.id === f.id)) { folders.push(f); await dbPut('folders', f); }
+    }
+    for (const m of data.media) {
+      if (!mediaItems.find(x => x.id === m.id)) {
+        mediaItems.unshift(m); await dbPut('media', m); imported++;
+      }
+    }
+    renderMediaGrid(); renderFolders(); updateFolderSelects(); updateHomeCounts();
+    toast(`Imported ${imported} items`, 'success');
+  } catch { toast('Failed to import archive', 'error'); }
+}
+
+// ═══════════════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════════════
+function setupDragDrop() {
+  const overlay = document.getElementById('drag-overlay');
+  let dragCount = 0;
+  document.addEventListener('dragenter', e => { e.preventDefault(); dragCount++; overlay.classList.add('active'); });
+  document.addEventListener('dragleave', () => { dragCount--; if (dragCount <= 0) { dragCount = 0; overlay.classList.remove('active'); } });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', async e => {
+    e.preventDefault(); dragCount = 0; overlay.classList.remove('active');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/') || f.type.startsWith('video/'));
+    const urlData = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
+    if (files.length > 0) {
+      for (const file of files) {
+        const blobUrl = URL.createObjectURL(file);
+        await saveMediaItem(blobUrl, 'dropped-file', 'direct', '');
+      }
+      renderMediaGrid(); updateHomeCounts(); toast(`${files.length} file(s) saved`, 'success');
+    } else if (urlData) {
+      for (const url of urlData.split('\n').map(u => u.trim()).filter(u => u)) {
+        await saveFromUrl(url, '');
       }
     }
   });
-}, { rootMargin: '200px' });
+}
 
-// ============================================================
-// MAIN APP
-// ============================================================
-class App {
-  constructor() {
-    this.db = new MediaDB();
-    this.items = [];
-    this.filteredItems = [];
-    this.currentFilter = 'all';
-    this.searchQuery = '';
-    this.currentPreviewId = null;
-    this.uploadQueue = null;
-    this.darkMode = false;
-  }
-
-  async init() {
-    await this.db.init();
-    this.uploadQueue = new UploadQueue(
-      this.db,
-      (id, status) => this.updateCardStatus(id, status),
-      (item) => this.updateCardAfterUpload(item),
-      (id, msg) => this.updateCardError(id, msg)
-    );
-
-    // FIX #13: Set dark mode BEFORE bindEvents so toggle.checked doesn't fire change event
-    this.darkMode = (await this.db.getSetting('darkMode')) === true ||
-                    window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (this.darkMode) document.documentElement.classList.add('dark');
-    document.getElementById('darkModeToggle').checked = this.darkMode;
-
-    const apiKey = await this.db.getSetting('imgbbApiKey') || '';
-    document.getElementById('apiKeyInput').value = apiKey;
-
-    this.bindEvents();
-    await this.loadItems();
-    this.renderGrid();
-    this.updateStats();
-  }
-
-  bindEvents() {
-    document.getElementById('saveBtn').addEventListener('click', () => this.handleSave());
-    document.getElementById('urlInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') this.handleSave(); });
-
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        this.currentFilter = btn.dataset.filter;
-        this.applyFilters();
-      });
-    });
-
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      this.searchQuery = e.target.value.toLowerCase();
-      this.applyFilters();
-    });
-
-    document.getElementById('settingsBtn').addEventListener('click', () => this.toggleSettings());
-    document.getElementById('settingsClose').addEventListener('click', () => this.toggleSettings(false));
-    document.getElementById('saveApiKey').addEventListener('click', () => this.saveApiKey());
-
-    // FIX #13: darkModeToggle.checked already set before bindEvents, change listener is safe now
-    document.getElementById('darkModeToggle').addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
-
-    document.getElementById('modalOverlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('modalOverlay')) this.closeModal();
-    });
-    document.getElementById('modalClose').addEventListener('click', () => this.closeModal());
-    document.getElementById('modalDownload').addEventListener('click', () => this.downloadCurrent());
-    document.getElementById('modalDelete').addEventListener('click', () => this.deleteCurrent());
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeModal(); });
-    document.getElementById('clearAllBtn')?.addEventListener('click', () => this.clearAll());
-
-    // Global paste shortcut
-    document.addEventListener('paste', (e) => {
-      const active = document.activeElement;
-      if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') return;
-      const text = e.clipboardData?.getData('text');
-      if (text && text.startsWith('http')) {
-        document.getElementById('urlInput').value = text;
-        document.getElementById('urlInput').focus();
-      }
-    });
-  }
-
-  async handleSave() {
-    const urlInput = document.getElementById('urlInput');
-    const url = urlInput.value.trim();
-    if (!url) return;
-
-    try { new URL(url); } catch { this.showToast('Please enter a valid URL', 'error'); return; }
-
-    // FIX #3: Dedup check using updated findByUrl (no unique constraint issues)
-    const existing = await this.db.findByUrl(url);
-    if (existing) { this.showToast('Already saved!', 'warning'); return; }
-
-    const btn = document.getElementById('saveBtn');
-    btn.classList.add('loading');
-    btn.disabled = true;
-    document.getElementById('progressBar').style.display = 'block';
-
-    try {
-      const platform = PlatformDetector.detect(url);
-      this.updateProgress(20);
-
-      const extracted = await MediaExtractor.extract(url, platform);
-      this.updateProgress(60);
-
-      const mediaList = extracted.media || [];
-      if (!mediaList.length) throw new Error('No media found');
-
-      // FIX #4: Build all items first, then render once
-      const newItems = [];
-      for (let i = 0; i < mediaList.length; i++) {
-        const media = mediaList[i];
-        const id = 'mv_' + Date.now() + '_' + i + '_' + Math.random().toString(36).slice(2, 7);
-
-        let localData = null;
-        if (media.type !== 'video') {
-          try { localData = await MediaExtractor.fetchAsBase64(media.url); } catch {}
-        }
-
-        const item = {
-          id,
-          sourceUrl: i === 0 ? url : url + '#item' + i,
-          mediaUrl: media.url,
-          mediaType: media.type,
-          platform,
-          title: extracted.title || '',
-          dateSaved: new Date().toISOString(),
-          uploadStatus: 'pending',
-          imgbbUrl: null,
-          imgbbThumb: null,
-          localData
-        };
-
-        await this.db.save(item);
-        newItems.push(item);
-      }
-
-      // Add all at once, render once
-      newItems.forEach(item => this.items.unshift(item));
-      this.applyFilters();
-      this.updateStats();
-
-      this.updateProgress(100);
-      urlInput.value = '';
-      this.showToast('Saved ' + mediaList.length + ' item' + (mediaList.length > 1 ? 's' : '') + '!', 'success');
-
-      // Queue uploads
-      newItems.forEach(item => this.uploadQueue.enqueue({ ...item }));
-
-    } catch (err) {
-      this.showToast(err.message || 'Failed to save media', 'error');
-      console.error(err);
-    } finally {
-      setTimeout(() => {
-        document.getElementById('progressBar').style.display = 'none';
-        this.updateProgress(0);
-      }, 600);
-      btn.classList.remove('loading');
-      btn.disabled = false;
-    }
-  }
-
-  updateProgress(pct) {
-    document.getElementById('progressFill').style.width = pct + '%';
-  }
-
-  async loadItems() {
-    this.items = await this.db.getAll();
-    this.items.sort((a, b) => new Date(b.dateSaved) - new Date(a.dateSaved));
-    this.applyFilters();
-  }
-
-  applyFilters() {
-    let filtered = [...this.items];
-    if (this.currentFilter !== 'all') filtered = filtered.filter(i => i.platform === this.currentFilter);
-    if (this.searchQuery) {
-      filtered = filtered.filter(i =>
-        (i.title || '').toLowerCase().includes(this.searchQuery) ||
-        (i.sourceUrl || '').toLowerCase().includes(this.searchQuery) ||
-        (i.platform || '').toLowerCase().includes(this.searchQuery)
-      );
-    }
-    this.filteredItems = filtered;
-    this.renderGrid();
-  }
-
-  renderGrid() {
-    const grid = document.getElementById('mediaGrid');
-    const empty = document.getElementById('emptyState');
-
-    if (!this.filteredItems.length) {
-      grid.innerHTML = '';
-      empty.style.display = 'flex';
-      return;
-    }
-    empty.style.display = 'none';
-
-    const existingIds = new Set([...grid.querySelectorAll('.media-card')].map(c => c.dataset.id));
-    const newIds = new Set(this.filteredItems.map(i => i.id));
-
-    // Remove deleted cards
-    grid.querySelectorAll('.media-card').forEach(card => {
-      if (!newIds.has(card.dataset.id)) card.remove();
-    });
-
-    // Prepend new cards
-    for (let i = this.filteredItems.length - 1; i >= 0; i--) {
-      const item = this.filteredItems[i];
-      if (!existingIds.has(item.id)) {
-        grid.insertBefore(this.createCard(item), grid.firstChild);
-      } else {
-        const existing = grid.querySelector('[data-id="' + item.id + '"]');
-        if (existing) this.patchCard(existing, item);
+// ═══════════════════════════════════════════════
+// CLIPBOARD PASTE
+// ═══════════════════════════════════════════════
+async function handlePaste(e) {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      if (blob) {
+        e.preventDefault();
+        const blobUrl = URL.createObjectURL(blob);
+        await saveMediaItem(blobUrl, 'pasted-image', 'direct', document.getElementById('folder-select-home').value);
+        renderMediaGrid(); updateHomeCounts(); toast('Image pasted and saved!', 'success');
+        return;
       }
     }
-  }
-
-  createCard(item) {
-    const card = document.createElement('div');
-    card.className = 'media-card';
-    card.dataset.id = item.id;
-    card.innerHTML = this.cardHTML(item);
-    card.addEventListener('click', () => this.openModal(item.id));
-    // Observe lazy images
-    const img = card.querySelector('img[data-src]');
-    if (img) lazyObserver.observe(img);
-    return card;
-  }
-
-  cardHTML(item) {
-    // FIX #6: Use data-src for lazy loading instead of src
-    // FIX #7: Safe fallback SVG without nested quote escaping issues
-    const isVideo = item.mediaType === 'video';
-    const thumbSrc = item.imgbbThumb || item.imgbbUrl || item.mediaUrl;
-    // For local base64 data, use it directly (already in memory); for URLs use lazy loading
-    const isBase64 = item.localData && item.localData.startsWith('data:');
-    const statusClass = { done:'status-done', uploading:'status-uploading', failed:'status-failed' }[item.uploadStatus] || 'status-pending';
-    const icon = PLATFORM_ICONS[item.platform] || '🌐';
-    const label = PLATFORM_LABELS[item.platform] || item.platform;
-    const dateStr = new Date(item.dateSaved).toLocaleDateString('en-US', { month:'short', day:'numeric' });
-    const fallbackSrc = 'data:image/svg+xml,%3Csvg xmlns%3D%22http%3A//www.w3.org/2000/svg%22 viewBox%3D%220 0 100 100%22%3E%3Crect fill%3D%22%23333%22 width%3D%22100%22 height%3D%22100%22/%3E%3Ctext y%3D%2260%22 font-size%3D%2240%22 x%3D%2250%25%22 text-anchor%3D%22middle%22%3E🖼%3C/text%3E%3C/svg%3E';
-
-    return `
-      <div class="card-media">
-        ${isVideo
-          ? `<video src="${escapeHtml(item.imgbbUrl || item.mediaUrl)}" muted playsinline loop preload="none" class="card-img"></video>
-             <div class="play-icon">▶</div>`
-          : isBase64
-            ? `<img src="${item.localData}" alt="${escapeHtml(item.title || 'Media')}" class="card-img">`
-            : `<img data-src="${escapeHtml(thumbSrc)}" src="${fallbackSrc}" alt="${escapeHtml(item.title || 'Media')}" class="card-img">`
-        }
-        <div class="card-overlay">
-          <span class="platform-badge ${item.platform}">${icon} ${label}</span>
-          <span class="card-date">${dateStr}</span>
-        </div>
-        <div class="upload-dot ${statusClass}" title="${statusClass.replace('status-','')}"></div>
-      </div>
-      ${item.title ? `<div class="card-title">${escapeHtml(item.title.substring(0, 80))}</div>` : ''}
-    `;
-  }
-
-  patchCard(card, item) {
-    const dot = card.querySelector('.upload-dot');
-    if (dot) {
-      dot.className = 'upload-dot ' + ({ done:'status-done', uploading:'status-uploading', failed:'status-failed' }[item.uploadStatus] || 'status-pending');
-    }
-    // Upgrade thumb to ImgBB version once uploaded
-    const img = card.querySelector('img');
-    if (img && item.imgbbThumb && !img.src.startsWith('data:')) {
-      img.src = item.imgbbThumb;
-    }
-  }
-
-  updateCardStatus(id, status) {
-    const idx = this.items.findIndex(i => i.id === id);
-    if (idx !== -1) this.items[idx].uploadStatus = status;
-    const card = document.querySelector('[data-id="' + id + '"]');
-    if (card) {
-      const dot = card.querySelector('.upload-dot');
-      if (dot) dot.className = 'upload-dot status-' + status;
-    }
-  }
-
-  updateCardAfterUpload(item) {
-    const idx = this.items.findIndex(i => i.id === item.id);
-    if (idx !== -1) this.items[idx] = item;
-    const card = document.querySelector('[data-id="' + item.id + '"]');
-    if (card) this.patchCard(card, item);
-    this.showToast('Uploaded to ImgBB ✓', 'success');
-  }
-
-  updateCardError(id, msg) {
-    this.updateCardStatus(id, 'failed');
-    console.warn('Upload failed:', id, msg);
-  }
-
-  openModal(id) {
-    const item = this.items.find(i => i.id === id);
-    if (!item) return;
-    this.currentPreviewId = id;
-
-    const mediaUrl = item.imgbbUrl || item.localData || item.mediaUrl;
-    const isVideo = item.mediaType === 'video';
-    document.getElementById('modalMedia').innerHTML = isVideo
-      ? `<video src="${escapeHtml(mediaUrl)}" controls autoplay loop class="modal-media-el"></video>`
-      : `<img src="${escapeHtml(mediaUrl)}" alt="${escapeHtml(item.title || '')}" class="modal-media-el" />`;
-
-    document.getElementById('modalTitle').textContent = item.title || 'Untitled';
-    document.getElementById('modalPlatform').textContent = PLATFORM_LABELS[item.platform] || item.platform;
-    document.getElementById('modalDate').textContent = new Date(item.dateSaved).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-    document.getElementById('modalSource').href = item.sourceUrl;
-    const imgbbLink = document.getElementById('modalImgbb');
-    imgbbLink.href = item.imgbbUrl || '#';
-    imgbbLink.style.opacity = item.imgbbUrl ? '1' : '0.4';
-
-    const status = document.getElementById('modalUploadStatus');
-    const statusMap = { done:'✓ Uploaded to ImgBB', failed:'✗ Upload failed', uploading:'⟳ Uploading…', pending:'○ Pending upload' };
-    status.textContent = statusMap[item.uploadStatus] || '';
-    status.className = 'modal-upload-status ' + (item.uploadStatus || 'pending');
-
-    document.getElementById('modalOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
-    document.body.style.overflow = '';
-    document.getElementById('modalMedia').innerHTML = '';
-    this.currentPreviewId = null;
-  }
-
-  async downloadCurrent() {
-    if (!this.currentPreviewId) return;
-    const item = this.items.find(i => i.id === this.currentPreviewId);
-    if (!item) return;
-    const url = item.imgbbUrl || item.mediaUrl;
-    const ext = url.match(/\.(jpg|jpeg|png|gif|webp|mp4|webm)/i)?.[1] || 'jpg';
-    const a = document.createElement('a');
-    a.href = url; a.download = 'mediavault_' + item.id + '.' + ext;
-    a.target = '_blank'; a.click();
-  }
-
-  async deleteCurrent() {
-    if (!this.currentPreviewId) return;
-    const id = this.currentPreviewId;
-    if (!confirm('Delete this media item?')) return;
-    await this.db.delete(id);
-    this.items = this.items.filter(i => i.id !== id);
-    this.closeModal();
-    this.applyFilters();
-    this.updateStats();
-    this.showToast('Deleted', 'info');
-  }
-
-  async saveApiKey() {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    await this.db.setSetting('imgbbApiKey', key);
-    this.showToast(key ? 'API key saved!' : 'API key cleared', key ? 'success' : 'info');
-    // Retry failed/pending uploads now that we have a key
-    if (key) {
-      this.items.filter(i => i.uploadStatus === 'pending' || i.uploadStatus === 'failed')
-        .forEach(i => this.uploadQueue.enqueue({ ...i }));
-    }
-  }
-
-  toggleSettings(force) {
-    const panel = document.getElementById('settingsPanel');
-    const shouldOpen = force !== undefined ? force : !panel.classList.contains('open');
-    panel.classList.toggle('open', shouldOpen);
-  }
-
-  toggleDarkMode(val) {
-    this.darkMode = val;
-    document.documentElement.classList.toggle('dark', val);
-    this.db.setSetting('darkMode', val);
-  }
-
-  updateStats() {
-    const total = this.items.length;
-    const platforms = {};
-    this.items.forEach(i => { platforms[i.platform] = (platforms[i.platform] || 0) + 1; });
-    document.getElementById('totalCount').textContent = total;
-    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
-      const f = btn.dataset.filter;
-      const badge = btn.querySelector('.filter-count');
-      if (badge) badge.textContent = f === 'all' ? total : (platforms[f] || 0);
-    });
-  }
-
-  async clearAll() {
-    if (!confirm('Delete ALL saved media? This cannot be undone.')) return;
-    for (const item of this.items) await this.db.delete(item.id);
-    this.items = [];
-    this.applyFilters();
-    this.updateStats();
-    this.showToast('All media cleared', 'info');
-  }
-
-  showToast(msg, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast toast-' + type;
-    const icons = { success:'✓', error:'✗', warning:'⚠', info:'ℹ' };
-    toast.innerHTML = '<span>' + (icons[type] || 'ℹ') + '</span> ' + escapeHtml(msg);
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3500);
   }
 }
 
-// ============================================================
-// BOOT
-// ============================================================
-document.addEventListener('DOMContentLoaded', async () => {
-  const app = new App();
-  await app.init();
-});
+// ═══════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════
+function applyTheme() {
+  document.documentElement.classList.toggle('light', !settings.darkMode);
+  document.getElementById('dark-toggle').classList.toggle('on', settings.darkMode);
+}
+
+// ═══════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + name)?.classList.add('active');
+  document.querySelector(`.nav-btn[data-view="${name}"]`)?.classList.add('active');
+  if (name === 'search') runSearch();
+  if (name === 'folders') renderFolders();
+}
+
+// ═══════════════════════════════════════════════
+// LOAD FROM DB
+// ═══════════════════════════════════════════════
+async function loadFromDB() {
+  const [meds, fols] = await Promise.all([dbGetAll('media'), dbGetAll('folders')]);
+  folders = fols.sort((a, b) => a.ts - b.ts);
+  mediaItems = meds.sort((a, b) => b.ts - a.ts);
+  // Restore blob URLs
+  for (const m of mediaItems) {
+    if (m.blobData && !m.cloudUrl) {
+      try {
+        const res = await fetch(m.blobData);
+        const blob = await res.blob();
+        m.blobUrl = URL.createObjectURL(blob);
+      } catch {}
+    }
+    if (m.cloudUrl) m.blobUrl = m.cloudUrl;
+  }
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+async function init() {
+  loadSettings();
+  applyTheme();
+  await initDB();
+  await loadFromDB();
+
+  // Apply saved settings to inputs
+  document.getElementById('api-endpoint-input').value = settings.apiEndpoint || '';
+  document.getElementById('imgbb-key-input').value = settings.imgbbKey || '';
+
+  renderMediaGrid();
+  renderFolders();
+  updateFolderSelects();
+  updateHomeCounts();
+  setupDragDrop();
+
+  // NAV
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
+  // GALLERY BUTTONS (header + save card)
+  function openGalleryPicker() {
+    const input = document.getElementById('file-media-input');
+    input.setAttribute('accept', 'image/*,video/*');
+    input.click();
+  }
+  document.getElementById('gallery-btn-header').addEventListener('click', openGalleryPicker);
+  document.getElementById('gallery-btn-card').addEventListener('click', openGalleryPicker);
+
+  // SAVE BTN
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    const url = document.getElementById('link-input').value;
+    const folder = document.getElementById('folder-select-home').value;
+    await saveFromUrl(url, folder);
+    document.getElementById('link-input').value = '';
+  });
+
+  // QUICK SAVE BTN
+  document.getElementById('quick-save-btn').addEventListener('click', async () => {
+    const url = document.getElementById('link-input').value;
+    await saveFromUrl(url, '');
+    document.getElementById('link-input').value = '';
+  });
+
+  // LINK INPUT enter
+  document.getElementById('link-input').addEventListener('keydown', async e => {
+    if (e.key === 'Enter') {
+      const url = document.getElementById('link-input').value;
+      const folder = document.getElementById('folder-select-home').value;
+      await saveFromUrl(url, folder);
+      document.getElementById('link-input').value = '';
+    }
+  });
+
+  // NEW FOLDER BTN
+  document.getElementById('new-folder-btn').addEventListener('click', () => openFolderModal());
+
+  // FOLDER MODAL
+  document.getElementById('folder-modal-cancel').addEventListener('click', closeFolderModal);
+  document.getElementById('folder-modal-save').addEventListener('click', saveFolderModal);
+  document.getElementById('folder-name-input').addEventListener('keydown', e => { if (e.key === 'Enter') saveFolderModal(); });
+
+  // MOVE MODAL
+  document.getElementById('move-modal-cancel').addEventListener('click', closeMoveModal);
+
+  // CONFIRM MODAL
+  document.getElementById('confirm-cancel').addEventListener('click', closeConfirm);
+  document.getElementById('confirm-ok').addEventListener('click', () => { confirmCallback?.(); closeConfirm(); });
+
+  // VIEWER
+  document.getElementById('viewer-close').addEventListener('click', closeViewer);
+
+  // CONTEXT MENU
+  document.getElementById('ctx-download').addEventListener('click', () => { if (contextTarget) downloadMedia(contextTarget); hideContextMenu(); });
+  document.getElementById('ctx-move').addEventListener('click', () => { if (contextTarget) openMoveModal(contextTarget.id); hideContextMenu(); });
+  document.getElementById('ctx-open').addEventListener('click', () => { if (contextTarget) window.open(contextTarget.sourceUrl, '_blank'); hideContextMenu(); });
+  document.getElementById('ctx-delete').addEventListener('click', () => { if (contextTarget) { deleteMedia(contextTarget.id); hideContextMenu(); } });
+  document.addEventListener('click', hideContextMenu);
+
+  // DARK TOGGLES
+  document.getElementById('dark-toggle').addEventListener('click', e => {
+    e.stopPropagation(); settings.darkMode = !settings.darkMode; saveSettings(); applyTheme();
+  });
+  document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+    settings.darkMode = !settings.darkMode; saveSettings(); applyTheme();
+  });
+  document.getElementById('dark-toggle-home').addEventListener('click', () => {
+    settings.darkMode = !settings.darkMode; saveSettings(); applyTheme();
+  });
+
+  // SETTINGS INPUTS
+  document.getElementById('api-endpoint-input').addEventListener('change', e => {
+    settings.apiEndpoint = e.target.value.trim(); saveSettings();
+  });
+  document.getElementById('imgbb-key-input').addEventListener('change', e => {
+    settings.imgbbKey = e.target.value.trim(); saveSettings();
+  });
+
+  // EXPORT/IMPORT
+  document.getElementById('export-btn').addEventListener('click', exportArchive);
+  document.getElementById('import-btn').addEventListener('click', () => document.getElementById('file-import-input').click());
+  document.getElementById('file-import-input').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) importArchive(file);
+    e.target.value = '';
+  });
+
+  // FILE MEDIA INPUT (gallery / drag-drop fallback)
+  document.getElementById('file-media-input').addEventListener('change', async e => {
+    const folder = document.getElementById('folder-select-home').value;
+    for (const file of e.target.files) {
+      const blobUrl = URL.createObjectURL(file);
+      const type = file.type.startsWith('video/') ? 'video' : 'image';
+      await saveMediaItem(blobUrl, 'gallery-' + file.name, type === 'video' ? 'direct' : 'direct', folder);
+    }
+    renderMediaGrid(); updateHomeCounts();
+    if (e.target.files.length) toast(`${e.target.files.length} file(s) saved from gallery`, 'success');
+    e.target.value = '';
+  });
+
+  // CLEAR DATA
+  document.getElementById('clear-data-btn').addEventListener('click', () => {
+    showConfirm('Clear All Data?', 'This will permanently delete your entire archive. This cannot be undone.', async () => {
+      const allMedia = await dbGetAll('media');
+      for (const m of allMedia) await dbDel('media', m.id);
+      const allFolders = await dbGetAll('folders');
+      for (const f of allFolders) await dbDel('folders', f.id);
+      mediaItems = []; folders = [];
+      renderMediaGrid(); renderFolders(); updateFolderSelects(); updateHomeCounts();
+      toast('All data cleared', 'info');
+    });
+  });
+
+  // SEARCH
+  document.getElementById('search-input').addEventListener('input', runSearch);
+  document.querySelectorAll('#filter-chips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filter-chips .chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      searchFilter = chip.dataset.filter;
+      runSearch();
+    });
+  });
+
+  // CLIPBOARD PASTE
+  document.addEventListener('paste', handlePaste);
+
+  // MODAL OVERLAY CLICK TO CLOSE
+  ['folder-modal', 'move-modal', 'confirm-modal'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.classList.remove('open');
+        if (id === 'confirm-modal') confirmCallback = null;
+      }
+    });
+  });
+
+  // UPLOAD QUEUE BTN (just shows info)
+  document.getElementById('upload-queue-btn').addEventListener('click', () => {
+    toast(`${uploadQueue.length} items in upload queue`, 'info');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 
 </body>
